@@ -10,7 +10,7 @@ import safetensors
 import safetensors.torch
 import torch
 from PIL import Image
-from scipy.io import loadmat, savemat
+from scipy.io import savemat
 from tqdm import tqdm
 
 from sadtalker.src.face3d.models import networks
