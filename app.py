@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from model import generate_audio, generate_video, get_response
 
 app = FastAPI()
-CONFIG = pd.read_json("/teamspace/studios/this_studio/graduation_project/config.json")
+CONFIG = pd.read_json("config.json")
 
 
 @app.get("/")
