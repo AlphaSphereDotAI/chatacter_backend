@@ -16,6 +16,7 @@ processor = AutoProcessor.from_pretrained(CONFIG["model"]["bark"])
 model = AutoModelForTextToWaveform.from_pretrained(CONFIG["model"]["bark"])
 chat = ChatGroq(model_name="llama3-70b-8192", verbose=True)
 
+
 def generate_audio(response):
     """generate audio"""
     print("\tChatacter is generating the audio...")
