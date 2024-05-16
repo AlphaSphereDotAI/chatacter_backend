@@ -1,8 +1,9 @@
 import torch
+from torch import nn
+
 from sadtalker.src.audio2pose_models.audio_encoder import AudioEncoder
 from sadtalker.src.audio2pose_models.cvae import CVAE
 from sadtalker.src.audio2pose_models.discriminator import PoseSequenceDiscriminator
-from torch import nn
 
 
 class Audio2Pose(nn.Module):

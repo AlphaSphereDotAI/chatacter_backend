@@ -10,13 +10,14 @@ import safetensors
 import safetensors.torch
 import torch
 from PIL import Image
+from scipy.io import loadmat, savemat
+from tqdm import tqdm
+
 from sadtalker.src.face3d.models import networks
 from sadtalker.src.face3d.util.load_mats import load_lm3d
 from sadtalker.src.face3d.util.preprocess import align_img
 from sadtalker.src.utils.croper import Preprocesser
 from sadtalker.src.utils.safetensor_helper import load_x_from_safetensor
-from scipy.io import loadmat, savemat
-from tqdm import tqdm
 
 warnings.filterwarnings("ignore")
 

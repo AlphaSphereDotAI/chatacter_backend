@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 import wget
 from cog import BasePredictor, Input, Path
+
 from sadtalker.src.facerender.animate import AnimateFromCoeff
 from sadtalker.src.generate_batch import get_data
 from sadtalker.src.generate_facerender_batch import get_facerender_data
