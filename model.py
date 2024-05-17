@@ -3,9 +3,10 @@ from dotenv_vault import load_dotenv
 from huggingface_hub import snapshot_download
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
-from sadtalker.predict import Predictor
 from scipy.io.wavfile import write
 from transformers import AutoModelForTextToWaveform, AutoProcessor
+
+from sadtalker.predict import Predictor
 
 CONFIG = pd.read_json("config.json")
 load_dotenv()
