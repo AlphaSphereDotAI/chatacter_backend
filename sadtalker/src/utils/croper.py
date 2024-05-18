@@ -38,7 +38,8 @@ class Preprocesser:
 
         return lm
 
-    def align_face(self, img, lm, output_size=1024):
+    @staticmethod
+    def align_face(img, lm, output_size=1024):
         """
         :param filepath: str
         :return: PIL Image

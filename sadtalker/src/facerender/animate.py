@@ -105,8 +105,8 @@ class AnimateFromCoeff:
 
         self.device = device
 
+    @staticmethod
     def load_cpk_facevid2vid_safetensor(
-        self,
         checkpoint_path,
         generator=None,
         kp_detector=None,
@@ -136,8 +136,8 @@ class AnimateFromCoeff:
 
         return None
 
+    @staticmethod
     def load_cpk_facevid2vid(
-        self,
         checkpoint_path,
         generator=None,
         discriminator=None,
@@ -181,8 +181,8 @@ class AnimateFromCoeff:
 
         return checkpoint["epoch"]
 
+    @staticmethod
     def load_cpk_mapping(
-        self,
         checkpoint_path,
         mapping=None,
         discriminator=None,

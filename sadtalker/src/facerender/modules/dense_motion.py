@@ -99,7 +99,8 @@ class DenseMotionNetwork(nn.Module):
         sparse_deformed = sparse_deformed.view((bs, self.num_kp + 1, -1, d, h, w))
         return sparse_deformed
 
-    def create_heatmap_representations(self, feature, kp_driving, kp_source):
+    @staticmethod
+    def create_heatmap_representations(feature, kp_driving, kp_source):
         spatial_size = feature.shape[3:]
         gaussian_driving = kp2gaussian(
             kp_driving, spatial_size=spatial_size, kp_variance=0.01

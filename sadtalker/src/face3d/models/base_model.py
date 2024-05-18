@@ -318,7 +318,8 @@ class BaseModel(ABC):
                 )
         print("-----------------------------------------------")
 
-    def set_requires_grad(self, nets, requires_grad=False):
+    @staticmethod
+    def set_requires_grad(nets, requires_grad=False):
         """Set requies_grad=Fasle for all the networks to avoid unnecessary computations
         Parameters:
             nets (network list)   -- a list of networks
@@ -331,5 +332,6 @@ class BaseModel(ABC):
                 for param in net.parameters():
                     param.requires_grad = requires_grad
 
-    def generate_visuals_for_evaluation(self, data, mode):
+    @staticmethod
+    def generate_visuals_for_evaluation(data, mode):
         return {}

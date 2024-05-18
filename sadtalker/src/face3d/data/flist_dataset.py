@@ -120,7 +120,8 @@ class FlistDataset(BaseDataset):
             "dataset": self.name,
         }
 
-    def _augmentation(self, img, lm, opt, msk=None):
+    @staticmethod
+    def _augmentation(img, lm, opt, msk=None):
         affine, affine_inv, flip = get_affine_mat(opt, img.size)
         img = apply_img_affine(img, affine_inv)
         lm = apply_lm_affine(lm, affine, flip, img.size)

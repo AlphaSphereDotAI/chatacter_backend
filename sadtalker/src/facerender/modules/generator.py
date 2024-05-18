@@ -105,7 +105,8 @@ class OcclusionAwareGenerator(nn.Module):
         self.estimate_occlusion_map = estimate_occlusion_map
         self.image_channel = image_channel
 
-    def deform_input(self, inp, deformation):
+    @staticmethod
+    def deform_input(inp, deformation):
         _, d_old, h_old, w_old, _ = deformation.shape
         _, _, d, h, w = inp.shape
         if d_old != d or h_old != h or w_old != w:
@@ -280,7 +281,8 @@ class OcclusionAwareSPADEGenerator(nn.Module):
 
         self.decoder = SPADEDecoder()
 
-    def deform_input(self, inp, deformation):
+    @staticmethod
+    def deform_input(inp, deformation):
         _, d_old, h_old, w_old, _ = deformation.shape
         _, _, d, h, w = inp.shape
         if d_old != d or h_old != h or w_old != w:
