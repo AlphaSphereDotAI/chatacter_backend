@@ -11,9 +11,7 @@ import yaml
 from pydub import AudioSegment
 from skimage import img_as_ubyte
 
-from sadtalker.src.facerender.modules.generator import (
-    OcclusionAwareSPADEGenerator,
-)
+from sadtalker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from sadtalker.src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
 from sadtalker.src.facerender.modules.make_animation import make_animation
 from sadtalker.src.facerender.modules.mapping import MappingNet
@@ -24,7 +22,6 @@ from sadtalker.src.utils.videoio import save_video_with_watermark
 warnings.filterwarnings("ignore")
 
 try:
-
     in_webui = True
 except:
     in_webui = False

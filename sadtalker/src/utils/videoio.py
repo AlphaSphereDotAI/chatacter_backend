@@ -34,7 +34,9 @@ def save_video_with_watermark(video, audio, save_path, watermark=False):
             # check if stable-diffusion-webui
             from modules import paths
 
-            watarmark_path = f"{paths.script_path}/extensions/SadTalker/docs/sadtalker_logo.png"
+            watarmark_path = (
+                f"{paths.script_path}/extensions/SadTalker/docs/sadtalker_logo.png"
+            )
         except Exception:
             # get the root path of sadtalker.
             dir_path = os.path.dirname(os.path.realpath(__file__))
