@@ -1,5 +1,5 @@
 import pandas as pd
-from dotenv_vault import load_dotenv
+# from dotenv_vault import load_dotenv
 from huggingface_hub import snapshot_download
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
@@ -8,7 +8,8 @@ from scipy.io.wavfile import write
 from transformers import AutoModelForTextToWaveform, AutoProcessor
 
 CONFIG = pd.read_json("config.json")
-load_dotenv()
+# load_dotenv()
+
 snapshot_download(repo_id="suno/bark-small", local_dir=CONFIG["model"]["bark"])
 processor = AutoProcessor.from_pretrained(CONFIG["model"]["bark"])
 model = AutoModelForTextToWaveform.from_pretrained(CONFIG["model"]["bark"])
