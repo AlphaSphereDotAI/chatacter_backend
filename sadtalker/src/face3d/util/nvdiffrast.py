@@ -2,26 +2,16 @@
 Attention, antialiasing step is missing in current version.
 """
 
-from typing import List
 
-import kornia
-import numpy as np
 import pytorch3d.ops
 import torch
-import torch.nn.functional as F
-from kornia.geometry.camera import pixel2cam
 from pytorch3d.renderer import (
-    DirectionalLights,
     FoVPerspectiveCameras,
     MeshRasterizer,
     MeshRenderer,
     RasterizationSettings,
-    SoftPhongShader,
-    TexturesUV,
-    look_at_view_transform,
 )
 from pytorch3d.structures import Meshes
-from scipy.io import loadmat
 from torch import nn
 
 # def ndc_projection(x=0.1, n=1.0, f=50.0):

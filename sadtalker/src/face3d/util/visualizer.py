@@ -2,11 +2,8 @@
 
 import ntpath
 import os
-import sys
 import time
-from subprocess import PIPE, Popen
 
-import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 
 from . import html, util

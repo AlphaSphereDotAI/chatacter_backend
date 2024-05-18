@@ -1,6 +1,4 @@
-import torch
 import torch.nn.functional as F
-from facerender.modules.util import kp2gaussian
 from torch import nn
 
 

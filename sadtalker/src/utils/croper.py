@@ -1,16 +1,9 @@
-import argparse
-import glob
-import os
-import time
-from itertools import cycle
 
 import cv2
 import numpy as np
-import scipy
 import torch
 from facexlib.alignment import landmark_98_to_68
 from PIL import Image
-from tqdm import tqdm
 
 from sadtalker.src.face3d.extract_kp_videos_safe import KeypointExtractor
 

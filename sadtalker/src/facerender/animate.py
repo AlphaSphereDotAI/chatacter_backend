@@ -7,13 +7,11 @@ import numpy as np
 import safetensors
 import safetensors.torch
 import torch
-import torchvision
 import yaml
 from pydub import AudioSegment
 from skimage import img_as_ubyte
 
 from sadtalker.src.facerender.modules.generator import (
-    OcclusionAwareGenerator,
     OcclusionAwareSPADEGenerator,
 )
 from sadtalker.src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
@@ -26,7 +24,6 @@ from sadtalker.src.utils.videoio import save_video_with_watermark
 warnings.filterwarnings("ignore")
 
 try:
-    import webui  # in webui
 
     in_webui = True
 except:
@@ -171,7 +168,7 @@ class AnimateFromCoeff:
                 optimizer_discriminator.load_state_dict(
                     checkpoint["optimizer_discriminator"]
                 )
-            except RuntimeError as e:
+            except RuntimeError:
                 print(
                     "No discriminator optimizer in the state-dict. Optimizer will be not initialized"
                 )

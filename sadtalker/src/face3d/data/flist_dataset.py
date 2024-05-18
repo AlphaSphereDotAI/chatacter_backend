@@ -2,12 +2,9 @@
 
 import json
 import os.path
-import pickle
-import random
 
 import numpy as np
 import torch
-import util.util as util
 from data.base_dataset import (
     BaseDataset,
     apply_img_affine,
@@ -15,9 +12,7 @@ from data.base_dataset import (
     get_affine_mat,
     get_transform,
 )
-from data.image_folder import make_dataset
 from PIL import Image
-from scipy.io import loadmat, savemat
 from util.load_mats import load_lm3d
 from util.preprocess import align_img, estimate_norm
 

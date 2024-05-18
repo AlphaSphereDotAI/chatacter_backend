@@ -335,5 +335,5 @@ class BaseModel(ABC):
                 for param in net.parameters():
                     param.requires_grad = requires_grad
 
-    def generate_visuals_for_evaluation(self, data=None, mode=None):
+    def generate_visuals_for_evaluation(self):
         return {}
