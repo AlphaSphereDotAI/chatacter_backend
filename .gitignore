@@ -11,7 +11,8 @@
 .env.previous
 */checkpoints/
 
-*/__pycache__/
+.ruff_cache
+__pycache__
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
