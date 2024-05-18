@@ -1,13 +1,14 @@
 import torch
 import torch.nn.functional as F
 import torch.nn.utils.spectral_norm as spectral_norm
+from torch import nn
+
 from sadtalker.src.facerender.sync_batchnorm import (
     SynchronizedBatchNorm2d as BatchNorm2d,
 )
 from sadtalker.src.facerender.sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
-from torch import nn
 
 
 def kp2gaussian(kp, spatial_size, kp_variance):

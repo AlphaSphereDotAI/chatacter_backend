@@ -1,5 +1,7 @@
 import torch
 import torch.nn.functional as F
+from torch import nn
+
 from sadtalker.src.facerender.modules.util import (
     AntiAliasInterpolation2d,
     KPHourglass,
@@ -9,7 +11,6 @@ from sadtalker.src.facerender.modules.util import (
 from sadtalker.src.facerender.sync_batchnorm import (
     SynchronizedBatchNorm2d as BatchNorm2d,
 )
-from torch import nn
 
 
 class KPDetector(nn.Module):

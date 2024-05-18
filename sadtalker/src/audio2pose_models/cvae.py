@@ -1,7 +1,8 @@
 import torch
 import torch.nn.functional as F
-from sadtalker.src.audio2pose_models.res_unet import ResUnet
 from torch import nn
+
+from sadtalker.src.audio2pose_models.res_unet import ResUnet
 
 
 def class2onehot(idx, class_num):

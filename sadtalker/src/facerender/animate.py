@@ -10,6 +10,8 @@ import torch
 import torchvision
 import yaml
 from pydub import AudioSegment
+from skimage import img_as_ubyte
+
 from sadtalker.src.facerender.modules.generator import (
     OcclusionAwareGenerator,
     OcclusionAwareSPADEGenerator,
@@ -20,7 +22,6 @@ from sadtalker.src.facerender.modules.mapping import MappingNet
 from sadtalker.src.utils.face_enhancer import enhancer_generator_with_len, enhancer_list
 from sadtalker.src.utils.paste_pic import paste_pic
 from sadtalker.src.utils.videoio import save_video_with_watermark
-from skimage import img_as_ubyte
 
 warnings.filterwarnings("ignore")
 
