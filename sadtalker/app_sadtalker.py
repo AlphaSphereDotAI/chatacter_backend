@@ -4,7 +4,6 @@ import gradio as gr
 from src.gradio_demo import SadTalker
 
 try:
-
     in_webui = True
 except:
     in_webui = False
