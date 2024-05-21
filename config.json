@@ -1,20 +1,16 @@
 {
-    "api": {
-        "lighting": "https://8000-01hqrk1qr2p3w6cc5np0wk0ys5.cloudspaces.litng.ai",
-        "localhost": "http://localhost:8000"
-    },
     "assets": {
-        "audio": "/teamspace/studios/this_studio/graduation_project/backend/assets/AUDIO.wav",
-        "image": "/teamspace/studios/this_studio/graduation_project/backend/assets/Einstein.jpg",
-        "video": "/teamspace/studios/this_studio/graduation_project/backend/assets/VIDEO.mp4"
+        "audio": "assets/AUDIO.wav",
+        "image": "assets/Einstein.jpg",
+        "video": "assets/VIDEO.mp4"
     },
     "model": {
-        "bark": "/teamspace/studios/this_studio/graduation_project/backend/bark-small",
+        "bark": "bark-small",
         "sadtalker": {
-            "base": "/teamspace/studios/this_studio/graduation_project/backend/sadtalker",
-            "checkpoints": "/teamspace/studios/this_studio/graduation_project/backend/sadtalker/checkpoints",
-            "gfpgan": "/teamspace/studios/this_studio/graduation_project/backend/sadtalker/gfpgan/weights"
+            "base": "sadtalker",
+            "checkpoints": "sadtalker/checkpoints",
+            "gfpgan": "sadtalker/gfpgan/weights"
         }
     },
-    "project_name": "graduation_project"
+    "project_name": "chatacter"
 }

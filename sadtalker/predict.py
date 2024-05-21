@@ -16,7 +16,7 @@ from sadtalker.src.test_audio2coeff import Audio2Coeff
 from sadtalker.src.utils.init_path import init_path
 from sadtalker.src.utils.preprocess import CropAndExtract
 
-CONFIG = pd.read_json("/teamspace/studios/this_studio/graduation_project/config.json")
+CONFIG = pd.read_json("config.json")
 
 
 class Predictor(BasePredictor):
