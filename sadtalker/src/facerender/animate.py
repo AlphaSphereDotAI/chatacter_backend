@@ -7,26 +7,21 @@ import numpy as np
 import safetensors
 import safetensors.torch
 import torch
-import torchvision
 import yaml
 from pydub import AudioSegment
-from sadtalker.src.facerender.modules.generator import (
-    OcclusionAwareGenerator,
-    OcclusionAwareSPADEGenerator,
-)
+from skimage import img_as_ubyte
+
+from sadtalker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from sadtalker.src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
 from sadtalker.src.facerender.modules.make_animation import make_animation
 from sadtalker.src.facerender.modules.mapping import MappingNet
 from sadtalker.src.utils.face_enhancer import enhancer_generator_with_len, enhancer_list
 from sadtalker.src.utils.paste_pic import paste_pic
 from sadtalker.src.utils.videoio import save_video_with_watermark
-from skimage import img_as_ubyte
 
 warnings.filterwarnings("ignore")
 
 try:
-    import webui  # in webui
-
     in_webui = True
 except:
     in_webui = False
@@ -105,8 +100,8 @@ class AnimateFromCoeff:
 
         self.device = device
 
+    @staticmethod
     def load_cpk_facevid2vid_safetensor(
-        self,
         checkpoint_path,
         generator=None,
         kp_detector=None,
@@ -136,8 +131,8 @@ class AnimateFromCoeff:
 
         return None
 
+    @staticmethod
     def load_cpk_facevid2vid(
-        self,
         checkpoint_path,
         generator=None,
         discriminator=None,
@@ -170,7 +165,7 @@ class AnimateFromCoeff:
                 optimizer_discriminator.load_state_dict(
                     checkpoint["optimizer_discriminator"]
                 )
-            except RuntimeError as e:
+            except RuntimeError:
                 print(
                     "No discriminator optimizer in the state-dict. Optimizer will be not initialized"
                 )
@@ -181,8 +176,8 @@ class AnimateFromCoeff:
 
         return checkpoint["epoch"]
 
+    @staticmethod
     def load_cpk_mapping(
-        self,
         checkpoint_path,
         mapping=None,
         discriminator=None,

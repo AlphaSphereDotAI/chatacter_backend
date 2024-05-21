@@ -1,14 +1,9 @@
 """This script contains the image preprocessing code for Deep3DFaceRecon_pytorch"""
 
-import os
 import warnings
 
-import cv2
 import numpy as np
-import torch
 from PIL import Image
-from scipy.io import loadmat
-from skimage import transform as trans
 
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)

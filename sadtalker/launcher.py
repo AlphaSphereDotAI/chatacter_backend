@@ -1,10 +1,8 @@
 # this scripts installs necessary requirements and launches main program in webui.py
 # borrow from : https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/master/launch.py
 import importlib.util
-import json
 import os
 import platform
-import shlex
 import subprocess
 import sys
 
@@ -249,13 +247,13 @@ def prepare_environment():
 
     if sys.platform != "win32" and not is_installed("tts"):
         run_pip(
-            f"install TTS",
+            "install TTS",
             "install TTS individually in SadTalker, which might not work on windows.",
         )
 
 
 def start():
-    print(f"Launching SadTalker Web UI")
+    print("Launching SadTalker Web UI")
     from app_sadtalker import sadtalker_demo
 
     demo = sadtalker_demo()

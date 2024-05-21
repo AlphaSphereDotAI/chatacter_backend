@@ -47,7 +47,8 @@ class Predictor(BasePredictor):
             ),
         }
 
-    def download_model(self):
+    @staticmethod
+    def download_model():
         os.system("pwd")
         MODELS = {
             f"{CONFIG['model']['sadtalker']['checkpoints']}/mapping_00109-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar",

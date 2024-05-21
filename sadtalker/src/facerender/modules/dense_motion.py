@@ -1,5 +1,7 @@
 import torch
 import torch.nn.functional as F
+from torch import nn
+
 from sadtalker.src.facerender.modules.util import (
     Hourglass,
     kp2gaussian,
@@ -8,7 +10,6 @@ from sadtalker.src.facerender.modules.util import (
 from sadtalker.src.facerender.sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
-from torch import nn
 
 
 class DenseMotionNetwork(nn.Module):
@@ -99,7 +100,8 @@ class DenseMotionNetwork(nn.Module):
         sparse_deformed = sparse_deformed.view((bs, self.num_kp + 1, -1, d, h, w))
         return sparse_deformed
 
-    def create_heatmap_representations(self, feature, kp_driving, kp_source):
+    @staticmethod
+    def create_heatmap_representations(feature, kp_driving, kp_source):
         spatial_size = feature.shape[3:]
         gaussian_driving = kp2gaussian(
             kp_driving, spatial_size=spatial_size, kp_variance=0.01
