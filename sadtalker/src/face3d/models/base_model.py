@@ -337,4 +337,3 @@ class BaseModel(ABC):
 
     def generate_visuals_for_evaluation(self, data=None, mode=None):
         return {}
-      
