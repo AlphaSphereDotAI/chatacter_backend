@@ -30,7 +30,7 @@ def find_model_using_name(model_name):
     be instantiated. It has to be a subclass of BaseModel,
     and it is case-insensitive.
     """
-    model_filename = "face3d.models." + model_name + "_model"
+    model_filename = f"face3d.models.{model_name}_model"
     modellib = importlib.import_module(model_filename)
     model = None
     target_model_name = model_name.replace("_", "") + "model"
@@ -40,8 +40,7 @@ def find_model_using_name(model_name):
 
     if model is None:
         print(
-            "In %s.py, there should be a subclass of BaseModel with class name that matches %s in lowercase."
-            % (model_filename, target_model_name)
+            f"In {model_filename}.py, there should be a subclass of BaseModel with class name that matches {target_model_name} in lowercase."
         )
         exit(0)
 
@@ -66,5 +65,5 @@ def create_model(opt):
     """
     model = find_model_using_name(opt.model)
     instance = model(opt)
-    print("model [%s] was created" % type(instance).__name__)
+    print(f"model [{type(instance).__name__}] was created")
     return instance

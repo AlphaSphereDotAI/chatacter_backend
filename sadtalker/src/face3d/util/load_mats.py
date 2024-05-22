@@ -4,7 +4,6 @@ import os.path as osp
 from array import array
 
 import numpy as np
-from PIL import Image
 from scipy.io import loadmat, savemat
 
 # load expression basis

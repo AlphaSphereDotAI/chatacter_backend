@@ -4,13 +4,14 @@ import numpy as np
 import safetensors
 import safetensors.torch
 import torch
+from scipy.io import loadmat, savemat
+from scipy.signal import savgol_filter
+from yacs.config import CfgNode as CN
+
 from sadtalker.src.audio2exp_models.audio2exp import Audio2Exp
 from sadtalker.src.audio2exp_models.networks import SimpleWrapperV2
 from sadtalker.src.audio2pose_models.audio2pose import Audio2Pose
 from sadtalker.src.utils.safetensor_helper import load_x_from_safetensor
-from scipy.io import loadmat, savemat
-from scipy.signal import savgol_filter
-from yacs.config import CfgNode as CN
 
 
 def load_cpk(checkpoint_path, model=None, optimizer=None, device="cpu"):
@@ -126,7 +127,8 @@ class Audio2Coeff:
                 coeff_save_dir, "%s##%s.mat" % (batch["pic_name"], batch["audio_name"])
             )
 
-    def using_refpose(self, coeffs_pred_numpy, ref_pose_coeff_path):
+    @staticmethod
+    def using_refpose(coeffs_pred_numpy, ref_pose_coeff_path):
         num_frames = coeffs_pred_numpy.shape[0]
         refpose_coeff_dict = loadmat(ref_pose_coeff_path)
         refpose_coeff = refpose_coeff_dict["coeff_3dmm"][:, 64:70]

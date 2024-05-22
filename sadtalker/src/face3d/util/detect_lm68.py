@@ -4,7 +4,6 @@ from shutil import move
 import cv2
 import numpy as np
 import tensorflow as tf
-from scipy.io import loadmat
 from util.preprocess import align_for_lm
 
 mean_face = np.loadtxt("util/test_mean_face.txt")

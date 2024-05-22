@@ -2,6 +2,7 @@ import pandas as pd
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+
 from model import generate_audio, generate_video, get_response
 
 app = FastAPI()
@@ -36,5 +37,5 @@ def get_video():
     return FileResponse(CONFIG["video"], media_type="video/mp4")
 
 
-if __name__ == "__main__":
-    uvicorn.run("app:app", host="localhost", port=8001, reload=True)
+# if __name__ == "__main__":
+#     uvicorn.run("app:app", host="localhost", port=8001, reload=True)
