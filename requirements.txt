@@ -1,140 +1,140 @@
-absl-py==2.1.0
-addict==2.4.0
-altair==5.3.0
-annotated-types==0.6.0
-anyio==4.3.0
-attrs==23.2.0
-audioread==3.0.1
-av==12.0.0
-basicsr==1.4.2
-blinker==1.7.0
-cachetools==5.3.3
-certifi==2023.7.22
-cffi==1.16.0
-charset-normalizer==2.1.1
-click==8.1.7
-cog==0.9.6
-contourpy==1.2.1
-cryptography==42.0.4
-cycler==0.12.1
-decorator==5.1.1
-distro==1.9.0
-exceptiongroup==1.2.1
-face-alignment==1.3.5
-facexlib==0.3.0
-fastapi==0.109.1
-filelock==3.13.1
-filterpy==1.4.5
-fonttools==4.51.0
-fsspec==2024.2.0
-future==1.0.0
-gfpgan==1.3.8
-gitdb==4.0.11
-gitpython==3.1.43
-groq==0.5.0
-grpcio==1.62.2
-h11==0.14.0
-httpcore==1.0.5
-httptools==0.6.1
-httpx==0.27.0
-huggingface-hub==0.22.2
-idna==3.7
-imageio==2.19.3
-imageio-ffmpeg==0.4.7
-importlib-metadata==7.1.0
-jinja2==3.1.3
-joblib==1.4.2
-jsonpatch==1.33
-jsonpointer==2.4
-jsonschema==4.21.1
-jsonschema-specifications==2023.12.1
-kiwisolver==1.4.5
-kornia==0.6.8
-langchain-core
-langchain-groq==0.1.2
-langsmith==0.1.49
-librosa==0.9.2
-llvmlite==0.42.0
-lmdb==1.4.1
-markdown==3.6
-markdown-it-py==3.0.0
-markupsafe==2.1.5
-matplotlib==3.8.4
-mdurl==0.1.2
-mpmath==1.3.0
-networkx==3.2.1
-numba
-numpy==1.26.3
-opencv-python==4.9.0.80
-orjson==3.10.1
-pandas==2.2.2
-pillow==10.3.0
-pip==24.0
-platformdirs==4.2.1
-pooch==1.8.1
-protobuf==3.20.2
-pyarrow==16.0.0
-pycparser==2.22
-pydantic==1.10.15
-pydantic-core==2.18.2
-pydeck==0.8.0
-pydub==0.25.1
-pygments==2.17.2
-pyparsing==3.1.2
-python-dateutil==2.9.0.post0
-python-dotenv==0.21.1
-python-dotenv-vault==0.6.4
-pytz==2024.1
-pywavelets==1.6.0
-pyyaml==6.0.1
-referencing==0.34.0
-regex==2024.4.16
-requests==2.31.0
-resampy==0.3.1
-rich==13.7.1
-rpds-py==0.18.0
-ruff==0.4.1
-safetensors==0.4.3
-scikit-image==0.19.3
-scikit-learn==1.4.2
-scipy==1.13.0
-setuptools==65.5.1
-six==1.16.0
-smmap==5.0.1
-sniffio==1.3.1
-soundfile==0.12.1
-starlette==0.36.2
-streamlit==1.33.0
-structlog==24.1.0
-sympy==1.12
-tb-nightly==2.17.0a20240423
-tenacity==8.2.3
-tensorboard-data-server==0.7.2
-threadpoolctl==3.4.0
-tifffile==2024.4.18
-tokenizers==0.19.1
-toml==0.10.2
-tomli==2.0.1
-toolz==0.12.1
-torch==2.1.0+cu121
-torchaudio==2.1.0+cu121
-torchvision==0.16.0+cu121
-tornado==6.4
-tqdm
-transformers==4.40.0
-triton==2.1.0
-typing-extensions==4.9.0
-tzdata==2024.1
-urllib3==1.26.18
-uv==0.1.37
-uvicorn==0.29.0
-uvloop==0.19.0
-watchdog==4.0.0
-watchfiles==0.21.0
-websockets==12.0
-werkzeug==3.0.2
-wget==3.2
-wheel==0.42.0
-yacs==0.1.8
-yapf==0.40.2
-zipp==3.18.1
+rye add absl-py==2.1.0
+rye add addict==2.4.0
+rye add altair==5.3.0
+rye add annotated-types==0.6.0
+rye add anyio==4.3.0
+rye add attrs==23.2.0
+rye add audioread==3.0.1
+rye add av==12.0.0
+rye add basicsr==1.4.2
+rye add blinker==1.7.0
+rye add cachetools==5.3.3
+rye add certifi==2023.7.22
+rye add cffi==1.16.0
+rye add charset-normalizer==2.1.1
+rye add click==8.1.7
+rye add cog==0.9.6
+rye add contourpy==1.2.1
+rye add cryptography==42.0.4
+rye add cycler==0.12.1
+rye add decorator==5.1.1
+rye add distro==1.9.0
+rye add exceptiongroup==1.2.1
+rye add face-alignment==1.3.5
+rye add facexlib==0.3.0
+rye add fastapi==0.109.1
+rye add filelock==3.13.1
+rye add filterpy==1.4.5
+rye add fonttools==4.51.0
+rye add fsspec==2024.2.0
+rye add future==1.0.0
+rye add gfpgan==1.3.8
+rye add gitdb==4.0.11
+rye add gitpython==3.1.43
+rye add groq==0.5.0
+rye add grpcio==1.62.2
+rye add h11==0.14.0
+rye add httpcore==1.0.5
+rye add httptools==0.6.1
+rye add httpx==0.27.0
+rye add huggingface-hub==0.22.2
+rye add idna==3.7
+rye add imageio==2.19.3
+rye add imageio-ffmpeg==0.4.7
+rye add importlib-metadata==7.1.0
+rye add jinja2==3.1.3
+rye add joblib==1.4.2
+rye add jsonpatch==1.33
+rye add jsonpointer==2.4
+rye add jsonschema==4.21.1
+rye add jsonschema-specifications==2023.12.1
+rye add kiwisolver==1.4.5
+rye add kornia==0.6.8
+rye add langchain-core
+rye add langchain-groq==0.1.2
+rye add langsmith==0.1.49
+rye add librosa==0.9.2
+rye add llvmlite==0.42.0
+rye add lmdb==1.4.1
+rye add markdown==3.6
+rye add markdown-it-py==3.0.0
+rye add markupsafe==2.1.5
+rye add matplotlib==3.8.4
+rye add mdurl==0.1.2
+rye add mpmath==1.3.0
+rye add networkx==3.2.1
+rye add numba
+rye add numpy==1.26.3
+rye add opencv-python==4.9.0.80
+rye add orjson==3.10.1
+rye add pandas==2.2.2
+rye add pillow==10.3.0
+rye add pip==24.0
+rye add platformdirs==4.2.1
+rye add pooch==1.8.1
+rye add protobuf==3.20.2
+rye add pyarrow==16.0.0
+rye add pycparser==2.22
+rye add pydantic==1.10.15
+rye add pydantic-core==2.18.2
+rye add pydeck==0.8.0
+rye add pydub==0.25.1
+rye add pygments==2.17.2
+rye add pyparsing==3.1.2
+rye add python-dateutil==2.9.0.post0
+rye add python-dotenv==0.21.1
+rye add python-dotenv-vault==0.6.4
+rye add pytz==2024.1
+rye add pywavelets==1.6.0
+rye add pyyaml==6.0.1
+rye add referencing==0.34.0
+rye add regex==2024.4.16
+rye add requests==2.31.0
+rye add resampy==0.3.1
+rye add rich==13.7.1
+rye add rpds-py==0.18.0
+rye add ruff==0.4.1
+rye add safetensors==0.4.3
+rye add scikit-image==0.19.3
+rye add scikit-learn==1.4.2
+rye add scipy==1.13.0
+rye add setuptools==65.5.1
+rye add six==1.16.0
+rye add smmap==5.0.1
+rye add sniffio==1.3.1
+rye add soundfile==0.12.1
+rye add starlette==0.36.2
+rye add streamlit==1.33.0
+rye add structlog==24.1.0
+rye add sympy==1.12
+rye add tb-nightly==2.17.0a20240423
+rye add tenacity==8.2.3
+rye add tensorboard-data-server==0.7.2
+rye add threadpoolctl==3.4.0
+rye add tifffile==2024.4.18
+rye add tokenizers==0.19.1
+rye add toml==0.10.2
+rye add tomli==2.0.1
+rye add toolz==0.12.1
+rye add torch==2.1.0+cu121
+rye add torchaudio==2.1.0+cu121
+rye add torchvision==0.16.0+cu121
+rye add tornado==6.4
+rye add tqdm
+rye add transformers==4.40.0
+rye add triton==2.1.0
+rye add typing-extensions==4.9.0
+rye add tzdata==2024.1
+rye add urllib3==1.26.18
+rye add uv==0.1.37
+rye add uvicorn==0.29.0
+rye add uvloop==0.19.0
+rye add watchdog==4.0.0
+rye add watchfiles==0.21.0
+rye add websockets==12.0
+rye add werkzeug==3.0.2
+rye add wget==3.2
+rye add wheel==0.42.0
+rye add yacs==0.1.8
+rye add yapf==0.40.2
+rye add zipp==3.18.1
