@@ -41,6 +41,7 @@ certifi==2022.12.7
     # via requests
 cffi==1.16.0
     # via backend
+    # via cryptography
 charset-normalizer==2.1.1
     # via backend
     # via requests
@@ -50,6 +51,8 @@ click==8.1.7
 cog==0.9.6
     # via backend
 contourpy==1.2.1
+    # via backend
+cryptography==42.0.4
     # via backend
 fastapi==0.98.0
     # via cog
