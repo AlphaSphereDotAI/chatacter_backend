@@ -21,6 +21,7 @@ dependencies = [
     "click==8.1.7",
     "cog==0.9.6",
     "contourpy==1.2.1",
+    "cryptography==42.0.4",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
