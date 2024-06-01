@@ -40,4 +40,7 @@ frontend/.pub/
 .env*
 .flaskenv*
 !.env.project
-!.env.vault
+!.env.vault# pixi environments
+.pixi
+*.egg-info
+
