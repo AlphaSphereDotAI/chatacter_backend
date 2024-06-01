@@ -13,7 +13,7 @@ dependencies = [
     "anyio==4.3.0",
     "attrs==23.2.0",
     "audioread==3.0.1",
-    "av==12.0.0",
+    "av>=12.1.0",
     "basicsr==1.4.2",
     "blinker==1.7.0",
     "cachetools==5.3.3",
@@ -21,7 +21,7 @@ dependencies = [
     "charset-normalizer==2.1.1",
     "click==8.1.7",
     "cog==0.9.6",
-    "contourpy==1.2.1",
+    "contourpy>=1.2.1",
     "cryptography==42.0.4",
     "cycler==0.12.1",
     "decorator==5.1.1",
@@ -158,3 +158,7 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/backend"]
+
+[[tool.rye.sources]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu121"
