@@ -2,12 +2,21 @@ import pandas as pd
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
-
 from model import generate_audio, generate_video, get_response
-
+import sentry_sdk
+import os
+sentry_sdk.init(
+    dsn=os.environ['SENTRY'],
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
 app = FastAPI()
 CONFIG = pd.read_json("config.json")
-
 
 @app.get("/")
 async def is_alive():

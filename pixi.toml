@@ -145,3 +145,7 @@ wheel = "*"
 yacs = "*"
 yapf = "*"
 zipp = "*"
+sentry-sdk = "*"
+
+[feature.fastapi.pypi-dependencies]
+sentry-sdk = "*"

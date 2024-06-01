@@ -1,0 +1,2009 @@
+[
+  {
+    "name": "_libgcc_mutex",
+    "version": "0.1",
+    "build": "conda_forge",
+    "size_bytes": 2562,
+    "kind": "conda",
+    "source": "_libgcc_mutex-0.1-conda_forge.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "_openmp_mutex",
+    "version": "4.5",
+    "build": "2_kmp_llvm",
+    "size_bytes": 5744,
+    "kind": "conda",
+    "source": "_openmp_mutex-4.5-2_kmp_llvm.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "absl_py",
+    "version": "2.1.0",
+    "build": null,
+    "size_bytes": 468780,
+    "kind": "pypi",
+    "source": "absl_py-2.1.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "addict",
+    "version": "2.4.0",
+    "build": null,
+    "size_bytes": 7873,
+    "kind": "pypi",
+    "source": "addict-2.4.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "altair",
+    "version": "5.3.0",
+    "build": null,
+    "size_bytes": 7660453,
+    "kind": "pypi",
+    "source": "altair-5.3.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "annotated_types",
+    "version": "0.7.0",
+    "build": null,
+    "size_bytes": 37041,
+    "kind": "pypi",
+    "source": "annotated_types-0.7.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "anyio",
+    "version": "4.4.0",
+    "build": null,
+    "size_bytes": 332728,
+    "kind": "pypi",
+    "source": "anyio-4.4.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "attrs",
+    "version": "23.2.0",
+    "build": null,
+    "size_bytes": 205527,
+    "kind": "pypi",
+    "source": "attrs-23.2.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "audioread",
+    "version": "3.0.1",
+    "build": null,
+    "size_bytes": 59441,
+    "kind": "pypi",
+    "source": "audioread-3.0.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "av",
+    "version": "12.1.0",
+    "build": null,
+    "size_bytes": 103206629,
+    "kind": "pypi",
+    "source": "av-12.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "basicsr",
+    "version": "1.4.2",
+    "build": null,
+    "size_bytes": 772990,
+    "kind": "pypi",
+    "source": "basicsr-1.4.2-py3-none-any.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "blas",
+    "version": "1.0",
+    "build": "mkl",
+    "size_bytes": 1381,
+    "kind": "conda",
+    "source": "blas-1.0-mkl.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "blinker",
+    "version": "1.8.2",
+    "build": null,
+    "size_bytes": 29189,
+    "kind": "pypi",
+    "source": "blinker-1.8.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "brotli-python",
+    "version": "1.1.0",
+    "build": "py310hc6cd4ac_1",
+    "size_bytes": 349397,
+    "kind": "conda",
+    "source": "brotli-python-1.1.0-py310hc6cd4ac_1.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "bzip2",
+    "version": "1.0.8",
+    "build": "hd590300_5",
+    "size_bytes": 254228,
+    "kind": "conda",
+    "source": "bzip2-1.0.8-hd590300_5.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "ca-certificates",
+    "version": "2024.2.2",
+    "build": "hbcca054_0",
+    "size_bytes": 155432,
+    "kind": "conda",
+    "source": "ca-certificates-2024.2.2-hbcca054_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "cachetools",
+    "version": "5.3.3",
+    "build": null,
+    "size_bytes": 37357,
+    "kind": "pypi",
+    "source": "cachetools-5.3.3-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "certifi",
+    "version": "2024.2.2",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 160559,
+    "kind": "conda",
+    "source": "certifi-2024.2.2-pyhd8ed1ab_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "cffi",
+    "version": "1.16.0",
+    "build": null,
+    "size_bytes": 1355441,
+    "kind": "pypi",
+    "source": "cffi-1.16.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "charset-normalizer",
+    "version": "3.3.2",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 46597,
+    "kind": "conda",
+    "source": "charset-normalizer-3.3.2-pyhd8ed1ab_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "click",
+    "version": "8.1.7",
+    "build": null,
+    "size_bytes": 353767,
+    "kind": "pypi",
+    "source": "click-8.1.7-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "cog",
+    "version": "0.9.8",
+    "build": null,
+    "size_bytes": 275617,
+    "kind": "pypi",
+    "source": "cog-0.9.8-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "contourpy",
+    "version": "1.2.1",
+    "build": null,
+    "size_bytes": 968198,
+    "kind": "pypi",
+    "source": "contourpy-1.2.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "cryptography",
+    "version": "42.0.7",
+    "build": null,
+    "size_bytes": 10944332,
+    "kind": "pypi",
+    "source": "cryptography-42.0.7-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "cuda-cudart",
+    "version": "12.1.105",
+    "build": "0",
+    "size_bytes": 193370,
+    "kind": "conda",
+    "source": "cuda-cudart-12.1.105-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cuda-cupti",
+    "version": "12.1.105",
+    "build": "0",
+    "size_bytes": 16124565,
+    "kind": "conda",
+    "source": "cuda-cupti-12.1.105-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cuda-libraries",
+    "version": "12.1.0",
+    "build": "0",
+    "size_bytes": 1551,
+    "kind": "conda",
+    "source": "cuda-libraries-12.1.0-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cuda-nvrtc",
+    "version": "12.1.105",
+    "build": "0",
+    "size_bytes": 20683159,
+    "kind": "conda",
+    "source": "cuda-nvrtc-12.1.105-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cuda-nvtx",
+    "version": "12.1.105",
+    "build": "0",
+    "size_bytes": 58422,
+    "kind": "conda",
+    "source": "cuda-nvtx-12.1.105-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cuda-opencl",
+    "version": "12.5.39",
+    "build": "0",
+    "size_bytes": 27051,
+    "kind": "conda",
+    "source": "cuda-opencl-12.5.39-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cuda-runtime",
+    "version": "12.1.0",
+    "build": "0",
+    "size_bytes": 1434,
+    "kind": "conda",
+    "source": "cuda-runtime-12.1.0-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cuda-version",
+    "version": "12.5",
+    "build": "3",
+    "size_bytes": 16538,
+    "kind": "conda",
+    "source": "cuda-version-12.5-3.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "cycler",
+    "version": "0.12.1",
+    "build": null,
+    "size_bytes": 22614,
+    "kind": "pypi",
+    "source": "cycler-0.12.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "decorator",
+    "version": "5.1.1",
+    "build": null,
+    "size_bytes": 22724,
+    "kind": "pypi",
+    "source": "decorator-5.1.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "distro",
+    "version": "1.9.0",
+    "build": null,
+    "size_bytes": 69501,
+    "kind": "pypi",
+    "source": "distro-1.9.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "exceptiongroup",
+    "version": "1.2.1",
+    "build": null,
+    "size_bytes": 51385,
+    "kind": "pypi",
+    "source": "exceptiongroup-1.2.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "face_alignment",
+    "version": "1.4.1",
+    "build": null,
+    "size_bytes": 88076,
+    "kind": "pypi",
+    "source": "face_alignment-1.4.1-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "facexlib",
+    "version": "0.3.0",
+    "build": null,
+    "size_bytes": 187802,
+    "kind": "pypi",
+    "source": "facexlib-0.3.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "fastapi",
+    "version": "0.98.0",
+    "build": null,
+    "size_bytes": 256907,
+    "kind": "pypi",
+    "source": "fastapi-0.98.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "ffmpeg",
+    "version": "4.3",
+    "build": "hf484d3e_0",
+    "size_bytes": 10426878,
+    "kind": "conda",
+    "source": "ffmpeg-4.3-hf484d3e_0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "filelock",
+    "version": "3.14.0",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 15902,
+    "kind": "conda",
+    "source": "filelock-3.14.0-pyhd8ed1ab_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "filterpy",
+    "version": "1.4.5",
+    "build": null,
+    "size_bytes": 349722,
+    "kind": "pypi",
+    "source": "filterpy-1.4.5-py3-none-any.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "fonttools",
+    "version": "4.53.0",
+    "build": null,
+    "size_bytes": 19801332,
+    "kind": "pypi",
+    "source": "fonttools-4.53.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "freetype",
+    "version": "2.12.1",
+    "build": "h267a509_2",
+    "size_bytes": 634972,
+    "kind": "conda",
+    "source": "freetype-2.12.1-h267a509_2.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "fsspec",
+    "version": "2024.5.0",
+    "build": null,
+    "size_bytes": 8443656,
+    "kind": "pypi",
+    "source": "fsspec-2024.5.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "future",
+    "version": "1.0.0",
+    "build": null,
+    "size_bytes": 1548054,
+    "kind": "pypi",
+    "source": "future-1.0.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "gfpgan",
+    "version": "1.3.8",
+    "build": null,
+    "size_bytes": 195896,
+    "kind": "pypi",
+    "source": "gfpgan-1.3.8-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "gitdb",
+    "version": "4.0.11",
+    "build": null,
+    "size_bytes": 180702,
+    "kind": "pypi",
+    "source": "gitdb-4.0.11-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "gitpython",
+    "version": "3.1.43",
+    "build": null,
+    "size_bytes": 687736,
+    "kind": "pypi",
+    "source": "gitpython-3.1.43-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "gmp",
+    "version": "6.3.0",
+    "build": "h59595ed_1",
+    "size_bytes": 569852,
+    "kind": "conda",
+    "source": "gmp-6.3.0-h59595ed_1.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "gmpy2",
+    "version": "2.1.5",
+    "build": "py310hc7909c9_1",
+    "size_bytes": 205664,
+    "kind": "conda",
+    "source": "gmpy2-2.1.5-py310hc7909c9_1.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "gnutls",
+    "version": "3.6.13",
+    "build": "h85f3911_1",
+    "size_bytes": 2096527,
+    "kind": "conda",
+    "source": "gnutls-3.6.13-h85f3911_1.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "groq",
+    "version": "0.8.0",
+    "build": null,
+    "size_bytes": 370215,
+    "kind": "pypi",
+    "source": "groq-0.8.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "grpcio",
+    "version": "1.64.0",
+    "build": null,
+    "size_bytes": 13735993,
+    "kind": "pypi",
+    "source": "grpcio-1.64.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "h11",
+    "version": "0.14.0",
+    "build": null,
+    "size_bytes": 193050,
+    "kind": "pypi",
+    "source": "h11-0.14.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "httpcore",
+    "version": "1.0.5",
+    "build": null,
+    "size_bytes": 284222,
+    "kind": "pypi",
+    "source": "httpcore-1.0.5-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "httptools",
+    "version": "0.6.1",
+    "build": null,
+    "size_bytes": 1139311,
+    "kind": "pypi",
+    "source": "httptools-0.6.1-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "httpx",
+    "version": "0.27.0",
+    "build": null,
+    "size_bytes": 302759,
+    "kind": "pypi",
+    "source": "httpx-0.27.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "huggingface_hub",
+    "version": "0.23.2",
+    "build": null,
+    "size_bytes": 1563556,
+    "kind": "pypi",
+    "source": "huggingface_hub-0.23.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "icu",
+    "version": "73.2",
+    "build": "h59595ed_0",
+    "size_bytes": 12089150,
+    "kind": "conda",
+    "source": "icu-73.2-h59595ed_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "idna",
+    "version": "3.7",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 52718,
+    "kind": "conda",
+    "source": "idna-3.7-pyhd8ed1ab_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "imageio",
+    "version": "2.34.1",
+    "build": null,
+    "size_bytes": 1151981,
+    "kind": "pypi",
+    "source": "imageio-2.34.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "imageio_ffmpeg",
+    "version": "0.5.0",
+    "build": null,
+    "size_bytes": 73851390,
+    "kind": "pypi",
+    "source": "imageio_ffmpeg-0.5.0-py3-none-manylinux2010_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "importlib_metadata",
+    "version": "7.1.0",
+    "build": null,
+    "size_bytes": 66872,
+    "kind": "pypi",
+    "source": "importlib_metadata-7.1.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "jinja2",
+    "version": "3.1.4",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 111565,
+    "kind": "conda",
+    "source": "jinja2-3.1.4-pyhd8ed1ab_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "joblib",
+    "version": "1.4.2",
+    "build": null,
+    "size_bytes": 907457,
+    "kind": "pypi",
+    "source": "joblib-1.4.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "jpeg",
+    "version": "9e",
+    "build": "h166bdaf_2",
+    "size_bytes": 275125,
+    "kind": "conda",
+    "source": "jpeg-9e-h166bdaf_2.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "jsonpatch",
+    "version": "1.33",
+    "build": null,
+    "size_bytes": 40271,
+    "kind": "pypi",
+    "source": "jsonpatch-1.33-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "jsonpointer",
+    "version": "2.4",
+    "build": null,
+    "size_bytes": 17623,
+    "kind": "pypi",
+    "source": "jsonpointer-2.4-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "jsonschema",
+    "version": "4.22.0",
+    "build": null,
+    "size_bytes": 470203,
+    "kind": "pypi",
+    "source": "jsonschema-4.22.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "jsonschema_specifications",
+    "version": "2023.12.1",
+    "build": null,
+    "size_bytes": 47334,
+    "kind": "pypi",
+    "source": "jsonschema_specifications-2023.12.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "kiwisolver",
+    "version": "1.4.5",
+    "build": null,
+    "size_bytes": 6660804,
+    "kind": "pypi",
+    "source": "kiwisolver-1.4.5-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "kornia",
+    "version": "0.7.2",
+    "build": null,
+    "size_bytes": 2938353,
+    "kind": "pypi",
+    "source": "kornia-0.7.2-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "kornia_rs",
+    "version": "0.1.3",
+    "build": null,
+    "size_bytes": 8624333,
+    "kind": "pypi",
+    "source": "kornia_rs-0.1.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "lame",
+    "version": "3.100",
+    "build": "h166bdaf_1003",
+    "size_bytes": 508258,
+    "kind": "conda",
+    "source": "lame-3.100-h166bdaf_1003.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "langchain_core",
+    "version": "0.2.3",
+    "build": null,
+    "size_bytes": 1307443,
+    "kind": "pypi",
+    "source": "langchain_core-0.2.3-py3-none-any.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "langchain_groq",
+    "version": "0.1.4",
+    "build": null,
+    "size_bytes": 44840,
+    "kind": "pypi",
+    "source": "langchain_groq-0.1.4-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "langsmith",
+    "version": "0.1.67",
+    "build": null,
+    "size_bytes": 525116,
+    "kind": "pypi",
+    "source": "langsmith-0.1.67-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "lazy_loader",
+    "version": "0.4",
+    "build": null,
+    "size_bytes": 27551,
+    "kind": "pypi",
+    "source": "lazy_loader-0.4-py3-none-any.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "lcms2",
+    "version": "2.15",
+    "build": "hfd0df8a_0",
+    "size_bytes": 240794,
+    "kind": "conda",
+    "source": "lcms2-2.15-hfd0df8a_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "ld_impl_linux-64",
+    "version": "2.40",
+    "build": "hf3520f5_1",
+    "size_bytes": 707934,
+    "kind": "conda",
+    "source": "ld_impl_linux-64-2.40-hf3520f5_1.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "lerc",
+    "version": "4.0.0",
+    "build": "h27087fc_0",
+    "size_bytes": 281798,
+    "kind": "conda",
+    "source": "lerc-4.0.0-h27087fc_0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libblas",
+    "version": "3.9.0",
+    "build": "1_h86c2bf4_netlib",
+    "size_bytes": 203305,
+    "kind": "conda",
+    "source": "libblas-3.9.0-1_h86c2bf4_netlib.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libcblas",
+    "version": "3.9.0",
+    "build": "5_h92ddd45_netlib",
+    "size_bytes": 55516,
+    "kind": "conda",
+    "source": "libcblas-3.9.0-5_h92ddd45_netlib.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libcublas",
+    "version": "12.1.0.26",
+    "build": "0",
+    "size_bytes": 344950844,
+    "kind": "conda",
+    "source": "libcublas-12.1.0.26-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libcufft",
+    "version": "11.0.2.4",
+    "build": "0",
+    "size_bytes": 107875277,
+    "kind": "conda",
+    "source": "libcufft-11.0.2.4-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libcufile",
+    "version": "1.10.0.4",
+    "build": "0",
+    "size_bytes": 1072918,
+    "kind": "conda",
+    "source": "libcufile-1.10.0.4-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libcurand",
+    "version": "10.3.6.39",
+    "build": "0",
+    "size_bytes": 54285029,
+    "kind": "conda",
+    "source": "libcurand-10.3.6.39-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libcusolver",
+    "version": "11.4.4.55",
+    "build": "0",
+    "size_bytes": 103066878,
+    "kind": "conda",
+    "source": "libcusolver-11.4.4.55-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libcusparse",
+    "version": "12.0.2.55",
+    "build": "0",
+    "size_bytes": 170873896,
+    "kind": "conda",
+    "source": "libcusparse-12.0.2.55-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libdeflate",
+    "version": "1.17",
+    "build": "h0b41bf4_0",
+    "size_bytes": 65017,
+    "kind": "conda",
+    "source": "libdeflate-1.17-h0b41bf4_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libffi",
+    "version": "3.4.2",
+    "build": "h7f98852_5",
+    "size_bytes": 58292,
+    "kind": "conda",
+    "source": "libffi-3.4.2-h7f98852_5.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libgcc-ng",
+    "version": "13.2.0",
+    "build": "h77fa898_7",
+    "size_bytes": 775806,
+    "kind": "conda",
+    "source": "libgcc-ng-13.2.0-h77fa898_7.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libgfortran-ng",
+    "version": "13.2.0",
+    "build": "h69a702a_7",
+    "size_bytes": 24314,
+    "kind": "conda",
+    "source": "libgfortran-ng-13.2.0-h69a702a_7.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libgfortran5",
+    "version": "13.2.0",
+    "build": "hca663fb_7",
+    "size_bytes": 1441361,
+    "kind": "conda",
+    "source": "libgfortran5-13.2.0-hca663fb_7.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libhwloc",
+    "version": "2.10.0",
+    "build": "default_h5622ce7_1001",
+    "size_bytes": 2413127,
+    "kind": "conda",
+    "source": "libhwloc-2.10.0-default_h5622ce7_1001.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libiconv",
+    "version": "1.17",
+    "build": "hd590300_2",
+    "size_bytes": 705775,
+    "kind": "conda",
+    "source": "libiconv-1.17-hd590300_2.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libjpeg-turbo",
+    "version": "2.0.0",
+    "build": "h9bf148f_0",
+    "size_bytes": 973037,
+    "kind": "conda",
+    "source": "libjpeg-turbo-2.0.0-h9bf148f_0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "liblapack",
+    "version": "3.9.0",
+    "build": "5_h92ddd45_netlib",
+    "size_bytes": 3111106,
+    "kind": "conda",
+    "source": "liblapack-3.9.0-5_h92ddd45_netlib.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libnpp",
+    "version": "12.0.2.50",
+    "build": "0",
+    "size_bytes": 146548459,
+    "kind": "conda",
+    "source": "libnpp-12.0.2.50-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libnsl",
+    "version": "2.0.1",
+    "build": "hd590300_0",
+    "size_bytes": 33408,
+    "kind": "conda",
+    "source": "libnsl-2.0.1-hd590300_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libnvjitlink",
+    "version": "12.1.105",
+    "build": "0",
+    "size_bytes": 17767798,
+    "kind": "conda",
+    "source": "libnvjitlink-12.1.105-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libnvjpeg",
+    "version": "12.1.1.14",
+    "build": "0",
+    "size_bytes": 3066598,
+    "kind": "conda",
+    "source": "libnvjpeg-12.1.1.14-0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libpng",
+    "version": "1.6.43",
+    "build": "h2797004_0",
+    "size_bytes": 288221,
+    "kind": "conda",
+    "source": "libpng-1.6.43-h2797004_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "librosa",
+    "version": "0.10.2.post1",
+    "build": null,
+    "size_bytes": 999339,
+    "kind": "pypi",
+    "source": "librosa-0.10.2.post1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "libsqlite",
+    "version": "3.45.3",
+    "build": "h2797004_0",
+    "size_bytes": 859858,
+    "kind": "conda",
+    "source": "libsqlite-3.45.3-h2797004_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libstdcxx-ng",
+    "version": "13.2.0",
+    "build": "hc0a3c3a_7",
+    "size_bytes": 3837704,
+    "kind": "conda",
+    "source": "libstdcxx-ng-13.2.0-hc0a3c3a_7.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libtiff",
+    "version": "4.5.0",
+    "build": "h6adf6a1_2",
+    "size_bytes": 406655,
+    "kind": "conda",
+    "source": "libtiff-4.5.0-h6adf6a1_2.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libuuid",
+    "version": "2.38.1",
+    "build": "h0b41bf4_0",
+    "size_bytes": 33601,
+    "kind": "conda",
+    "source": "libuuid-2.38.1-h0b41bf4_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libwebp-base",
+    "version": "1.4.0",
+    "build": "hd590300_0",
+    "size_bytes": 438953,
+    "kind": "conda",
+    "source": "libwebp-base-1.4.0-hd590300_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libxcb",
+    "version": "1.13",
+    "build": "h7f98852_1004",
+    "size_bytes": 399895,
+    "kind": "conda",
+    "source": "libxcb-1.13-h7f98852_1004.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "libxml2",
+    "version": "2.12.7",
+    "build": "hc051c1a_0",
+    "size_bytes": 705857,
+    "kind": "conda",
+    "source": "libxml2-2.12.7-hc051c1a_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "libzlib",
+    "version": "1.2.13",
+    "build": "h4ab18f5_6",
+    "size_bytes": 61571,
+    "kind": "conda",
+    "source": "libzlib-1.2.13-h4ab18f5_6.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "llvm-openmp",
+    "version": "15.0.7",
+    "build": "h0cdce71_0",
+    "size_bytes": 3268766,
+    "kind": "conda",
+    "source": "llvm-openmp-15.0.7-h0cdce71_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "llvmlite",
+    "version": "0.42.0",
+    "build": null,
+    "size_bytes": 134221937,
+    "kind": "pypi",
+    "source": "llvmlite-0.42.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "lmdb",
+    "version": "1.4.1",
+    "build": null,
+    "size_bytes": 862601,
+    "kind": "pypi",
+    "source": "lmdb-1.4.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "markdown",
+    "version": "3.6",
+    "build": null,
+    "size_bytes": 320027,
+    "kind": "pypi",
+    "source": "markdown-3.6-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "markdown_it_py",
+    "version": "3.0.0",
+    "build": null,
+    "size_bytes": 229612,
+    "kind": "pypi",
+    "source": "markdown_it_py-3.0.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "markupsafe",
+    "version": "2.1.5",
+    "build": "py310h2372a71_0",
+    "size_bytes": 24493,
+    "kind": "conda",
+    "source": "markupsafe-2.1.5-py310h2372a71_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "matplotlib",
+    "version": "3.9.0",
+    "build": null,
+    "size_bytes": 20910529,
+    "kind": "pypi",
+    "source": "matplotlib-3.9.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "mdurl",
+    "version": "0.1.2",
+    "build": null,
+    "size_bytes": 23308,
+    "kind": "pypi",
+    "source": "mdurl-0.1.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "mkl",
+    "version": "2023.0.0",
+    "build": "h84fe81f_26648",
+    "size_bytes": 161440193,
+    "kind": "conda",
+    "source": "mkl-2023.0.0-h84fe81f_26648.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "mpc",
+    "version": "1.3.1",
+    "build": "hfe3b2da_0",
+    "size_bytes": 116276,
+    "kind": "conda",
+    "source": "mpc-1.3.1-hfe3b2da_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "mpfr",
+    "version": "4.2.1",
+    "build": "h9458935_1",
+    "size_bytes": 643060,
+    "kind": "conda",
+    "source": "mpfr-4.2.1-h9458935_1.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "mpmath",
+    "version": "1.3.0",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 438339,
+    "kind": "conda",
+    "source": "mpmath-1.3.0-pyhd8ed1ab_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "msgpack",
+    "version": "1.0.8",
+    "build": null,
+    "size_bytes": 1265144,
+    "kind": "pypi",
+    "source": "msgpack-1.0.8-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "ncurses",
+    "version": "6.5",
+    "build": "h59595ed_0",
+    "size_bytes": 887465,
+    "kind": "conda",
+    "source": "ncurses-6.5-h59595ed_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "nettle",
+    "version": "3.6",
+    "build": "he412f7d_0",
+    "size_bytes": 6773272,
+    "kind": "conda",
+    "source": "nettle-3.6-he412f7d_0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "networkx",
+    "version": "3.3",
+    "build": "pyhd8ed1ab_1",
+    "size_bytes": 1185670,
+    "kind": "conda",
+    "source": "networkx-3.3-pyhd8ed1ab_1.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "numba",
+    "version": "0.59.1",
+    "build": null,
+    "size_bytes": 14778501,
+    "kind": "pypi",
+    "source": "numba-0.59.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "numpy",
+    "version": "1.26.4",
+    "build": "py310hb13e2d6_0",
+    "size_bytes": 7009070,
+    "kind": "conda",
+    "source": "numpy-1.26.4-py310hb13e2d6_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "opencv_python",
+    "version": "4.9.0.80",
+    "build": null,
+    "size_bytes": 174458988,
+    "kind": "pypi",
+    "source": "opencv_python-4.9.0.80-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "openh264",
+    "version": "2.1.1",
+    "build": "h780b84a_0",
+    "size_bytes": 1585354,
+    "kind": "conda",
+    "source": "openh264-2.1.1-h780b84a_0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "openjpeg",
+    "version": "2.5.0",
+    "build": "hfec8fc6_2",
+    "size_bytes": 352022,
+    "kind": "conda",
+    "source": "openjpeg-2.5.0-hfec8fc6_2.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "openssl",
+    "version": "3.3.0",
+    "build": "h4ab18f5_3",
+    "size_bytes": 2891147,
+    "kind": "conda",
+    "source": "openssl-3.3.0-h4ab18f5_3.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "orjson",
+    "version": "3.10.3",
+    "build": null,
+    "size_bytes": 329359,
+    "kind": "pypi",
+    "source": "orjson-3.10.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "packaging",
+    "version": "23.2",
+    "build": null,
+    "size_bytes": 172703,
+    "kind": "pypi",
+    "source": "packaging-23.2-py3-none-any.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "pandas",
+    "version": "2.2.2",
+    "build": null,
+    "size_bytes": 43906475,
+    "kind": "pypi",
+    "source": "pandas-2.2.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pillow",
+    "version": "9.4.0",
+    "build": "py310h023d228_1",
+    "size_bytes": 46458896,
+    "kind": "conda",
+    "source": "pillow-9.4.0-py310h023d228_1.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "platformdirs",
+    "version": "4.2.2",
+    "build": null,
+    "size_bytes": 82128,
+    "kind": "pypi",
+    "source": "platformdirs-4.2.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pooch",
+    "version": "1.8.1",
+    "build": null,
+    "size_bytes": 309319,
+    "kind": "pypi",
+    "source": "pooch-1.8.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "protobuf",
+    "version": "5.27.0",
+    "build": null,
+    "size_bytes": 1267147,
+    "kind": "pypi",
+    "source": "protobuf-5.27.0-cp38-abi3-manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pthread-stubs",
+    "version": "0.4",
+    "build": "h36c2ea0_1001",
+    "size_bytes": 5625,
+    "kind": "conda",
+    "source": "pthread-stubs-0.4-h36c2ea0_1001.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "pyarrow",
+    "version": "16.1.0",
+    "build": null,
+    "size_bytes": 135789889,
+    "kind": "pypi",
+    "source": "pyarrow-16.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pycparser",
+    "version": "2.22",
+    "build": null,
+    "size_bytes": 611823,
+    "kind": "pypi",
+    "source": "pycparser-2.22-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pydantic",
+    "version": "1.10.15",
+    "build": null,
+    "size_bytes": 9305218,
+    "kind": "pypi",
+    "source": "pydantic-1.10.15-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pydeck",
+    "version": "0.9.1",
+    "build": null,
+    "size_bytes": 28869991,
+    "kind": "pypi",
+    "source": "pydeck-0.9.1-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pydub",
+    "version": "0.25.1",
+    "build": null,
+    "size_bytes": 111291,
+    "kind": "pypi",
+    "source": "pydub-0.25.1-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pygments",
+    "version": "2.18.0",
+    "build": null,
+    "size_bytes": 4431241,
+    "kind": "pypi",
+    "source": "pygments-2.18.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pyparsing",
+    "version": "3.1.2",
+    "build": null,
+    "size_bytes": 392762,
+    "kind": "pypi",
+    "source": "pyparsing-3.1.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pysocks",
+    "version": "1.7.1",
+    "build": "pyha2e5f31_6",
+    "size_bytes": 18981,
+    "kind": "conda",
+    "source": "pysocks-1.7.1-pyha2e5f31_6.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "python",
+    "version": "3.10.0",
+    "build": "h543edf9_3_cpython",
+    "size_bytes": 31281695,
+    "kind": "conda",
+    "source": "python-3.10.0-h543edf9_3_cpython.tar.bz2",
+    "is_explicit": true
+  },
+  {
+    "name": "python_abi",
+    "version": "3.10",
+    "build": "4_cp310",
+    "size_bytes": 6398,
+    "kind": "conda",
+    "source": "python_abi-3.10-4_cp310.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "python_dateutil",
+    "version": "2.9.0.post0",
+    "build": null,
+    "size_bytes": 441579,
+    "kind": "pypi",
+    "source": "python_dateutil-2.9.0.post0-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "python_dotenv",
+    "version": "1.0.1",
+    "build": null,
+    "size_bytes": 54258,
+    "kind": "pypi",
+    "source": "python_dotenv-1.0.1-py3-none-any.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "pytorch",
+    "version": "2.1.0",
+    "build": "py3.10_cuda12.1_cudnn8.9.2_0",
+    "size_bytes": 1377007991,
+    "kind": "conda",
+    "source": "pytorch-2.1.0-py3.10_cuda12.1_cudnn8.9.2_0.tar.bz2",
+    "is_explicit": true
+  },
+  {
+    "name": "pytorch-cuda",
+    "version": "12.1",
+    "build": "ha16c6d3_5",
+    "size_bytes": 3564,
+    "kind": "conda",
+    "source": "pytorch-cuda-12.1-ha16c6d3_5.tar.bz2",
+    "is_explicit": true
+  },
+  {
+    "name": "pytorch-mutex",
+    "version": "1.0",
+    "build": "cuda",
+    "size_bytes": 2906,
+    "kind": "conda",
+    "source": "pytorch-mutex-1.0-cuda.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "pytz",
+    "version": "2024.1",
+    "build": null,
+    "size_bytes": 1002279,
+    "kind": "pypi",
+    "source": "pytz-2024.1-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pywavelets",
+    "version": "1.6.0",
+    "build": null,
+    "size_bytes": 8911139,
+    "kind": "pypi",
+    "source": "pywavelets-1.6.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "pyyaml",
+    "version": "6.0.1",
+    "build": "py310h2372a71_1",
+    "size_bytes": 170627,
+    "kind": "conda",
+    "source": "pyyaml-6.0.1-py310h2372a71_1.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "readline",
+    "version": "8.2",
+    "build": "h8228510_1",
+    "size_bytes": 281456,
+    "kind": "conda",
+    "source": "readline-8.2-h8228510_1.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "referencing",
+    "version": "0.35.1",
+    "build": null,
+    "size_bytes": 115310,
+    "kind": "pypi",
+    "source": "referencing-0.35.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "regex",
+    "version": "2024.5.15",
+    "build": null,
+    "size_bytes": 2950299,
+    "kind": "pypi",
+    "source": "regex-2024.5.15-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "requests",
+    "version": "2.32.3",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 58810,
+    "kind": "conda",
+    "source": "requests-2.32.3-pyhd8ed1ab_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "resampy",
+    "version": "0.4.3",
+    "build": null,
+    "size_bytes": 3400369,
+    "kind": "pypi",
+    "source": "resampy-0.4.3-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "rich",
+    "version": "13.7.1",
+    "build": null,
+    "size_bytes": 947654,
+    "kind": "pypi",
+    "source": "rich-13.7.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "rpds_py",
+    "version": "0.18.1",
+    "build": null,
+    "size_bytes": 4335066,
+    "kind": "pypi",
+    "source": "rpds_py-0.18.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "ruff",
+    "version": "0.4.7",
+    "build": null,
+    "size_bytes": 23506647,
+    "kind": "pypi",
+    "source": "ruff-0.4.7-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "safetensors",
+    "version": "0.4.3",
+    "build": null,
+    "size_bytes": 4483995,
+    "kind": "pypi",
+    "source": "safetensors-0.4.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "scikit_image",
+    "version": "0.23.2",
+    "build": null,
+    "size_bytes": 33180351,
+    "kind": "pypi",
+    "source": "scikit_image-0.23.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "scikit_learn",
+    "version": "1.5.0",
+    "build": null,
+    "size_bytes": 40772690,
+    "kind": "pypi",
+    "source": "scikit_learn-1.5.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "scipy",
+    "version": "1.13.1",
+    "build": null,
+    "size_bytes": 119627302,
+    "kind": "pypi",
+    "source": "scipy-1.13.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "sentry_sdk",
+    "version": "2.3.1",
+    "build": null,
+    "size_bytes": 996175,
+    "kind": "pypi",
+    "source": "sentry_sdk-2.3.1-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "setuptools",
+    "version": "70.0.0",
+    "build": null,
+    "size_bytes": 2986169,
+    "kind": "pypi",
+    "source": "setuptools-70.0.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "six",
+    "version": "1.16.0",
+    "build": null,
+    "size_bytes": 37959,
+    "kind": "pypi",
+    "source": "six-1.16.0-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "smmap",
+    "version": "5.0.1",
+    "build": null,
+    "size_bytes": 69097,
+    "kind": "pypi",
+    "source": "smmap-5.0.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "sniffio",
+    "version": "1.3.1",
+    "build": null,
+    "size_bytes": 22921,
+    "kind": "pypi",
+    "source": "sniffio-1.3.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "soundfile",
+    "version": "0.12.1",
+    "build": null,
+    "size_bytes": 3638978,
+    "kind": "pypi",
+    "source": "soundfile-0.12.1-py2.py3-none-manylinux_2_17_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "soxr",
+    "version": "0.3.7",
+    "build": null,
+    "size_bytes": 5317870,
+    "kind": "pypi",
+    "source": "soxr-0.3.7-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "sqlite",
+    "version": "3.45.3",
+    "build": "h2c6b66d_0",
+    "size_bytes": 848611,
+    "kind": "conda",
+    "source": "sqlite-3.45.3-h2c6b66d_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "starlette",
+    "version": "0.27.0",
+    "build": null,
+    "size_bytes": 239662,
+    "kind": "pypi",
+    "source": "starlette-0.27.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "structlog",
+    "version": "24.2.0",
+    "build": null,
+    "size_bytes": 207774,
+    "kind": "pypi",
+    "source": "structlog-24.2.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "sympy",
+    "version": "1.12",
+    "build": "pypyh9d50eac_103",
+    "size_bytes": 4256289,
+    "kind": "conda",
+    "source": "sympy-1.12-pypyh9d50eac_103.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "tb_nightly",
+    "version": "2.17.0a20240328",
+    "build": null,
+    "size_bytes": 8552713,
+    "kind": "pypi",
+    "source": "tb_nightly-2.17.0a20240328-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "tbb",
+    "version": "2021.12.0",
+    "build": "h297d8ca_1",
+    "size_bytes": 194111,
+    "kind": "conda",
+    "source": "tbb-2021.12.0-h297d8ca_1.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "tenacity",
+    "version": "8.3.0",
+    "build": null,
+    "size_bytes": 75310,
+    "kind": "pypi",
+    "source": "tenacity-8.3.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "tensorboard_data_server",
+    "version": "0.7.2",
+    "build": null,
+    "size_bytes": 2967,
+    "kind": "pypi",
+    "source": "tensorboard_data_server-0.7.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "threadpoolctl",
+    "version": "3.5.0",
+    "build": null,
+    "size_bytes": 65854,
+    "kind": "pypi",
+    "source": "threadpoolctl-3.5.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "tifffile",
+    "version": "2024.5.22",
+    "build": null,
+    "size_bytes": 1012129,
+    "kind": "pypi",
+    "source": "tifffile-2024.5.22-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "tk",
+    "version": "8.6.13",
+    "build": "noxft_h4845f30_101",
+    "size_bytes": 3318875,
+    "kind": "conda",
+    "source": "tk-8.6.13-noxft_h4845f30_101.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "tokenizers",
+    "version": "0.19.1",
+    "build": null,
+    "size_bytes": 12013347,
+    "kind": "pypi",
+    "source": "tokenizers-0.19.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "toml",
+    "version": "0.10.2",
+    "build": null,
+    "size_bytes": 59899,
+    "kind": "pypi",
+    "source": "toml-0.10.2-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "tomli",
+    "version": "2.0.1",
+    "build": null,
+    "size_bytes": 36922,
+    "kind": "pypi",
+    "source": "tomli-2.0.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "toolz",
+    "version": "0.12.1",
+    "build": null,
+    "size_bytes": 195336,
+    "kind": "pypi",
+    "source": "toolz-0.12.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "torchaudio",
+    "version": "2.1.0",
+    "build": "py310_cu121",
+    "size_bytes": 6451161,
+    "kind": "conda",
+    "source": "torchaudio-2.1.0-py310_cu121.tar.bz2",
+    "is_explicit": true
+  },
+  {
+    "name": "torchtriton",
+    "version": "2.1.0",
+    "build": "py310",
+    "size_bytes": 95306827,
+    "kind": "conda",
+    "source": "torchtriton-2.1.0-py310.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "torchvision",
+    "version": "0.16.0",
+    "build": "py310_cu121",
+    "size_bytes": 8605551,
+    "kind": "conda",
+    "source": "torchvision-0.16.0-py310_cu121.tar.bz2",
+    "is_explicit": true
+  },
+  {
+    "name": "tornado",
+    "version": "6.4",
+    "build": null,
+    "size_bytes": 1610293,
+    "kind": "pypi",
+    "source": "tornado-6.4-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "tqdm",
+    "version": "4.66.4",
+    "build": null,
+    "size_bytes": 224617,
+    "kind": "pypi",
+    "source": "tqdm-4.66.4-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "transformers",
+    "version": "4.41.2",
+    "build": null,
+    "size_bytes": 40804846,
+    "kind": "pypi",
+    "source": "transformers-4.41.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "triton",
+    "version": "2.3.1",
+    "build": null,
+    "size_bytes": 439025686,
+    "kind": "pypi",
+    "source": "triton-2.3.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "typing_extensions",
+    "version": "4.11.0",
+    "build": "pyha770c72_0",
+    "size_bytes": 37583,
+    "kind": "conda",
+    "source": "typing_extensions-4.11.0-pyha770c72_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "tzdata",
+    "version": "2024a",
+    "build": "h0c530f3_0",
+    "size_bytes": 119815,
+    "kind": "conda",
+    "source": "tzdata-2024a-h0c530f3_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "tzdata",
+    "version": "2024.1",
+    "build": null,
+    "size_bytes": 578886,
+    "kind": "pypi",
+    "source": "tzdata-2024.1-py2.py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "urllib3",
+    "version": "2.2.1",
+    "build": "pyhd8ed1ab_0",
+    "size_bytes": 94669,
+    "kind": "conda",
+    "source": "urllib3-2.2.1-pyhd8ed1ab_0.conda",
+    "is_explicit": true
+  },
+  {
+    "name": "uvicorn",
+    "version": "0.30.0",
+    "build": null,
+    "size_bytes": 200368,
+    "kind": "pypi",
+    "source": "uvicorn-0.30.0-py3-none-any.http.whl",
+    "is_explicit": false
+  },
+  {
+    "name": "uvloop",
+    "version": "0.19.0",
+    "build": null,
+    "size_bytes": 11874513,
+    "kind": "pypi",
+    "source": "uvloop-0.19.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "watchdog",
+    "version": "4.0.1",
+    "build": null,
+    "size_bytes": 269192,
+    "kind": "pypi",
+    "source": "watchdog-4.0.1-py3-none-manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "watchfiles",
+    "version": "0.22.0",
+    "build": null,
+    "size_bytes": 4473301,
+    "kind": "pypi",
+    "source": "watchfiles-0.22.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "websockets",
+    "version": "12.0",
+    "build": null,
+    "size_bytes": 460083,
+    "kind": "pypi",
+    "source": "websockets-12.0-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "werkzeug",
+    "version": "3.0.3",
+    "build": null,
+    "size_bytes": 764533,
+    "kind": "pypi",
+    "source": "werkzeug-3.0.3-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "wget",
+    "version": "3.2",
+    "build": null,
+    "size_bytes": 25852,
+    "kind": "pypi",
+    "source": "wget-3.2-py3-none-any.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "wheel",
+    "version": "0.43.0",
+    "build": null,
+    "size_bytes": 205290,
+    "kind": "pypi",
+    "source": "wheel-0.43.0-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "xorg-libxau",
+    "version": "1.0.11",
+    "build": "hd590300_0",
+    "size_bytes": 14468,
+    "kind": "conda",
+    "source": "xorg-libxau-1.0.11-hd590300_0.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "xorg-libxdmcp",
+    "version": "1.1.3",
+    "build": "h7f98852_0",
+    "size_bytes": 19126,
+    "kind": "conda",
+    "source": "xorg-libxdmcp-1.1.3-h7f98852_0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "xz",
+    "version": "5.2.6",
+    "build": "h166bdaf_0",
+    "size_bytes": 418368,
+    "kind": "conda",
+    "source": "xz-5.2.6-h166bdaf_0.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "yacs",
+    "version": "0.1.8",
+    "build": null,
+    "size_bytes": 44064,
+    "kind": "pypi",
+    "source": "yacs-0.1.8-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "yaml",
+    "version": "0.2.5",
+    "build": "h7f98852_2",
+    "size_bytes": 89141,
+    "kind": "conda",
+    "source": "yaml-0.2.5-h7f98852_2.tar.bz2",
+    "is_explicit": false
+  },
+  {
+    "name": "yapf",
+    "version": "0.40.2",
+    "build": null,
+    "size_bytes": 1028823,
+    "kind": "pypi",
+    "source": "yapf-0.40.2-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "zipp",
+    "version": "3.19.1",
+    "build": null,
+    "size_bytes": 21890,
+    "kind": "pypi",
+    "source": "zipp-3.19.1-py3-none-any.http.whl",
+    "is_explicit": true
+  },
+  {
+    "name": "zlib",
+    "version": "1.2.13",
+    "build": "h4ab18f5_6",
+    "size_bytes": 92883,
+    "kind": "conda",
+    "source": "zlib-1.2.13-h4ab18f5_6.conda",
+    "is_explicit": false
+  },
+  {
+    "name": "zstd",
+    "version": "1.5.6",
+    "build": "ha6fb4c9_0",
+    "size_bytes": 554846,
+    "kind": "conda",
+    "source": "zstd-1.5.6-ha6fb4c9_0.conda",
+    "is_explicit": false
+  }
+]

@@ -198,6 +198,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/ea/82/264b5d0f2f4c4ec073e59dd1ac1ed5fa85f54bec2dd4cc231fcdfd12ba42/scikit_image-0.23.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/1e/7d/1a2ea8eb5b4df373c30c7418cf26305a4a05e2a0e56c80a8043b791595f3/scikit_learn-1.5.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/a3/ba/7255e5dc82a65adbe83771c72f384d99c43063648456796436c9a5585ec3/scipy-1.13.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/25/18/9783ccc5faddc0edef492046a00164e3c2e698ef5302c85d805aa644e017/sentry_sdk-2.3.1-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/de/88/70c5767a0e43eb4451c2200f07d042a4bcd7639276003a9c54a68cfcc1f8/setuptools-70.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d9/5a/e7c31adbe875f2abbb91bd84cf2dc52d792b5a01506781dbcf25c91daf11/six-1.16.0-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a7/a5/10f97f73544edcdef54409f1d839f6049a0d79df68adbc1ceb24d1aaca42/smmap-5.0.1-py3-none-any.whl
@@ -3299,6 +3300,62 @@ packages:
   - doit>=0.36.0 ; extra == 'dev'
   - pydevtool ; extra == 'dev'
   requires_python: '>=3.9'
+- kind: pypi
+  name: sentry-sdk
+  version: 2.3.1
+  url: https://files.pythonhosted.org/packages/25/18/9783ccc5faddc0edef492046a00164e3c2e698ef5302c85d805aa644e017/sentry_sdk-2.3.1-py2.py3-none-any.whl
+  sha256: c5aeb095ba226391d337dd42a6f9470d86c9fc236ecc71cfc7cd1942b45010c6
+  requires_dist:
+  - urllib3>=1.26.11
+  - certifi
+  - aiohttp>=3.5 ; extra == 'aiohttp'
+  - anthropic>=0.16 ; extra == 'anthropic'
+  - arq>=0.23 ; extra == 'arq'
+  - asyncpg>=0.23 ; extra == 'asyncpg'
+  - apache-beam>=2.12 ; extra == 'beam'
+  - bottle>=0.12.13 ; extra == 'bottle'
+  - celery>=3 ; extra == 'celery'
+  - celery-redbeat>=2 ; extra == 'celery-redbeat'
+  - chalice>=1.16.0 ; extra == 'chalice'
+  - clickhouse-driver>=0.2.0 ; extra == 'clickhouse-driver'
+  - django>=1.8 ; extra == 'django'
+  - falcon>=1.4 ; extra == 'falcon'
+  - fastapi>=0.79.0 ; extra == 'fastapi'
+  - flask>=0.11 ; extra == 'flask'
+  - blinker>=1.1 ; extra == 'flask'
+  - markupsafe ; extra == 'flask'
+  - grpcio>=1.21.1 ; extra == 'grpcio'
+  - protobuf>=3.8.0 ; extra == 'grpcio'
+  - httpx>=0.16.0 ; extra == 'httpx'
+  - huey>=2 ; extra == 'huey'
+  - huggingface-hub>=0.22 ; extra == 'huggingface_hub'
+  - langchain>=0.0.210 ; extra == 'langchain'
+  - loguru>=0.5 ; extra == 'loguru'
+  - openai>=1.0.0 ; extra == 'openai'
+  - tiktoken>=0.3.0 ; extra == 'openai'
+  - opentelemetry-distro>=0.35b0 ; extra == 'opentelemetry'
+  - opentelemetry-distro~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - opentelemetry-instrumentation-aiohttp-client~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - opentelemetry-instrumentation-django~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - opentelemetry-instrumentation-fastapi~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - opentelemetry-instrumentation-flask~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - opentelemetry-instrumentation-requests~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - opentelemetry-instrumentation-sqlite3~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - opentelemetry-instrumentation-urllib~=0.40b0 ; extra == 'opentelemetry-experimental'
+  - pure-eval ; extra == 'pure_eval'
+  - executing ; extra == 'pure_eval'
+  - asttokens ; extra == 'pure_eval'
+  - pymongo>=3.1 ; extra == 'pymongo'
+  - pyspark>=2.4.4 ; extra == 'pyspark'
+  - quart>=0.16.1 ; extra == 'quart'
+  - blinker>=1.1 ; extra == 'quart'
+  - rq>=0.6 ; extra == 'rq'
+  - sanic>=0.8 ; extra == 'sanic'
+  - sqlalchemy>=1.2 ; extra == 'sqlalchemy'
+  - starlette>=0.19.1 ; extra == 'starlette'
+  - starlite>=1.48 ; extra == 'starlite'
+  - tornado>=5 ; extra == 'tornado'
+  requires_python: '>=3.6'
 - kind: pypi
   name: setuptools
   version: 70.0.0
