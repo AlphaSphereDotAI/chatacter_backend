@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from model import generate_audio, generate_video, get_response
 import sentry_sdk
 import os
+
 sentry_sdk.init(
     dsn=os.environ['SENTRY'],
     # Set traces_sample_rate to 1.0 to capture 100%
@@ -46,5 +47,5 @@ def get_video():
     return FileResponse(CONFIG["video"], media_type="video/mp4")
 
 
-# if __name__ == "__main__":
-#     uvicorn.run("app:app", host="localhost", port=8001, reload=True)
+if __name__ == "__main__":
+    uvicorn.run("app:app", host="localhost", port=8001, reload=True)
