@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add a short description here"
 authors = ["Mohamed Hisham Abdelzaher <mohamed.hisham.abdelzaher@gmail.com>"]
 channels = ["pytorch", "nvidia", "conda-forge"]
-platforms = ["linux-64"]
+platforms = ["linux-64", "win-64"]
 
 [tasks]
 
@@ -14,6 +14,7 @@ pytorch = "2.1.0.*"
 torchvision = ">=0.16.0,<0.17"
 torchaudio = ">=2.1.0,<2.2"
 pytorch-cuda = "12.1.*"
+ffmpeg = ">=4.3,<5"
 
 [pypi-dependencies]
 absl-py = "*"
@@ -130,11 +131,9 @@ toolz = "*"
 tornado = "*"
 tqdm = "*"
 transformers = "*"
-triton = "*"
 typing-extensions = "*"
 tzdata = "*"
 urllib3 = "*"
-uvloop = "*"
 watchdog = "*"
 watchfiles = "*"
 websockets = "*"
