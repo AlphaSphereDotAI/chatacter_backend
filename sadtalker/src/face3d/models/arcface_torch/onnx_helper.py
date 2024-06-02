@@ -2,10 +2,8 @@ from __future__ import division
 
 import argparse
 import datetime
-import glob
 import os
 import os.path as osp
-import sys
 
 import cv2
 import numpy as np

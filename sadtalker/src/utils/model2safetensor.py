@@ -8,10 +8,7 @@ from safetensors.torch import save_file
 from src.audio2exp_models.networks import SimpleWrapperV2
 from src.audio2pose_models.audio2pose import Audio2Pose
 from src.face3d.models import networks
-from src.facerender.modules.generator import (
-    OcclusionAwareGenerator,
-    OcclusionAwareSPADEGenerator,
-)
+from src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
 from src.facerender.modules.mapping import MappingNet
 from src.test_audio2coeff import load_cpk
@@ -82,7 +79,7 @@ def load_cpk_facevid2vid(
             optimizer_discriminator.load_state_dict(
                 checkpoint["optimizer_discriminator"]
             )
-        except RuntimeError as e:
+        except RuntimeError:
             print(
                 "No discriminator optimizer in the state-dict. Optimizer will be not initialized"
             )

@@ -6,7 +6,6 @@ import cv2
 import numpy as np
 import scipy.io as scio
 import torch
-from src.face3d.models.bfm import ParametricFaceModel
 from src.face3d.models.facerecon_model import FaceReconModel
 from tqdm import tqdm
 

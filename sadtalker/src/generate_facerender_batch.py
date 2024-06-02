@@ -4,7 +4,7 @@ import numpy as np
 import scipy.io as scio
 import torch
 from PIL import Image
-from skimage import img_as_float32, io, transform
+from skimage import img_as_float32, transform
 
 
 def get_facerender_data(
