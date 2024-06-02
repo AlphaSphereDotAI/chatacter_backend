@@ -82,7 +82,8 @@ class KPDetector(nn.Module):
         if self.scale_factor != 1:
             self.down = AntiAliasInterpolation2d(image_channel, self.scale_factor)
 
-    def gaussian2kp(self, heatmap):
+    @staticmethod
+    def gaussian2kp(heatmap):
         """
         Extract the mean from a heatmap
         """

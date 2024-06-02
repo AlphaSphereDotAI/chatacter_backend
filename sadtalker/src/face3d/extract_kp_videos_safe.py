@@ -43,8 +43,6 @@ class KeypointExtractor:
     def __init__(self, device="cuda"):
         # gfpgan/weights
         try:
-            import webui  # in webui
-
             root_path = "extensions/SadTalker/gfpgan/weights"
 
         except:

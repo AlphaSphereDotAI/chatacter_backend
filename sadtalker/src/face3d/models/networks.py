@@ -1,14 +1,11 @@
 """This script defines deep neural networks for Deep3DFaceRecon_pytorch"""
 
-import functools
 import os
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import init
 from torch.optim import lr_scheduler
 
 try:

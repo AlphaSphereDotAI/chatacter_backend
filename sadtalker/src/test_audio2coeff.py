@@ -127,7 +127,8 @@ class Audio2Coeff:
                 coeff_save_dir, "%s##%s.mat" % (batch["pic_name"], batch["audio_name"])
             )
 
-    def using_refpose(self, coeffs_pred_numpy, ref_pose_coeff_path):
+    @staticmethod
+    def using_refpose(coeffs_pred_numpy, ref_pose_coeff_path):
         num_frames = coeffs_pred_numpy.shape[0]
         refpose_coeff_dict = loadmat(ref_pose_coeff_path)
         refpose_coeff = refpose_coeff_dict["coeff_3dmm"][:, 64:70]

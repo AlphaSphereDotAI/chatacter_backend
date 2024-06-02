@@ -4,7 +4,6 @@ import os
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
-import numpy as np
 import torch
 
 from . import networks
@@ -49,7 +48,7 @@ class BaseModel(ABC):
 
     @staticmethod
     def dict_grad_hook_factory(add_func=lambda x: x):
-        saved_dict = dict()
+        saved_dict = {}
 
         def hook_gen(name):
             def grad_hook(grad):
@@ -139,13 +138,12 @@ class BaseModel(ABC):
                     setattr(self, name, module.to(self.device))
 
         # put state_dict of optimizer to gpu device
-        if self.opt.phase != "test":
-            if self.opt.continue_train:
-                for optim in self.optimizers:
-                    for state in optim.state.values():
-                        for k, v in state.items():
-                            if isinstance(v, torch.Tensor):
-                                state[k] = v.to(self.device)
+        if self.opt.phase != "test" and self.opt.continue_train:
+            for optim in self.optimizers:
+                for state in optim.state.values():
+                    for k, v in state.items():
+                        if isinstance(v, torch.Tensor):
+                            state[k] = v.to(self.device)
 
     def data_dependent_initialize(self, data):
         pass
@@ -207,7 +205,7 @@ class BaseModel(ABC):
         for name in self.loss_names:
             if isinstance(name, str):
                 # float(...) works for both scalar tensor and float number
-                errors_ret[name] = float(getattr(self, "loss_" + name))
+                errors_ret[name] = float(getattr(self, f"loss_{name}"))
         return errors_ret
 
     def save_networks(self, epoch):
@@ -219,15 +217,19 @@ class BaseModel(ABC):
         if not os.path.isdir(self.save_dir):
             os.makedirs(self.save_dir)
 
-        save_filename = "epoch_%s.pth" % (epoch)
+        save_filename = f"epoch_{epoch}.pth"
         save_path = os.path.join(self.save_dir, save_filename)
 
         save_dict = {}
         for name in self.model_names:
             if isinstance(name, str):
                 net = getattr(self, name)
-                if isinstance(net, torch.nn.DataParallel) or isinstance(
-                    net, torch.nn.parallel.DistributedDataParallel
+                if isinstance(
+                    net,
+                    (
+                        torch.nn.DataParallel,
+                        torch.nn.parallel.DistributedDataParallel,
+                    ),
                 ):
                     net = net.module
                 save_dict[name] = net.state_dict()
@@ -244,11 +246,16 @@ class BaseModel(ABC):
         """Fix InstanceNorm checkpoints incompatibility (prior to 0.4)"""
         key = keys[i]
         if i + 1 == len(keys):  # at the end, pointing to a parameter/buffer
-            if module.__class__.__name__.startswith("InstanceNorm") and (
-                key == "running_mean" or key == "running_var"
+            if (
+                module.__class__.__name__.startswith("InstanceNorm")
+                and key
+                in [
+                    "running_mean",
+                    "running_var",
+                ]
+                and getattr(module, key) is None
             ):
-                if getattr(module, key) is None:
-                    state_dict.pop(".".join(keys))
+                state_dict.pop(".".join(keys))
             if module.__class__.__name__.startswith("InstanceNorm") and (
                 key == "num_batches_tracked"
             ):
@@ -268,10 +275,10 @@ class BaseModel(ABC):
             load_dir = os.path.join(self.opt.checkpoints_dir, self.opt.pretrained_name)
         else:
             load_dir = self.save_dir
-        load_filename = "epoch_%s.pth" % (epoch)
+        load_filename = f"epoch_{epoch}.pth"
         load_path = os.path.join(load_dir, load_filename)
         state_dict = torch.load(load_path, map_location=self.device)
-        print("loading the model from %s" % load_path)
+        print(f"loading the model from {load_path}")
 
         for name in self.model_names:
             if isinstance(name, str):
@@ -280,22 +287,21 @@ class BaseModel(ABC):
                     net = net.module
                 net.load_state_dict(state_dict[name])
 
-        if self.opt.phase != "test":
-            if self.opt.continue_train:
-                print("loading the optim from %s" % load_path)
-                for i, optim in enumerate(self.optimizers):
-                    optim.load_state_dict(state_dict["opt_%02d" % i])
+        if self.opt.phase != "test" and self.opt.continue_train:
+            print(f"loading the optim from {load_path}")
+            for i, optim in enumerate(self.optimizers):
+                optim.load_state_dict(state_dict["opt_%02d" % i])
 
-                try:
-                    print("loading the sched from %s" % load_path)
-                    for i, sched in enumerate(self.schedulers):
-                        sched.load_state_dict(state_dict["sched_%02d" % i])
-                except:
-                    print(
-                        "Failed to load schedulers, set schedulers according to epoch count manually"
-                    )
-                    for i, sched in enumerate(self.schedulers):
-                        sched.last_epoch = self.opt.epoch_count - 1
+            try:
+                print(f"loading the sched from {load_path}")
+                for i, sched in enumerate(self.schedulers):
+                    sched.load_state_dict(state_dict["sched_%02d" % i])
+            except Exception:
+                print(
+                    "Failed to load schedulers, set schedulers according to epoch count manually"
+                )
+                for sched in self.schedulers:
+                    sched.last_epoch = self.opt.epoch_count - 1
 
     def print_networks(self, verbose):
         """Print the total number of parameters in the network and (if verbose) network architecture
@@ -307,9 +313,7 @@ class BaseModel(ABC):
         for name in self.model_names:
             if isinstance(name, str):
                 net = getattr(self, name)
-                num_params = 0
-                for param in net.parameters():
-                    num_params += param.numel()
+                num_params = sum(param.numel() for param in net.parameters())
                 if verbose:
                     print(net)
                 print(
@@ -331,5 +335,5 @@ class BaseModel(ABC):
                 for param in net.parameters():
                     param.requires_grad = requires_grad
 
-    def generate_visuals_for_evaluation(self, data, mode):
+    def generate_visuals_for_evaluation(self, data=None, mode=None):
         return {}

@@ -265,7 +265,8 @@ class ParametricFaceModel:
 
         return face_proj
 
-    def transform(self, face_shape, rot, trans):
+    @staticmethod
+    def transform(face_shape, rot, trans):
         """
         Return:
             face_shape       -- torch.tensor, size (B, N, 3) pts @ rot + trans
@@ -287,7 +288,8 @@ class ParametricFaceModel:
         """
         return face_proj[:, self.keypoints]
 
-    def split_coeff(self, coeffs):
+    @staticmethod
+    def split_coeff(coeffs):
         """
         Return:
             coeffs_dict     -- a dict of torch.tensors

@@ -584,7 +584,8 @@ class SPADEResnetBlock(nn.Module):
             x_s = x
         return x_s
 
-    def actvn(self, x):
+    @staticmethod
+    def actvn(x):
         return F.leaky_relu(x, 2e-1)
 
 
@@ -605,7 +606,8 @@ class audio2image(nn.Module):
         self.he_estimator_audio = he_estimator_audio
         self.train_params = train_params
 
-    def headpose_pred_to_degree(self, pred):
+    @staticmethod
+    def headpose_pred_to_degree(pred):
         device = pred.device
         idx_tensor = [idx for idx in range(66)]
         idx_tensor = torch.FloatTensor(idx_tensor).to(device)
@@ -614,7 +616,8 @@ class audio2image(nn.Module):
 
         return degree
 
-    def get_rotation_matrix(self, yaw, pitch, roll):
+    @staticmethod
+    def get_rotation_matrix(yaw, pitch, roll):
         yaw = yaw / 180 * 3.14
         pitch = pitch / 180 * 3.14
         roll = roll / 180 * 3.14
