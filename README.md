@@ -4,9 +4,16 @@ Back to [Chatacter](https://github.com/AlphaSphereDotAI/chatacter)
 
 ## Installation
 
+### Download the repository
+
 ```bash
 git clone https://github.com/AlphaSphereDotAI/chatacter_backend.git
 cd chatacter_backend
+```
+
+### Install the dependencies
+
+```bash
 conda create -n chatacter python=3.10
 conda activate chatacter
 conda install ffmpeg pytorch=2.1.0 torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
