@@ -19,3 +19,9 @@ tqdm
 pyyaml  
 basicsr==1.4.2
 trimesh==3.9.20
+fastapi
+pandas
+huggingface_hub
+langchain-groq
+langchain-core
+transformers
