@@ -1,5 +1,7 @@
 import torch
 import torch.nn.functional as F
+from torch import nn
+
 from sadtalker.src.facerender.modules.dense_motion import DenseMotionNetwork
 from sadtalker.src.facerender.modules.util import (
     DownBlock2d,
@@ -9,7 +11,6 @@ from sadtalker.src.facerender.modules.util import (
     SPADEResnetBlock,
     UpBlock2d,
 )
-from torch import nn
 
 
 class OcclusionAwareGenerator(nn.Module):
@@ -105,7 +106,8 @@ class OcclusionAwareGenerator(nn.Module):
         self.estimate_occlusion_map = estimate_occlusion_map
         self.image_channel = image_channel
 
-    def deform_input(self, inp, deformation):
+    @staticmethod
+    def deform_input(inp, deformation):
         _, d_old, h_old, w_old, _ = deformation.shape
         _, _, d, h, w = inp.shape
         if d_old != d or h_old != h or w_old != w:
@@ -280,7 +282,8 @@ class OcclusionAwareSPADEGenerator(nn.Module):
 
         self.decoder = SPADEDecoder()
 
-    def deform_input(self, inp, deformation):
+    @staticmethod
+    def deform_input(inp, deformation):
         _, d_old, h_old, w_old, _ = deformation.shape
         _, _, d, h, w = inp.shape
         if d_old != d or h_old != h or w_old != w:

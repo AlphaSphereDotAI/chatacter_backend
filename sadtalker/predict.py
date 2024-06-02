@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 import wget
 from cog import BasePredictor, Input, Path
+
 from sadtalker.src.facerender.animate import AnimateFromCoeff
 from sadtalker.src.generate_batch import get_data
 from sadtalker.src.generate_facerender_batch import get_facerender_data
@@ -15,7 +16,7 @@ from sadtalker.src.test_audio2coeff import Audio2Coeff
 from sadtalker.src.utils.init_path import init_path
 from sadtalker.src.utils.preprocess import CropAndExtract
 
-CONFIG = pd.read_json("/teamspace/studios/this_studio/graduation_project/config.json")
+CONFIG = pd.read_json("config.json")
 
 
 class Predictor(BasePredictor):
@@ -46,7 +47,8 @@ class Predictor(BasePredictor):
             ),
         }
 
-    def download_model(self):
+    @staticmethod
+    def download_model():
         os.system("pwd")
         MODELS = {
             f"{CONFIG['model']['sadtalker']['checkpoints']}/mapping_00109-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar",

@@ -8,7 +8,7 @@ import cv2
 import face_alignment
 import numpy as np
 from PIL import Image
-from torch.multiprocessing import Pool, Process, set_start_method
+from torch.multiprocessing import Pool, set_start_method
 from tqdm import tqdm
 
 

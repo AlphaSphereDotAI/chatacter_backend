@@ -1,14 +1,12 @@
 import glob
 import os
 import sys
-import tempfile
 from pathlib import Path
 
-import gradio as gr
 import launch
 from huggingface_hub import snapshot_download
-from modules import paths, script_callbacks, shared
-from modules.call_queue import wrap_gradio_gpu_call, wrap_queued_call
+from modules import paths, script_callbacks
+from modules.call_queue import wrap_queued_call
 from modules.shared import OptionInfo, opts
 
 

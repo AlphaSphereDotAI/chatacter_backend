@@ -16,7 +16,6 @@ You need to implement the following functions:
     <optimize_parameters>: Update network weights; it will be called in every training iteration.
 """
 
-import numpy as np
 import torch
 
 from . import networks

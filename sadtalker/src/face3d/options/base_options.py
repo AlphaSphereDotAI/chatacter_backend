@@ -5,8 +5,6 @@ import os
 
 import face3d.data as data
 import face3d.models as models
-import numpy as np
-import torch
 from util import util
 
 
