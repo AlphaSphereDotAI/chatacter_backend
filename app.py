@@ -37,5 +37,5 @@ def get_video():
     return FileResponse(CONFIG["video"], media_type="video/mp4")
 
 
-# if __name__ == "__main__":
-#     uvicorn.run("app:app", host="localhost", port=8001, reload=True)
+if __name__ == "__main__":
+    uvicorn.run("app:app", host="localhost", port=8001, reload=True)
