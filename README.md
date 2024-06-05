@@ -13,6 +13,15 @@ cd chatacter_backend
 
 ### Install the dependencies
 
+#### Using environment.yml
+
+```bash
+conda env create -f environment.yml
+conda activate chatacter
+```
+
+#### Manually
+
 ```bash
 conda create -n chatacter python=3.10
 conda activate chatacter
