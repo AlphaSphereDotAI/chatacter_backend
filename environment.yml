@@ -2,8 +2,8 @@ name: chatacter
 channels:
     - pytorch
     - nvidia
-    - conda-forge
     - defaults
+    - conda-forge
     - 1adrianb
 dependencies:
     - python=3.10
