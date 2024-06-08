@@ -27,9 +27,14 @@ dependencies:
     - langchain-groq
     - opencv
     - face_alignment=1.3.5
+    - transformers
+    - pydantic
+    - libsndfile
     - pip
     - pip:
           - basicsr==1.4.2
           - gfpgan
           - wget
           - cog
+          - uvicorn
+          - SoundFile

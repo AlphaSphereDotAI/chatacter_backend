@@ -5,7 +5,7 @@
 .idea/
 *.bin
 *.tmp
-
+.pyc
 .env
 .env.me
 .env.previous

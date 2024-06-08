@@ -1,13 +1,12 @@
-import pandas as pd
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
-
+import configuration
 from model import generate_audio, generate_video, get_response
 
 app = FastAPI()
-CONFIG = pd.read_json("config.json")
-
+settings = configuration.Settings()
+print(settings)
 
 @app.get("/")
 async def is_alive():
