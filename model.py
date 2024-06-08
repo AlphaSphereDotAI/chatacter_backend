@@ -1,22 +1,19 @@
-import pandas as pd
-
-# from dotenv_vault import load_dotenv
 from huggingface_hub import snapshot_download
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from scipy.io.wavfile import write
 from transformers import AutoModelForTextToWaveform, AutoProcessor
 
+from configuration import get_settings
 from sadtalker.predict import Predictor
 
-CONFIG = pd.read_json("config.json")
-# load_dotenv()
+settings = get_settings()
 
-snapshot_download(repo_id="suno/bark-small", local_dir=CONFIG["model"]["bark"])
-processor = AutoProcessor.from_pretrained(CONFIG["model"]["bark"])
-model = AutoModelForTextToWaveform.from_pretrained(CONFIG["model"]["bark"])
-processor = AutoProcessor.from_pretrained(CONFIG["model"]["bark"])
-model = AutoModelForTextToWaveform.from_pretrained(CONFIG["model"]["bark"])
+snapshot_download(repo_id="suno/bark-small", local_dir=settings.bark.path)
+processor = AutoProcessor.from_pretrained(settings.bark.path)
+model = AutoModelForTextToWaveform.from_pretrained(settings.bark.path)
+processor = AutoProcessor.from_pretrained(settings.bark.path)
+model = AutoModelForTextToWaveform.from_pretrained(settings.bark.path)
 chat = ChatGroq(model_name="llama3-70b-8192", verbose=True)
 
 
@@ -27,7 +24,7 @@ def generate_audio(response):
     audio = model.generate(**inputs)
     print("\tAudio generated with Rate 24000")
     print("\tSaving audio...")
-    write(CONFIG["assets"]["audio"], 24000, audio.squeeze(0).numpy())
+    write(settings.assets.audio, 24000, audio.squeeze(0).numpy())
 
 
 def generate_video():
@@ -36,8 +33,8 @@ def generate_video():
     predictor = Predictor()
     predictor.setup()
     predictor.predict(
-        source_image=CONFIG["assets"]["source_image"],
-        driven_audio=CONFIG["assets"]["audio"],
+        source_image=settings.assets.image,
+        driven_audio=settings.assets.audio,
         enhancer="gfpgan",
         preprocess="full",
     )

@@ -1,12 +1,14 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
-import configuration
+
+from configuration import get_settings
 from model import generate_audio, generate_video, get_response
 
 app = FastAPI()
-settings = configuration.Settings()
+settings = get_settings()
 print(settings)
+
 
 @app.get("/")
 async def is_alive():
@@ -33,7 +35,7 @@ def get_audio(text: str):
 def get_video():
     """generate the video file"""
     generate_video()
-    return FileResponse(CONFIG["video"], media_type="video/mp4")
+    return FileResponse(settings.assets.video, media_type="video/mp4")
 
 
 if __name__ == "__main__":
