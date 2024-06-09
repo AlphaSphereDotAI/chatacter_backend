@@ -37,6 +37,7 @@ from sklearn.model_selection import KFold
 
 
 class LFold:
+
     def __init__(self, n_splits=2, shuffle=False):
         self.n_splits = n_splits
         if self.n_splits > 1:
@@ -45,8 +46,7 @@ class LFold:
     def split(self, indices):
         if self.n_splits > 1:
             return self.k_fold.split(indices)
-        else:
-            return [(indices, indices)]
+        return [(indices, indices)]
 
 
 def calculate_roc(

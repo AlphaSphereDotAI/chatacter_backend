@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 
 class KeypointExtractor:
+
     def __init__(self, device):
         self.detector = face_alignment.FaceAlignment(
             face_alignment.LandmarksType._2D, device=device
@@ -36,28 +37,25 @@ class KeypointExtractor:
             keypoints = np.concatenate(keypoints, 0)
             np.savetxt(os.path.splitext(name)[0] + ".txt", keypoints.reshape(-1))
             return keypoints
-        else:
-            while True:
-                try:
-                    keypoints = self.detector.get_landmarks_from_image(
-                        np.array(images)
-                    )[0]
+        while True:
+            try:
+                keypoints = self.detector.get_landmarks_from_image(np.array(images))[0]
+                break
+            except RuntimeError as e:
+                if str(e).startswith("CUDA"):
+                    print("Warning: out of memory, sleep for 1s")
+                    time.sleep(1)
+                else:
+                    print(e)
                     break
-                except RuntimeError as e:
-                    if str(e).startswith("CUDA"):
-                        print("Warning: out of memory, sleep for 1s")
-                        time.sleep(1)
-                    else:
-                        print(e)
-                        break
-                except TypeError:
-                    print("No face detected in this image")
-                    shape = [68, 2]
-                    keypoints = -1.0 * np.ones(shape)
-                    break
-            if name is not None:
-                np.savetxt(os.path.splitext(name)[0] + ".txt", keypoints.reshape(-1))
-            return keypoints
+            except TypeError:
+                print("No face detected in this image")
+                shape = [68, 2]
+                keypoints = -1.0 * np.ones(shape)
+                break
+        if name is not None:
+            np.savetxt(os.path.splitext(name)[0] + ".txt", keypoints.reshape(-1))
+        return keypoints
 
 
 def read_video(filename):

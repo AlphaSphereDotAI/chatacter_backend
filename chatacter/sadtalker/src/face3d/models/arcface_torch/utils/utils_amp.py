@@ -30,6 +30,7 @@ class _MultiDeviceReplicator(object):
 
 
 class MaxClipGradScaler(GradScaler):
+
     def __init__(self, init_scale, max_scale: float, growth_interval=100):
         GradScaler.__init__(
             self, init_scale=init_scale, growth_interval=growth_interval
@@ -79,13 +80,11 @@ class MaxClipGradScaler(GradScaler):
                     assert self._scale is not None
                     stash.append(_MultiDeviceReplicator(self._scale))
                 return val * stash[0].get(val.device)
-            elif isinstance(val, Iterable):
+            if isinstance(val, Iterable):
                 iterable = map(apply_scale, val)
                 if isinstance(val, list) or isinstance(val, tuple):
                     return type(val)(iterable)
-                else:
-                    return iterable
-            else:
-                raise ValueError("outputs must be a Tensor or an iterable of Tensors")
+                return iterable
+            raise ValueError("outputs must be a Tensor or an iterable of Tensors")
 
         return apply_scale(outputs)

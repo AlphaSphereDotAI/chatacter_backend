@@ -155,8 +155,7 @@ class BaseOptions:
         self.parser = parser
         if self.cmd_line is None:
             return parser.parse_args()
-        else:
-            return parser.parse_args(self.cmd_line)
+        return parser.parse_args(self.cmd_line)
 
     def print_options(self, opt):
         """Print and save options

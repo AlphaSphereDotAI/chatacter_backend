@@ -5,13 +5,13 @@ from torch import nn
 def get_loss(name):
     if name == "cosface":
         return CosFace()
-    elif name == "arcface":
+    if name == "arcface":
         return ArcFace()
-    else:
-        raise ValueError()
+    raise ValueError()
 
 
 class CosFace(nn.Module):
+
     def __init__(self, s=64.0, m=0.40):
         super(CosFace, self).__init__()
         self.s = s
@@ -27,6 +27,7 @@ class CosFace(nn.Module):
 
 
 class ArcFace(nn.Module):
+
     def __init__(self, s=64.0, m=0.5):
         super(ArcFace, self).__init__()
         self.s = s

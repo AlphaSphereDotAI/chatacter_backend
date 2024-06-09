@@ -184,8 +184,7 @@ class IResNet(nn.Module):
     def checkpoint(self, func, num_seg, x):
         if self.training:
             return checkpoint_sequential(func, num_seg, x)
-        else:
-            return func(x)
+        return func(x)
 
     def forward(self, x):
         with torch.cuda.amp.autocast(self.fp16):
