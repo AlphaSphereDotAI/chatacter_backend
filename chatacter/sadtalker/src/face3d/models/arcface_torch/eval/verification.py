@@ -37,6 +37,7 @@ from sklearn.model_selection import KFold
 
 
 class LFold:
+
     def __init__(self, n_splits=2, shuffle=False):
         self.n_splits = n_splits
         if self.n_splits > 1:

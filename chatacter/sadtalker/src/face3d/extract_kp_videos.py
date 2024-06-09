@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 
 class KeypointExtractor:
+
     def __init__(self, device):
         self.detector = face_alignment.FaceAlignment(
             face_alignment.LandmarksType._2D, device=device
@@ -38,9 +39,7 @@ class KeypointExtractor:
             return keypoints
         while True:
             try:
-                keypoints = self.detector.get_landmarks_from_image(
-                    np.array(images)
-                )[0]
+                keypoints = self.detector.get_landmarks_from_image(np.array(images))[0]
                 break
             except RuntimeError as e:
                 if str(e).startswith("CUDA"):
