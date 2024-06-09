@@ -4,8 +4,8 @@ from langchain_groq import ChatGroq
 from scipy.io.wavfile import write
 from transformers import AutoModelForTextToWaveform, AutoProcessor
 
-from chatacter.settings import get_settings
 from chatacter.sadtalker.predict import Predictor
+from chatacter.settings import get_settings
 
 settings = get_settings()
 

@@ -21,6 +21,7 @@ from src.face3d.util.nvdiffrast import MeshRenderer
 
 
 class FaceReconModel(BaseModel):
+
     @staticmethod
     def modify_commandline_options(parser, is_train=False):
         """Configures options specific for CUT model"""

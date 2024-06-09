@@ -126,6 +126,7 @@ class ReconNetWrapper(nn.Module):
 
 
 class RecogNetWrapper(nn.Module):
+
     def __init__(self, net_recog, pretrained_path=None, input_size=112):
         super(RecogNetWrapper, self).__init__()
         net = get_model(name=net_recog, fp16=False)
@@ -305,6 +306,7 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
+
     def __init__(
         self,
         block: Type[Union[BasicBlock, Bottleneck]],

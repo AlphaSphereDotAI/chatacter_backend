@@ -4,6 +4,7 @@ from TTS.api import TTS
 
 
 class TTSTalker:
+
     def __init__(self) -> None:
         model_name = TTS().list_models()[0]
         self.tts = TTS(model_name)

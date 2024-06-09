@@ -8,6 +8,7 @@ from chatacter.sadtalker.src.face3d.extract_kp_videos_safe import KeypointExtrac
 
 
 class Preprocesser:
+
     def __init__(self, device="cuda"):
         self.predictor = KeypointExtractor(device)
 

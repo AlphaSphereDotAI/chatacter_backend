@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 
 class KeypointExtractor:
+
     def __init__(self, device):
         self.detector = face_alignment.FaceAlignment(
             face_alignment.LandmarksType._2D, device=device

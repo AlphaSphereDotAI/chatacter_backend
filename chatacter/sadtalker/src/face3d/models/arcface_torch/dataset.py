@@ -11,6 +11,7 @@ from torchvision import transforms
 
 
 class BackgroundGenerator(threading.Thread):
+
     def __init__(self, generator, local_rank, max_prefetch=6):
         super(BackgroundGenerator, self).__init__()
         self.queue = Queue.Queue(max_prefetch)
@@ -39,6 +40,7 @@ class BackgroundGenerator(threading.Thread):
 
 
 class DataLoaderX(DataLoader):
+
     def __init__(self, local_rank, **kwargs):
         super(DataLoaderX, self).__init__(**kwargs)
         self.stream = torch.cuda.Stream(local_rank)
@@ -70,6 +72,7 @@ class DataLoaderX(DataLoader):
 
 
 class MXFaceDataset(Dataset):
+
     def __init__(self, root_dir, local_rank):
         super(MXFaceDataset, self).__init__()
         self.transform = transforms.Compose(
@@ -111,6 +114,7 @@ class MXFaceDataset(Dataset):
 
 
 class SyntheticDataset(Dataset):
+
     def __init__(self, local_rank):
         super(SyntheticDataset, self).__init__()
         img = np.random.randint(0, 255, size=(112, 112, 3), dtype=np.int32)
