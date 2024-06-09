@@ -4,7 +4,7 @@ from langchain_groq import ChatGroq
 from scipy.io.wavfile import write
 from transformers import AutoModelForTextToWaveform, AutoProcessor
 
-from configuration import get_settings
+from settings import get_settings
 from sadtalker.predict import Predictor
 
 settings = get_settings()
@@ -46,7 +46,7 @@ def get_response(query):
     print("Thinking...")
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "Ack as Napoleon Bonaparte. Answer in one statement."),
+            ("system", "Act as Napoleon Bonaparte. Answer in one statement."),
             ("human", "{text}"),
         ]
     )

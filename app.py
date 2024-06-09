@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from configuration import get_settings
+from settings import get_settings
 from model import generate_audio, generate_video, get_response
 
 app = FastAPI()

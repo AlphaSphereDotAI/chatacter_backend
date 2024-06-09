@@ -8,7 +8,7 @@ import torch
 import wget
 from cog import BasePredictor, Input, Path
 
-from configuration import get_settings
+from settings import get_settings
 from sadtalker.src.facerender.animate import AnimateFromCoeff
 from sadtalker.src.generate_batch import get_data
 from sadtalker.src.generate_facerender_batch import get_facerender_data
