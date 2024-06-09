@@ -85,7 +85,6 @@ class MaxClipGradScaler(GradScaler):
                 if isinstance(val, list) or isinstance(val, tuple):
                     return type(val)(iterable)
                 return iterable
-            else:
-                raise ValueError("outputs must be a Tensor or an iterable of Tensors")
+            raise ValueError("outputs must be a Tensor or an iterable of Tensors")
 
         return apply_scale(outputs)

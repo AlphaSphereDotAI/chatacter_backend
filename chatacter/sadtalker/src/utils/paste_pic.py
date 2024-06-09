@@ -53,8 +53,6 @@ def paste_pic(
     clx, cly, crx, cry = crop_info[1]
     lx, ly, rx, ry = crop_info[2]
     lx, ly, rx, ry = int(lx), int(ly), int(rx), int(ry)
-    # oy1, oy2, ox1, ox2 = cly+ly, cly+ry, clx+lx, clx+rx
-    # oy1, oy2, ox1, ox2 = cly+ly, cly+ry, clx+lx, clx+rx
 
     if extended_crop:
         oy1, oy2, ox1, ox2 = cly, cry, clx, crx
