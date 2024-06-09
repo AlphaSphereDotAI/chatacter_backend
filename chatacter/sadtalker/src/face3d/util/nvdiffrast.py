@@ -21,6 +21,7 @@ from torch import nn
 
 
 class MeshRenderer(nn.Module):
+
     def __init__(self, rasterize_fov, znear=0.1, zfar=10, rasterize_size=224):
         super(MeshRenderer, self).__init__()
 

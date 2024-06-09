@@ -3,6 +3,7 @@ import torch.nn as nn
 
 
 class ResidualConv(nn.Module):
+
     def __init__(self, input_dim, output_dim, stride, padding):
         super(ResidualConv, self).__init__()
 
@@ -26,6 +27,7 @@ class ResidualConv(nn.Module):
 
 
 class Upsample(nn.Module):
+
     def __init__(self, input_dim, output_dim, kernel, stride):
         super(Upsample, self).__init__()
 
@@ -38,6 +40,7 @@ class Upsample(nn.Module):
 
 
 class Squeeze_Excite_Block(nn.Module):
+
     def __init__(self, channel, reduction=16):
         super(Squeeze_Excite_Block, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
@@ -56,6 +59,7 @@ class Squeeze_Excite_Block(nn.Module):
 
 
 class ASPP(nn.Module):
+
     def __init__(self, in_dims, out_dims, rate=[6, 12, 18]):
         super(ASPP, self).__init__()
 
@@ -101,6 +105,7 @@ class ASPP(nn.Module):
 
 
 class Upsample_(nn.Module):
+
     def __init__(self, scale=2):
         super(Upsample_, self).__init__()
 
@@ -111,6 +116,7 @@ class Upsample_(nn.Module):
 
 
 class AttentionBlock(nn.Module):
+
     def __init__(self, input_encoder, input_decoder, output_dim):
         super(AttentionBlock, self).__init__()
 

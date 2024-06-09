@@ -11,8 +11,9 @@ import yaml
 from pydub import AudioSegment
 from skimage import img_as_ubyte
 
-from chatacter.sadtalker.src.facerender.modules.generator import \
-    OcclusionAwareSPADEGenerator
+from chatacter.sadtalker.src.facerender.modules.generator import (
+    OcclusionAwareSPADEGenerator,
+)
 from chatacter.sadtalker.src.facerender.modules.keypoint_detector import (
     HEEstimator,
     KPDetector,
@@ -23,8 +24,6 @@ from chatacter.sadtalker.src.utils.face_enhancer import (
     enhancer_generator_with_len,
     enhancer_list,
 )
-from chatacter.sadtalker.src.utils.face_enhancer import (
-    enhancer_generator_with_len, enhancer_list)
 from chatacter.sadtalker.src.utils.paste_pic import paste_pic
 from chatacter.sadtalker.src.utils.videoio import save_video_with_watermark
 
@@ -37,6 +36,7 @@ except:
 
 
 class AnimateFromCoeff:
+
     def __init__(self, sadtalker_path, device):
         with open(sadtalker_path["facerender_yaml"]) as f:
             config = yaml.safe_load(f)

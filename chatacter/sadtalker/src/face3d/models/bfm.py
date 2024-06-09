@@ -20,6 +20,7 @@ def perspective_projection(focal, center):
 
 
 class SH:
+
     def __init__(self):
         self.a = [np.pi, 2 * np.pi / np.sqrt(3.0), 2 * np.pi / np.sqrt(8.0)]
         self.c = [
@@ -30,6 +31,7 @@ class SH:
 
 
 class ParametricFaceModel:
+
     def __init__(
         self,
         bfm_folder="./BFM",
