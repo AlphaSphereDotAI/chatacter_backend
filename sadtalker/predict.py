@@ -8,18 +8,19 @@ import torch
 import wget
 from cog import BasePredictor, Input, Path
 
-from settings import get_settings
 from sadtalker.src.facerender.animate import AnimateFromCoeff
 from sadtalker.src.generate_batch import get_data
 from sadtalker.src.generate_facerender_batch import get_facerender_data
 from sadtalker.src.test_audio2coeff import Audio2Coeff
 from sadtalker.src.utils.init_path import init_path
 from sadtalker.src.utils.preprocess import CropAndExtract
+from settings import get_settings
 
 settings = get_settings()
 
 
 class Predictor(BasePredictor):
+
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
         device = "cuda"
