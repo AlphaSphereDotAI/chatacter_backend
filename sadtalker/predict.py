@@ -4,11 +4,11 @@ import os
 import shutil
 from argparse import Namespace
 
-import pandas as pd
 import torch
 import wget
 from cog import BasePredictor, Input, Path
 
+from configuration import get_settings
 from sadtalker.src.facerender.animate import AnimateFromCoeff
 from sadtalker.src.generate_batch import get_data
 from sadtalker.src.generate_facerender_batch import get_facerender_data
@@ -16,7 +16,7 @@ from sadtalker.src.test_audio2coeff import Audio2Coeff
 from sadtalker.src.utils.init_path import init_path
 from sadtalker.src.utils.preprocess import CropAndExtract
 
-CONFIG = pd.read_json("config.json")
+settings = get_settings()
 
 
 class Predictor(BasePredictor):
@@ -25,7 +25,7 @@ class Predictor(BasePredictor):
         device = "cuda"
 
         sadtalker_paths = init_path(
-            CONFIG["model"]["sadtalker"]["checkpoints"], os.path.join("src", "config")
+            settings["model"]["sadtalker"]["checkpoints"], os.path.join("src", "config")
         )
         print(sadtalker_paths)
         # init model
@@ -51,15 +51,15 @@ class Predictor(BasePredictor):
     def download_model():
         os.system("pwd")
         MODELS = {
-            f"{CONFIG['model']['sadtalker']['checkpoints']}/mapping_00109-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar",
-            f"{CONFIG['model']['sadtalker']['checkpoints']}/mapping_00229-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00229-model.pth.tar",
-            f"{CONFIG['model']['sadtalker']['checkpoints']}/SadTalker_V0.0.2_256.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_256.safetensors",
-            f"{CONFIG['model']['sadtalker']['checkpoints']}/SadTalker_V0.0.2_512.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_512.safetensors",
-            f"{CONFIG['model']['sadtalker']['checkpoints']}/epoch_00190_iteration_000400000_checkpoint.pt": "https://huggingface.co/vinthony/SadTalker-V002rc/resolve/main/epoch_00190_iteration_000400000_checkpoint.pt?download=true",
-            f"{CONFIG['model']['sadtalker']['gfpgan']}/alignment_WFLW_4HG.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/alignment_WFLW_4HG.pth",
-            f"{CONFIG['model']['sadtalker']['gfpgan']}/detection_Resnet50_Final.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth",
-            f"{CONFIG['model']['sadtalker']['gfpgan']}/GFPGANv1.4.pth": "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.4.pth",
-            f"{CONFIG['model']['sadtalker']['gfpgan']}/parsing_parsenet.pth": "https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth",
+            f"{settings['model']['sadtalker']['checkpoints']}/mapping_00109-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar",
+            f"{settings['model']['sadtalker']['checkpoints']}/mapping_00229-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00229-model.pth.tar",
+            f"{settings['model']['sadtalker']['checkpoints']}/SadTalker_V0.0.2_256.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_256.safetensors",
+            f"{settings['model']['sadtalker']['checkpoints']}/SadTalker_V0.0.2_512.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_512.safetensors",
+            f"{settings['model']['sadtalker']['checkpoints']}/epoch_00190_iteration_000400000_checkpoint.pt": "https://huggingface.co/vinthony/SadTalker-V002rc/resolve/main/epoch_00190_iteration_000400000_checkpoint.pt?download=true",
+            f"{settings['model']['sadtalker']['gfpgan']}/alignment_WFLW_4HG.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/alignment_WFLW_4HG.pth",
+            f"{settings['model']['sadtalker']['gfpgan']}/detection_Resnet50_Final.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth",
+            f"{settings['model']['sadtalker']['gfpgan']}/GFPGANv1.4.pth": "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.4.pth",
+            f"{settings['model']['sadtalker']['gfpgan']}/parsing_parsenet.pth": "https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth",
         }
 
         def download_model_from_url(url, path):
@@ -67,12 +67,12 @@ class Predictor(BasePredictor):
             wget.download(url=url, out=path)
             print()
 
-        if not os.path.exists(CONFIG["model"]["sadtalker"]["checkpoints"]):
+        if not os.path.exists(settings["model"]["sadtalker"]["checkpoints"]):
             print("\nCreating checkpoints directory")
-            os.mkdir(CONFIG["model"]["sadtalker"]["checkpoints"])
-        if not os.path.exists(CONFIG["model"]["sadtalker"]["gfpgan"]):
+            os.mkdir(settings["model"]["sadtalker"]["checkpoints"])
+        if not os.path.exists(settings["model"]["sadtalker"]["gfpgan"]):
             print("\nCreating gfpgan/weights directory")
-            os.makedirs(CONFIG["model"]["sadtalker"]["gfpgan"])
+            os.makedirs(settings["model"]["sadtalker"]["gfpgan"])
 
         for path, link in MODELS.items():
             if not os.path.exists(path):

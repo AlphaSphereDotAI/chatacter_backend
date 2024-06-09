@@ -12,7 +12,7 @@
 */checkpoints/
 
 .ruff_cache
-__pycache__
+**/__pycache__/
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -41,3 +41,4 @@ frontend/.pub/
 .flaskenv*
 !.env.project
 !.env.vault
+sadtalker/src/audio2pose_models/__pycache__/cvae.cpython-310.pyc

@@ -7,7 +7,6 @@ from model import generate_audio, generate_video, get_response
 
 app = FastAPI()
 settings = get_settings()
-print(settings)
 
 
 @app.get("/")

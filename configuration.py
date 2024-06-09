@@ -1,36 +1,35 @@
 from functools import lru_cache
-
-
 from pydantic import BaseModel
 
 
-class ModelConfig(BaseModel):
-    path: str
-    checkpoints: str
-    gfpgan: str
+class SadTalkerSettings(BaseModel):
+    path: str = "sadtalker"
+    checkpoints: str = "sadtalker/checkpoints"
+    gfpgan: str = "sadtalker/gfpgan/weights"
 
 
-class Assets(BaseModel):
-    audio: str
-    image: str
-    video: str
+class AssetsSettings(BaseModel):
+    audio: str = "assets/AUDIO.wav"
+    image: str = "assets/Einstein.jpg"
+    video: str = "assets/VIDEO.mp4"
+
+
+class BarkSettings(BaseModel):
+    path: str = "bark-small"
 
 
 class Settings(BaseModel):
     app_name: str = "Chatacter"
-    assets: Assets = Assets(
-        audio="assets/AUDIO.wav",
-        image="assets/Einstein.jpg",
-        video="assets/VIDEO.mp4",
-    )
-    sadtalker: ModelConfig = ModelConfig(
-        path="sadtalker",
-        checkpoints="sadtalker/checkpoints",
-        gfpgan="sadtalker/gfpgan/weights",
-    )
-    bark: ModelConfig = ModelConfig(path="bark-small")
+    assets: AssetsSettings = AssetsSettings()
+    sadtalker: SadTalkerSettings = SadTalkerSettings()
+    bark: BarkSettings = BarkSettings()
 
 
 @lru_cache
 def get_settings():
     return Settings()
+
+
+if __name__ == "__main__":
+    settings = get_settings()
+    print(settings.model_dump_json(indent=4))
