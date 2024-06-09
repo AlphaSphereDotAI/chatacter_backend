@@ -45,8 +45,7 @@ class LFold:
     def split(self, indices):
         if self.n_splits > 1:
             return self.k_fold.split(indices)
-        else:
-            return [(indices, indices)]
+        return [(indices, indices)]
 
 
 def calculate_roc(
