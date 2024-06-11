@@ -51,7 +51,7 @@ def generate_video() -> dict:
     predictor.setup()
     try:
         predictor.predict(
-            source_image=settings.assets.image,
+            source_image=settings.assets.image + settings.character + ".jpg",
             driven_audio=settings.assets.audio,
             enhancer="gfpgan",
             preprocess="full",
