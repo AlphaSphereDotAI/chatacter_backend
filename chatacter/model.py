@@ -1,9 +1,11 @@
 import time
+
 from huggingface_hub import snapshot_download
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
+
 from chatacter.sadtalker.predict import Predictor
 from chatacter.settings import get_settings
 
