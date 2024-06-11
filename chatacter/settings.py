@@ -10,9 +10,9 @@ class SadTalkerSettings(BaseModel):
 
 
 class AssetsSettings(BaseModel):
-    audio: str = "chatacter/assets/AUDIO.wav"
-    image: str = "chatacter/assets/Einstein.jpg"
-    video: str = "chatacter/assets/VIDEO.mp4"
+    audio: str = "chatacter/assets/audio/AUDIO.wav"
+    image: str = "chatacter/assets/image/"
+    video: str = "chatacter/assets/video/VIDEO.mp4"
 
 
 class BarkSettings(BaseModel):
@@ -24,6 +24,7 @@ class Settings(BaseModel):
     assets: AssetsSettings = AssetsSettings()
     sadtalker: SadTalkerSettings = SadTalkerSettings()
     bark: BarkSettings = BarkSettings()
+    character: str = str()
 
 
 @lru_cache

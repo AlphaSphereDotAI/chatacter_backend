@@ -1,41 +1,46 @@
-import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from chatacter.model import generate_audio, generate_video, get_response
 from chatacter.settings import get_settings
 
-app = FastAPI()
+app = FastAPI(debug=True)
 settings = get_settings()
 
 
 @app.get("/")
 async def is_alive():
-    """hello world function"""
-    return {
-        "message": "Hello World",
-        "status": "ok",
-    }
+    return {"message": "Chatacter is alive!", "status": "ok"}
+
+
+@app.get("/get_settings")
+async def get_settings():
+    return settings.model_dump()
+
+
+@app.post("/set_character")
+def set_character(character: str):
+    settings.character = character
+    return {"status": "ok", "character": settings.character}
 
 
 @app.post("/get_text")
 def get_text(query: str):
-    """get text response function"""
     return get_response(query)
 
 
 @app.get("/get_audio")
 def get_audio(text: str):
-    """generate the audio file"""
     return generate_audio(text)
 
 
 @app.get("/get_video")
 def get_video():
-    """generate the video file"""
     generate_video()
     return FileResponse(settings.assets.video, media_type="video/mp4")
 
 
 if __name__ == "__main__":
+    import uvicorn
+
     uvicorn.run("app:app", host="localhost", port=8000, reload=True)

@@ -29,6 +29,7 @@ dependencies:
     - transformers
     - pydantic
     - libsndfile
+    - accelerate
     - pip
     - pip:
           - basicsr==1.4.2
@@ -37,3 +38,4 @@ dependencies:
           - cog
           - uvicorn
           - SoundFile
+          - optimum

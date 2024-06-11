@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings.development
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    depends_on:
+      - db
+    command: python manage.py runserver
+  search:
+    image: searxng/searxng
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./search:/app
