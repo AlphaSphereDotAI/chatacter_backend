@@ -15,3 +15,4 @@ joblib==1.2.0
 scikit-image==0.19.3
 facexlib==0.3.0
 llvmlite==0.38.1
+pillow>=10.2.0 # not directly required, pinned by Snyk to avoid a vulnerability
