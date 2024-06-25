@@ -26,7 +26,7 @@ class Predictor(BasePredictor):
         device = "cuda"
 
         sadtalker_paths = init_path(
-            settings["model"]["sadtalker"]["checkpoints"], os.path.join("src", "config")
+            settings.sadtalker.checkpoints, os.path.join("src", "config")
         )
         print(sadtalker_paths)
         # init model
@@ -52,15 +52,15 @@ class Predictor(BasePredictor):
     def download_model():
         os.system("pwd")
         MODELS = {
-            f"{settings['model']['sadtalker']['checkpoints']}/mapping_00109-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar",
-            f"{settings['model']['sadtalker']['checkpoints']}/mapping_00229-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00229-model.pth.tar",
-            f"{settings['model']['sadtalker']['checkpoints']}/SadTalker_V0.0.2_256.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_256.safetensors",
-            f"{settings['model']['sadtalker']['checkpoints']}/SadTalker_V0.0.2_512.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_512.safetensors",
-            f"{settings['model']['sadtalker']['checkpoints']}/epoch_00190_iteration_000400000_checkpoint.pt": "https://huggingface.co/vinthony/SadTalker-V002rc/resolve/main/epoch_00190_iteration_000400000_checkpoint.pt?download=true",
-            f"{settings['model']['sadtalker']['gfpgan']}/alignment_WFLW_4HG.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/alignment_WFLW_4HG.pth",
-            f"{settings['model']['sadtalker']['gfpgan']}/detection_Resnet50_Final.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth",
-            f"{settings['model']['sadtalker']['gfpgan']}/GFPGANv1.4.pth": "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.4.pth",
-            f"{settings['model']['sadtalker']['gfpgan']}/parsing_parsenet.pth": "https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth",
+            f"{settings.sadtalker.checkpoints}/mapping_00109-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar",
+            f"{settings.sadtalker.checkpoints}/mapping_00229-model.pth.tar": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00229-model.pth.tar",
+            f"{settings.sadtalker.checkpoints}/SadTalker_V0.0.2_256.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_256.safetensors",
+            f"{settings.sadtalker.checkpoints}/SadTalker_V0.0.2_512.safetensors": "https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_512.safetensors",
+            f"{settings.sadtalker.checkpoints}/epoch_00190_iteration_000400000_checkpoint.pt": "https://huggingface.co/vinthony/SadTalker-V002rc/resolve/main/epoch_00190_iteration_000400000_checkpoint.pt?download=true",
+            f"{settings.sadtalker.gfpgan}/alignment_WFLW_4HG.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/alignment_WFLW_4HG.pth",
+            f"{settings.sadtalker.gfpgan}/detection_Resnet50_Final.pth": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth",
+            f"{settings.sadtalker.gfpgan}/GFPGANv1.4.pth": "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.4.pth",
+            f"{settings.sadtalker.gfpgan}/parsing_parsenet.pth": "https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth",
         }
 
         def download_model_from_url(url, path):
@@ -68,14 +68,15 @@ class Predictor(BasePredictor):
             wget.download(url=url, out=path)
             print()
 
-        if not os.path.exists(settings["model"]["sadtalker"]["checkpoints"]):
+        if not os.path.exists(settings.sadtalker.checkpoints):
             print("\nCreating checkpoints directory")
-            os.mkdir(settings["model"]["sadtalker"]["checkpoints"])
-        if not os.path.exists(settings["model"]["sadtalker"]["gfpgan"]):
+            os.mkdir(settings.sadtalker.checkpoints)
+        if not os.path.exists(settings.sadtalker.gfpgan):
             print("\nCreating gfpgan/weights directory")
-            os.makedirs(settings["model"]["sadtalker"]["gfpgan"])
+            os.makedirs(settings.sadtalker.gfpgan)
 
         for path, link in MODELS.items():
+            print(path, link)
             if not os.path.exists(path):
                 download_model_from_url(url=link, path=path)
 
@@ -106,7 +107,7 @@ class Predictor(BasePredictor):
             default=None,
         ),
         still: bool = Input(
-            description="can crop back to the original videos for the full body aniamtion when preprocess is full",
+            description="can crop back to the original videos for the full body animation when preprocess is full",
             default=True,
         ),
     ) -> Path:
