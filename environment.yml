@@ -30,12 +30,12 @@ dependencies:
     - pydantic
     - libsndfile
     - accelerate
+    - uvicorn
+    - optimum
     - pip
     - pip:
           - basicsr==1.4.2
           - gfpgan
           - wget
           - cog
-          - uvicorn
           - SoundFile
-          - optimum
