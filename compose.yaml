@@ -1,8 +1,8 @@
 services:
   fastapi:
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 8000:8000
     container_name: chatacter_fastapi_server
@@ -26,7 +26,7 @@ services:
           path: .
           target: /app
     environment:
-       GROQ_API_KEY: ${GROQ_API_KEY}
+      GROQ_API_KEY: ${GROQ_API_KEY}
 
   search:
     image: searxng/searxng:latest
@@ -37,8 +37,8 @@ services:
     restart: always
     container_name: chatacter_search_engine
     environment:
-      - SEARXNG_DEBUG=true
-      - SEARXNG_PORT=8080
+      SEARXNG_DEBUG: true
+      SEARXNG_PORT: 8080
     develop:
       watch:
         - action: sync+restart
