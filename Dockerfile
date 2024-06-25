@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # RUN apt-get autoremove
 
 RUN conda init
-RUN conda update -v -y conda
+RUN conda update -y conda
 RUN conda install -c conda-forge -y \
     imageio=2.19.3 \
     imageio-ffmpeg=0.4.7 \
