@@ -1,4 +1,9 @@
-from langchain_community.document_loaders import UnstructuredFileLoader, UnstructuredURLLoader, AsyncHtmlLoader, RecursiveUrlLoader
+from langchain_community.document_loaders import (
+    AsyncHtmlLoader,
+    RecursiveUrlLoader,
+    UnstructuredFileLoader,
+    UnstructuredURLLoader,
+)
 from langchain_community.utilities import SearxSearchWrapper
 
 search = SearxSearchWrapper(searx_host="https://localhost:8080")
