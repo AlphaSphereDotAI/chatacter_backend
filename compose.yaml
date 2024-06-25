@@ -1,19 +1,53 @@
 services:
-  backend:
-    build: .
+  fastapi:
+    build:
+        context: .
+        dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - 8000:8000
+    container_name: chatacter_fastapi_server
     volumes:
-      - ./backend:/app
-    environment:
-      - DJANGO_SETTINGS_MODULE=backend.settings.development
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - .:/app:rw
+    restart: always
     depends_on:
-      - db
-    command: python manage.py runserver
+      - search
+      - VectorDatabase
+    command: fastapi dev
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    develop:
+      watch:
+        - action: sync+restart
+          path: .
+          target: /app
+
   search:
-    image: searxng/searxng
+    image: searxng/searxng:latest
     ports:
-      - "8080:8080"
+      - 8080:8080
     volumes:
-      - ./search:/app
+      - ./chatacter/searxng:/etc/searxng:rw
+    restart: always
+    container_name: chatacter_search_engine
+    environment:
+      - SEARXNG_DEBUG=true
+      - SEARXNG_PORT=8080
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./chatacter/searxng
+          target: /app/chatacter/searxng
+
+  VectorDatabase:
+    image: qdrant/qdrant:latest
+    ports:
+      - 6333:6333
+    container_name: chatacter_vector_database
+    volumes:
+      - ./chatacter/qdrant:/app/chatacter/qdrant:rw
+    restart: always
