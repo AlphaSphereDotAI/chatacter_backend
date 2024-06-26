@@ -26,9 +26,9 @@ jobs:
       - name: Cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache
-          key: ${{ runner.os }}-chatacter-${{ hashFiles('**/environment.yml') }}
-          restore-keys: ${{ runner.os }}-chatacter-
+          path: /var/lib/docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          restore-keys: ${{ runner.os }}-docker-
       # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
       - name: Log in to the Container registry
         uses: docker/login-action@master
