@@ -1,4 +1,6 @@
-name: chatacter
+# name: chatacter
+# prefix: ./conda
+name: base
 channels:
     - pytorch
     - nvidia
@@ -17,7 +19,7 @@ dependencies:
     - librosa=0.9.2
     - pydub=0.25.1
     - kornia=0.6.8
-    - yacs=0.1.8
+    - yacs
     - scikit-image=0.19.3
     - facexlib=0.3.0
     - trimesh=3.9.20
@@ -34,8 +36,13 @@ dependencies:
     - optimum
     - pip
     - pip:
-          - basicsr==1.4.2
+          - langchain-community
+          - langchain-qdrant
+          - basicsr
           - gfpgan
           - wget
           - cog
           - SoundFile
+          - opencv-python-headless
+          - unstructured[all-docs]
+          - fastapi-cli
