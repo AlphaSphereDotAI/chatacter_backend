@@ -1,8 +1,6 @@
 services:
   fastapi:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/alphaspheredotai/chatacter_backend:main
     ports:
       - 8000:8000
     container_name: chatacter_fastapi_server
@@ -12,7 +10,6 @@ services:
     depends_on:
       - search
       - VectorDatabase
-    command: fastapi dev
     deploy:
       resources:
         reservations:

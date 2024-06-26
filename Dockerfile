@@ -1,50 +1,32 @@
 FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
 
-# COPY .venv /app/.venv
 COPY . /app
 WORKDIR /app
 
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
-# RUN apt-get update
-# RUN apt-get install ffmpeg -y
-# RUN apt-get install x264 -y
-# RUN apt-get full-upgrade -y
-# RUN apt-get autoremove
+RUN apt-get update
+RUN apt-get install ffmpeg -y
+RUN apt-get install x264 -y
+RUN apt-get install wget -y
+RUN apt-get full-upgrade -y
+RUN apt-get autoremove
+
+RUN mkdir ./app/chatacter/sadtalker/checkpoints  
+RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar -O  ./app/chatacter/sadtalker/checkpoints/mapping_00109-model.pth.tar
+RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00229-model.pth.tar -O  ./app/chatacter/sadtalker/checkpoints/mapping_00229-model.pth.tar
+RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_256.safetensors -O  ./app/chatacter/sadtalker/checkpoints/SadTalker_V0.0.2_256.safetensors
+RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_512.safetensors -O  ./app/chatacter/sadtalker/checkpoints/SadTalker_V0.0.2_512.safetensors
+RUN wget -nc https://huggingface.co/vinthony/SadTalker-V002rc/resolve/main/epoch_00190_iteration_000400000_checkpoint.pt?download=true -O ./app/chatacter/sadtalker/checkpoints/epoch_00190_iteration_000400000_checkpoint.pt
+
+RUN mkdir -p ./app/chatacter/sadtalker/gfpgan/weights
+RUN wget -nc https://github.com/xinntao/facexlib/releases/download/v0.1.0/alignment_WFLW_4HG.pth -O ./app/chatacter/sadtalker/gfpgan/weights/alignment_WFLW_4HG.pth
+RUN wget -nc https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth -O ./app/chatacter/sadtalker/gfpgan/weights/detection_Resnet50_Final.pth 
+RUN wget -nc https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.4.pth -O ./app/chatacter/sadtalker/gfpgan/weights/GFPGANv1.4.pth 
+RUN wget -nc https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth -O ./app/chatacter/sadtalker/gfpgan/weights/parsing_parsenet.pth 
 
 RUN conda init
 RUN conda update -y conda
-# RUN conda install -c conda-forge -y \
-#     imageio=2.19.3 \
-#     imageio-ffmpeg=0.4.7 \
-#     librosa=0.9.2  \
-#     pydub=0.25.1  \
-#     kornia=0.6.8  \
-#     yacs=0.1.8  \
-#     scikit-image=0.19.3  \
-#     facexlib=0.3.0  \
-#     trimesh=3.9.20 \
-#     fastapi \
-#     huggingface_hub \
-#     langchain-groq \
-#     opencv \
-#     transformers \
-#     pydantic \
-#     libsndfile \
-#     accelerate \
-#     optimum \
-#     uvicorn \
-#     pysoundfile
-# RUN pip install -v --use-pep517 \
-#     langchain-community \
-#     langchain-qdrant \
-#     gfpgan \
-#     wget \
-#     cog \
-#     face_alignment==1.3.5 \
-#     opencv-python-headless \
-#     unstructured[all-docs] \
-#     basicsr
 RUN conda env update
 CMD ["fastapi", "dev"]
