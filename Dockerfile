@@ -47,4 +47,3 @@ RUN conda update -y conda
 #     unstructured[all-docs] \
 #     basicsr
 RUN conda env update
-RUN conda activate base
