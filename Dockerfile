@@ -29,4 +29,6 @@ RUN pip install -v --no-cache-dir -r requirements.txt
 
 COPY . .
 
+EXPOSE 8000
+
 CMD ["fastapi", "dev"]
