@@ -10,7 +10,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY . /app
 WORKDIR /app
 
 RUN mkdir ./chatacter/sadtalker/checkpoints && \
@@ -26,4 +25,7 @@ RUN mkdir ./chatacter/sadtalker/checkpoints && \
     wget -nc https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth -O ./chatacter/sadtalker/gfpgan/weights/parsing_parsenet.pth 
 
 RUN pip install -v --no-cache-dir -r requirements.txt
+
+COPY . .
+
 CMD ["fastapi", "dev"]
