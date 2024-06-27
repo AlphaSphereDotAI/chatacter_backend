@@ -1,8 +1,5 @@
 FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
 
-COPY . /app
-WORKDIR /app
-
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -12,6 +9,9 @@ RUN apt-get update && \
     apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+COPY . /app
+WORKDIR /app
 
 RUN mkdir ./chatacter/sadtalker/checkpoints && \
     mkdir -p ./chatacter/sadtalker/gfpgan/weights && \
