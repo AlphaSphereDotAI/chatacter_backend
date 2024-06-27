@@ -12,7 +12,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-RUN mkdir ./chatacter/sadtalker/checkpoints && \
+RUN mkdir -p ./chatacter/sadtalker/checkpoints && \
     mkdir -p ./chatacter/sadtalker/gfpgan/weights && \
     wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar -O  ./chatacter/sadtalker/checkpoints/mapping_00109-model.pth.tar && \
     wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00229-model.pth.tar -O  ./chatacter/sadtalker/checkpoints/mapping_00229-model.pth.tar && \
