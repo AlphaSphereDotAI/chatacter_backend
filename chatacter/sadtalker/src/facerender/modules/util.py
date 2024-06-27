@@ -74,7 +74,6 @@ def make_coordinate_grid(spatial_size, type):
 
 
 class ResBottleneck(nn.Module):
-
     def __init__(self, in_features, stride):
         super(ResBottleneck, self).__init__()
         self.conv1 = nn.Conv2d(
@@ -521,7 +520,6 @@ class AntiAliasInterpolation2d(nn.Module):
 
 
 class SPADE(nn.Module):
-
     def __init__(self, norm_nc, label_nc):
         super().__init__()
 
@@ -545,7 +543,6 @@ class SPADE(nn.Module):
 
 
 class SPADEResnetBlock(nn.Module):
-
     def __init__(self, fin, fout, norm_G, label_nc, use_se=False, dilation=1):
         super().__init__()
         # Attributes
@@ -593,7 +590,6 @@ class SPADEResnetBlock(nn.Module):
 
 
 class audio2image(nn.Module):
-
     def __init__(
         self,
         generator,

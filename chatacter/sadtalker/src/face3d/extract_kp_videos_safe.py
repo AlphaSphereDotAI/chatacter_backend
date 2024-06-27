@@ -40,7 +40,6 @@ def init_alignment_model(model_name, half=False, device="cuda", model_rootpath=N
 
 
 class KeypointExtractor:
-
     def __init__(self, device="cuda"):
         # gfpgan/weights
         try:

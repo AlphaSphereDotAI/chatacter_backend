@@ -30,7 +30,6 @@ class _MultiDeviceReplicator(object):
 
 
 class MaxClipGradScaler(GradScaler):
-
     def __init__(self, init_scale, max_scale: float, growth_interval=100):
         GradScaler.__init__(
             self, init_scale=init_scale, growth_interval=growth_interval

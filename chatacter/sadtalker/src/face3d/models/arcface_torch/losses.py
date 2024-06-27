@@ -11,7 +11,6 @@ def get_loss(name):
 
 
 class CosFace(nn.Module):
-
     def __init__(self, s=64.0, m=0.40):
         super(CosFace, self).__init__()
         self.s = s
@@ -27,7 +26,6 @@ class CosFace(nn.Module):
 
 
 class ArcFace(nn.Module):
-
     def __init__(self, s=64.0, m=0.5):
         super(ArcFace, self).__init__()
         self.s = s
