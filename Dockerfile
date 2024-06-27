@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install ffmpeg x264 wget -y && \
+    apt-get install --no-install-recommends ffmpeg x264 wget -y && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
@@ -25,5 +25,5 @@ RUN mkdir ./chatacter/sadtalker/checkpoints && \
     wget -nc https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.4.pth -O ./chatacter/sadtalker/gfpgan/weights/GFPGANv1.4.pth && \
     wget -nc https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth -O ./chatacter/sadtalker/gfpgan/weights/parsing_parsenet.pth 
 
-RUN pip install -r requirements.txt
+RUN pip install -v --no-cache-dir -r requirements.txt
 CMD ["fastapi", "dev"]
