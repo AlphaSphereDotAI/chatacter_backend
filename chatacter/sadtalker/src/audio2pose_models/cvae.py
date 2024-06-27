@@ -12,7 +12,6 @@ def class2onehot(idx, class_num):
 
 
 class CVAE(nn.Module):
-
     def __init__(self, cfg):
         super().__init__()
         encoder_layer_sizes = cfg.MODEL.CVAE.ENCODER_LAYER_SIZES
@@ -66,7 +65,6 @@ class CVAE(nn.Module):
 
 
 class ENCODER(nn.Module):
-
     def __init__(
         self,
         layer_sizes,
@@ -127,7 +125,6 @@ class ENCODER(nn.Module):
 
 
 class DECODER(nn.Module):
-
     def __init__(
         self,
         layer_sizes,
