@@ -6,26 +6,15 @@ WORKDIR /app
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update
-RUN apt-get install ffmpeg -y
-RUN apt-get install x264 -y
-RUN apt-get install wget -y
-RUN apt-get full-upgrade -y
-RUN apt-get autoremove
+RUN apt-get update && \
+    apt-get install ffmpeg x264 wget -y && \
+    apt-get full-upgrade -y && \
+    apt-get autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir ./chatacter/sadtalker/checkpoints  
-RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00109-model.pth.tar -O  ./chatacter/sadtalker/checkpoints/mapping_00109-model.pth.tar
-RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/mapping_00229-model.pth.tar -O  ./chatacter/sadtalker/checkpoints/mapping_00229-model.pth.tar
-RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_256.safetensors -O  ./chatacter/sadtalker/checkpoints/SadTalker_V0.0.2_256.safetensors
-RUN wget -nc https://github.com/OpenTalker/SadTalker/releases/download/v0.0.2-rc/SadTalker_V0.0.2_512.safetensors -O  ./chatacter/sadtalker/checkpoints/SadTalker_V0.0.2_512.safetensors
-RUN wget -nc https://huggingface.co/vinthony/SadTalker-V002rc/resolve/main/epoch_00190_iteration_000400000_checkpoint.pt?download=true -O ./chatacter/sadtalker/checkpoints/epoch_00190_iteration_000400000_checkpoint.pt
+RUN chatacter/sadtalker/scripts/download_models.sh
 
-RUN mkdir -p ./chatacter/sadtalker/gfpgan/weights
-RUN wget -nc https://github.com/xinntao/facexlib/releases/download/v0.1.0/alignment_WFLW_4HG.pth -O ./chatacter/sadtalker/gfpgan/weights/alignment_WFLW_4HG.pth
-RUN wget -nc https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth -O ./chatacter/sadtalker/gfpgan/weights/detection_Resnet50_Final.pth 
-RUN wget -nc https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.4.pth -O ./chatacter/sadtalker/gfpgan/weights/GFPGANv1.4.pth 
-RUN wget -nc https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth -O ./chatacter/sadtalker/gfpgan/weights/parsing_parsenet.pth 
-
-RUN conda init
 RUN pip install -r requirements.txt
+
 CMD ["fastapi", "dev"]
