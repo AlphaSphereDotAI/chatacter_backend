@@ -13,6 +13,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN chmod +x chatacter/sadtalker/scripts/download_models.sh
 RUN chatacter/sadtalker/scripts/download_models.sh
 
 RUN pip install -r requirements.txt
