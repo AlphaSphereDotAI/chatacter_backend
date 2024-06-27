@@ -1,8 +1,8 @@
 accelerate
-torch==2.1.0+cu121
-torchaudio==2.1.0+cu121
-torchvision==0.16.0+cu121
-basicsr==1.4.2
+# torch==2.1.0+cu121
+# torchaudio==2.1.0+cu121
+# torchvision==0.16.0+cu121
+basicsr
 cog~=0.9.8
 face_alignment~=1.3.5
 facexlib~=0.3.0
@@ -33,3 +33,8 @@ trimesh~=3.9.20
 uvicorn
 wget
 yacs~=0.1.8
+langchain-community
+langchain-qdrant
+opencv-python-headless
+unstructured[all-docs]
+fastapi-cli

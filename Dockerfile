@@ -27,6 +27,5 @@ RUN wget -nc https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGA
 RUN wget -nc https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth -O ./chatacter/sadtalker/gfpgan/weights/parsing_parsenet.pth 
 
 RUN conda init
-RUN conda update -y conda
-RUN conda env update
+RUN pip install -r requirements.txt
 CMD ["fastapi", "dev"]
