@@ -37,7 +37,6 @@ from sklearn.model_selection import KFold
 
 
 class LFold:
-
     def __init__(self, n_splits=2, shuffle=False):
         self.n_splits = n_splits
         if self.n_splits > 1:
@@ -308,5 +307,3 @@ def dumpR(data_set, backbone, batch_size, name="", data_extra=None, label_shape=
     outname = os.path.join("temp.bin")
     with open(outname, "wb") as f:
         pickle.dump((embeddings, issame_list), f, protocol=pickle.HIGHEST_PROTOCOL)
-
-

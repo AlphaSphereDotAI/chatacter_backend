@@ -79,7 +79,6 @@ class DenseMotionNetwork(nn.Module):
             [identity_grid, driving_to_source], dim=1
         )  # bs num_kp+1 d h w 3
 
-
         return sparse_motions
 
     def create_deformed_feature(self, feature, sparse_motions):
@@ -132,7 +131,6 @@ class DenseMotionNetwork(nn.Module):
 
         input_ = torch.cat([heatmap, deformed_feature], dim=2)
         input_ = input_.view(bs, -1, d, h, w)
-
 
         prediction = self.hourglass(input_)
 

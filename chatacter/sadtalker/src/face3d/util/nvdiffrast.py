@@ -14,9 +14,7 @@ from pytorch3d.structures import Meshes
 from torch import nn
 
 
-
 class MeshRenderer(nn.Module):
-
     def __init__(self, rasterize_fov, znear=0.1, zfar=10, rasterize_size=224):
         super(MeshRenderer, self).__init__()
 
@@ -52,7 +50,6 @@ class MeshRenderer(nn.Module):
         if self.rasterizer is None:
             self.rasterizer = MeshRasterizer()
             print("create rasterizer on device cuda:%d" % device.index)
-
 
         # for range_mode vetex: [B*N, 4], tri: [B*M, 3], for instance_mode vetex: [B, N, 4], tri: [M, 3]
         tri = tri.type(torch.int32).contiguous()

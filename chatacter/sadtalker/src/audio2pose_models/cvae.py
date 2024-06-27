@@ -12,7 +12,6 @@ def class2onehot(idx, class_num):
 
 
 class CVAE(nn.Module):
-
     def __init__(self, cfg):
         super().__init__()
         encoder_layer_sizes = cfg.MODEL.CVAE.ENCODER_LAYER_SIZES
@@ -66,7 +65,6 @@ class CVAE(nn.Module):
 
 
 class ENCODER(nn.Module):
-
     def __init__(
         self,
         layer_sizes,
@@ -127,7 +125,6 @@ class ENCODER(nn.Module):
 
 
 class DECODER(nn.Module):
-
     def __init__(
         self,
         layer_sizes,
@@ -181,7 +178,6 @@ class DECODER(nn.Module):
         # bs layer_sizes[-1]
         x_out = self.MLP(x_in)
         x_out = x_out.reshape((bs, self.seq_len, -1))
-
 
         pose_emb = self.resunet(x_out.unsqueeze(1))  # bs 1 seq_len 6
 

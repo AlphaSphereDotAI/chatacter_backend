@@ -15,7 +15,6 @@ def resize_n_crop(image, M, dsize=112):
 
 
 class PerceptualLoss(nn.Module):
-
     def __init__(self, recog_net, input_size=112):
         super(PerceptualLoss, self).__init__()
         self.recog_net = recog_net

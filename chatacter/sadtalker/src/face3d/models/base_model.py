@@ -50,7 +50,6 @@ class BaseModel(ABC):
         saved_dict = {}
 
         def hook_gen(name):
-
             def grad_hook(grad):
                 saved_vals = add_func(grad)
                 saved_dict[name] = saved_vals
@@ -105,7 +104,6 @@ class BaseModel(ABC):
         if not self.isTrain or opt.continue_train:
             load_suffix = opt.epoch
             self.load_networks(load_suffix)
-
 
     def parallelize(self, convert_sync_batchnorm=True):
         if not self.opt.use_ddp:

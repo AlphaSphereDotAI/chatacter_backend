@@ -3,7 +3,6 @@ from torch import nn
 
 
 class Conv2d(nn.Module):
-
     def __init__(
         self, cin, cout, kernel_size, stride, padding, residual=False, *args, **kwargs
     ):
@@ -22,7 +21,6 @@ class Conv2d(nn.Module):
 
 
 class AudioEncoder(nn.Module):
-
     def __init__(self, wav2lip_checkpoint, device):
         super(AudioEncoder, self).__init__()
 
@@ -45,7 +43,6 @@ class AudioEncoder(nn.Module):
         # load the pre-trained audio_encoder, we do not need to load wav2lip model here.
         # wav2lip_state_dict = torch.load(wav2lip_checkpoint, map_location=torch.device(device))['state_dict']
         # state_dict = self.audio_encoder.state_dict()
-
 
     def forward(self, audio_sequences):
         B = audio_sequences.size(0)

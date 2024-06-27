@@ -15,7 +15,6 @@ You need to implement the following functions:
 from data.base_dataset import BaseDataset, get_transform
 
 
-
 class TemplateDataset(BaseDataset):
     """A template dataset class for you to implement custom datasets."""
 

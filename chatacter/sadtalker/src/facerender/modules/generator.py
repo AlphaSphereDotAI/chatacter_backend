@@ -157,7 +157,6 @@ class OcclusionAwareGenerator(nn.Module):
                     )
                 out = out * occlusion_map
 
-
         # Decoding part
         out = self.resblocks_2d(out)
         for i in range(len(self.up_blocks)):
@@ -171,7 +170,6 @@ class OcclusionAwareGenerator(nn.Module):
 
 
 class SPADEDecoder(nn.Module):
-
     def __init__(self):
         super().__init__()
         ic = 256
@@ -212,7 +210,6 @@ class SPADEDecoder(nn.Module):
 
 
 class OcclusionAwareSPADEGenerator(nn.Module):
-
     def __init__(
         self,
         image_channel,
@@ -309,7 +306,6 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             )
             output_dict["mask"] = dense_motion["mask"]
 
-
             if "occlusion_map" in dense_motion:
                 occlusion_map = dense_motion["occlusion_map"]
                 output_dict["occlusion_map"] = occlusion_map
@@ -322,7 +318,6 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             out = out.view(bs, c * d, h, w)
             out = self.third(out)
             out = self.fourth(out)
-
 
             if occlusion_map is not None:
                 if (
