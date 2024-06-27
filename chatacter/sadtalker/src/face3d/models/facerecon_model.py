@@ -17,7 +17,6 @@ from src.face3d.models.losses import (
 from src.face3d.util import util
 from src.face3d.util.nvdiffrast import MeshRenderer
 
-# from src.face3d.util.preprocess import estimate_norm_torch
 
 
 class FaceReconModel(BaseModel):

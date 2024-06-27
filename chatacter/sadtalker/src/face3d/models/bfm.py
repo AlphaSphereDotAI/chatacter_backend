@@ -355,9 +355,7 @@ class ParametricFaceModel:
         """
         coef_dict = self.split_coeff(coeffs)
         face_shape = self.compute_shape(coef_dict["id"], coef_dict["exp"])
-        # rotation = self.compute_rotation(coef_dict['angle'])
 
-        # face_shape_transformed = self.transform(face_shape, rotation, coef_dict['trans'])
         face_vertex = self.to_camera(face_shape)
 
         face_proj = self.to_image(face_vertex)

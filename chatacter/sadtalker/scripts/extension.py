@@ -91,19 +91,15 @@ def get_default_checkpoint_path():
     )
 
     if check_all_files_safetensor(checkpoint_path):
-        # print('founding sadtalker checkpoint in ' + str(checkpoint_path))
         return checkpoint_path
 
     if check_all_files_safetensor(extension_checkpoint_path):
-        # print('founding sadtalker checkpoint in ' + str(extension_checkpoint_path))
         return extension_checkpoint_path
 
     if check_all_files(checkpoint_path):
-        # print('founding sadtalker checkpoint in ' + str(checkpoint_path))
         return checkpoint_path
 
     if check_all_files(extension_checkpoint_path):
-        # print('founding sadtalker checkpoint in ' + str(extension_checkpoint_path))
         return extension_checkpoint_path
 
     return None
@@ -125,13 +121,8 @@ def install():
     }
 
     # # dlib is not necessary currently
-    # if 'darwin' in sys.platform:
-    #     kv['dlib'] = "dlib"
-    # else:
-    #     kv['dlib'] = 'dlib-bin'
 
     # #### we need to have a newer version of imageio for our method.
-    # launch.run_pip("install imageio==2.19.3", "requirements for SadTalker")
 
     for k, v in kv.items():
         if not launch.is_installed(k):
@@ -152,15 +143,7 @@ def install():
             """
         )
 
-        # python = sys.executable
 
-        # launch.run(f'"{python}" -m pip uninstall -y huggingface_hub', live=True)
-        # launch.run(f'"{python}" -m pip install --upgrade git+https://github.com/huggingface/huggingface_hub@main', live=True)
-        # ### run the scripts to downlod models to correct localtion.
-        # # print('download models for SadTalker')
-        # # launch.run("cd " + paths.script_path+"/extensions/SadTalker && bash ./scripts/download_models.sh", live=True)
-        # # print('SadTalker is successfully installed!')
-        # download_model(paths.script_path+'/extensions/SadTalker/checkpoints')
 
 
 def on_ui_tabs():

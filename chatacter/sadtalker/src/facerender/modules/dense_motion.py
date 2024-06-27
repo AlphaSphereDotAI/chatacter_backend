@@ -29,7 +29,6 @@ class DenseMotionNetwork(nn.Module):
         estimate_occlusion_map=False,
     ):
         super(DenseMotionNetwork, self).__init__()
-        # self.hourglass = Hourglass(block_expansion=block_expansion, in_features=(num_kp+1)*(feature_channel+1), max_features=max_features, num_blocks=num_blocks)
         self.hourglass = Hourglass(
             block_expansion=block_expansion,
             in_features=(num_kp + 1) * (compress + 1),
@@ -45,7 +44,6 @@ class DenseMotionNetwork(nn.Module):
         self.norm = BatchNorm3d(compress, affine=True)
 
         if estimate_occlusion_map:
-            # self.occlusion = nn.Conv2d(reshape_channel*reshape_depth, 1, kernel_size=7, padding=3)
             self.occlusion = nn.Conv2d(
                 self.hourglass.out_filters * reshape_depth, 1, kernel_size=7, padding=3
             )
@@ -62,7 +60,6 @@ class DenseMotionNetwork(nn.Module):
             bs, self.num_kp, 1, 1, 1, 3
         )
 
-        # if 'jacobian' in kp_driving:
         if "jacobian" in kp_driving and kp_driving["jacobian"] is not None:
             jacobian = torch.matmul(
                 kp_source["jacobian"], torch.inverse(kp_driving["jacobian"])
@@ -82,7 +79,6 @@ class DenseMotionNetwork(nn.Module):
             [identity_grid, driving_to_source], dim=1
         )  # bs num_kp+1 d h w 3
 
-        # sparse_motions = driving_to_source
 
         return sparse_motions
 
@@ -137,7 +133,6 @@ class DenseMotionNetwork(nn.Module):
         input_ = torch.cat([heatmap, deformed_feature], dim=2)
         input_ = input_.view(bs, -1, d, h, w)
 
-        # input = deformed_feature.view(bs, -1, d, h, w)      # (bs, num_kp+1 * c, d, h, w)
 
         prediction = self.hourglass(input_)
 

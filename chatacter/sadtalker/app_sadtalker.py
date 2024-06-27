@@ -81,8 +81,6 @@ def sadtalker_demo(
                             "need help? please visit our [best practice page](https://github.com/OpenTalker/SadTalker/blob/main/docs/best_practice.md) for more detials"
                         )
                         with gr.Column(variant="panel"):
-                            # width = gr.Slider(minimum=64, elem_id="img2img_width", maximum=2048, step=8, label="Manually Crop Width", value=512) # img2img_width
-                            # height = gr.Slider(minimum=64, elem_id="img2img_height", maximum=2048, step=8, label="Manually Crop Height", value=512) # img2img_width
                             pose_style = gr.Slider(
                                 minimum=0,
                                 maximum=46,

@@ -154,7 +154,6 @@ class SadTalker:
 
         # audio2ceoff
         if use_ref_video and ref_info == "all":
-            # self.audio_to_coeff.generate(batch, save_dir, pose_style, ref_pose_coeff_path)
             coeff_path = ref_video_coeff_path
         else:
             batch = get_data(

@@ -1,4 +1,3 @@
-# coding: utf-8
 
 import argparse
 import os
@@ -124,7 +123,6 @@ def divideIntoNstrand(listTemp, n):
 
 
 def read_template_media_list(path):
-    # ijb_meta = np.loadtxt(path, dtype=str)
     ijb_meta = pd.read_csv(path, sep=" ", header=None).values
     templates = ijb_meta[:, 1].astype(np.int)
     medias = ijb_meta[:, 2].astype(np.int)
@@ -135,10 +133,7 @@ def read_template_media_list(path):
 
 
 def read_template_pair_list(path):
-    # pairs = np.loadtxt(path, dtype=str)
     pairs = pd.read_csv(path, sep=" ", header=None).values
-    # print(pairs.shape)
-    # print(pairs[:, 0].astype(np.int))
     t1 = pairs[:, 0].astype(np.int)
     t2 = pairs[:, 1].astype(np.int)
     label = pairs[:, 2].astype(np.int)
@@ -205,8 +200,6 @@ def get_image_feature(img_path, files_list, model_path, epoch, gpu_id):
             batch += 1
         faceness_scores.append(name_lmk_score[-1])
     faceness_scores = np.array(faceness_scores).astype(np.float32)
-    # img_feats = np.ones( (len(files), 1024), dtype=np.float32) * 0.01
-    # faceness_scores = np.ones( (len(files), ), dtype=np.float32 )
     return img_feats, faceness_scores
 
 
@@ -237,13 +230,10 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
                     np.mean(face_norm_feats[ind_m], axis=0, keepdims=True)
                 ]
         media_norm_feats = np.array(media_norm_feats)
-        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
         template_feats[count_template] = np.sum(media_norm_feats, axis=0)
         if count_template % 2000 == 0:
             print("Finish Calculating {} template features.".format(count_template))
-    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     template_norm_feats = sklearn.preprocessing.normalize(template_feats)
-    # print(template_norm_feats.shape)
     return template_norm_feats, unique_templates
 
 
@@ -350,11 +340,8 @@ img_path = "%s/loose_crop" % image_path
 img_list_path = "%s/meta/%s_name_5pts_score.txt" % (image_path, target.lower())
 img_list = open(img_list_path)
 files = img_list.readlines()
-# files_list = divideIntoNstrand(files, rank_size)
 files_list = files
 
-# img_feats
-# for i in range(rank_size):
 img_feats, faceness_scores = get_image_feature(
     img_path, files_list, model_path, 0, gpu_id
 )
@@ -378,9 +365,6 @@ start = timeit.default_timer()
 # 2. FaceScore （Detector）
 
 if use_flip_test:
-    # concat --- F1
-    # img_input_feats = img_feats
-    # add --- F2
     img_input_feats = (
         img_feats[:, 0 : img_feats.shape[1] // 2]
         + img_feats[:, img_feats.shape[1] // 2 :]
@@ -422,7 +406,6 @@ print("Time: %.2f s. " % (stop - start))
 
 # In[ ]:
 save_path = os.path.join(result_dir, args.job)
-# save_path = result_dir + '/%s_result' % target
 
 if not os.path.exists(save_path):
     os.makedirs(save_path)

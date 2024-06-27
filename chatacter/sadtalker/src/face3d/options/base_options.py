@@ -204,8 +204,6 @@ class BaseOptions:
             if id >= 0:
                 gpu_ids.append(id)
         opt.world_size = len(gpu_ids)
-        # if len(opt.gpu_ids) > 0:
-        #     torch.cuda.set_device(gpu_ids[0])
         if opt.world_size == 1:
             opt.use_ddp = False
 

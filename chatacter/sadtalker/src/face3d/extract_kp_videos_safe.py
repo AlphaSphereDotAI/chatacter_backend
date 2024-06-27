@@ -66,7 +66,6 @@ class KeypointExtractor:
 
             for image in i_range:
                 current_kp = self.extract_keypoint(image)
-                # current_kp = self.detector.get_landmarks(np.array(image))
                 if np.mean(current_kp) == -1 and keypoints:
                     keypoints.append(keypoints[-1])
                 else:

@@ -29,7 +29,6 @@ class BaseDataset(data.Dataset, ABC):
             opt (Option class)-- stores all the experiment flags; needs to be a subclass of BaseOptions
         """
         self.opt = opt
-        # self.root = opt.dataroot
         self.current_epoch = 0
 
     @staticmethod

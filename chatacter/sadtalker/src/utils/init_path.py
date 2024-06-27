@@ -55,7 +55,6 @@ def init_path(
         config_dir, "auido2pose.yaml"
     )
     sadtalker_paths["audio2exp_yaml_path"] = os.path.join(config_dir, "auido2exp.yaml")
-    # os.path.join(config_dir, 'auido2exp.yaml')
     sadtalker_paths["use_safetensor"] = use_safetensor
 
     if "full" in preprocess:

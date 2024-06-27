@@ -36,7 +36,6 @@ class BaseModel(ABC):
         self.opt = opt
         self.isTrain = False
         self.device = torch.device("cpu")
-        # os.path.join(opt.checkpoints_dir, opt.name)  # save all the checkpoints to save_dir
         self.save_dir = " "
         self.loss_names = []
         self.model_names = []
@@ -107,7 +106,6 @@ class BaseModel(ABC):
             load_suffix = opt.epoch
             self.load_networks(load_suffix)
 
-        # self.print_networks(opt.verbose)
 
     def parallelize(self, convert_sync_batchnorm=True):
         if not self.opt.use_ddp:

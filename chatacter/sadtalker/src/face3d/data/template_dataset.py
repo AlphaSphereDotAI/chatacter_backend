@@ -14,8 +14,6 @@ You need to implement the following functions:
 
 from data.base_dataset import BaseDataset, get_transform
 
-# from data.image_folder import make_dataset
-# from PIL import Image
 
 
 class TemplateDataset(BaseDataset):

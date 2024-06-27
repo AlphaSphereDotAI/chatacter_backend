@@ -89,9 +89,6 @@ class Audio2Coeff:
             results_dict_exp = self.audio2exp_model.test(batch)
             exp_pred = results_dict_exp["exp_coeff_pred"]  # bs T 64
 
-            # for class_id in  range(1):
-            # class_id = 0#(i+10)%45
-            # class_id = random.randint(0,46)                                   #46 styles can be selected
             batch["class"] = torch.LongTensor([pose_style]).to(self.device)
             results_dict_pose = self.audio2pose_model.test(batch)
             pose_pred = results_dict_pose["pose_pred"]  # bs T 6

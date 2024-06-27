@@ -168,7 +168,6 @@ class DECODER(nn.Module):
         ref = batch["ref"]  # bs 6
         # bs seq_len audio_emb_in_size
         audio_in = batch["audio_emb"]
-        # print('audio_in: ', audio_in[:, :, :10])
 
         # bs seq_len audio_emb_out_size
         audio_out = self.linear_audio(audio_in)
@@ -183,7 +182,6 @@ class DECODER(nn.Module):
         x_out = self.MLP(x_in)
         x_out = x_out.reshape((bs, self.seq_len, -1))
 
-        # print('x_out: ', x_out)
 
         pose_emb = self.resunet(x_out.unsqueeze(1))  # bs 1 seq_len 6
 
