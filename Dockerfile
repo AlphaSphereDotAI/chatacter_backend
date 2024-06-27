@@ -11,6 +11,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+COPY requirements.txt .
 
 RUN mkdir -p ./chatacter/sadtalker/checkpoints && \
     mkdir -p ./chatacter/sadtalker/gfpgan/weights && \
