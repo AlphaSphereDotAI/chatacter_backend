@@ -24,7 +24,7 @@ RUN mkdir -p ./chatacter/sadtalker/checkpoints && \
     wget -nc https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth -O ./chatacter/sadtalker/gfpgan/weights/parsing_parsenet.pth 
 
 COPY requirements.txt .
-RUN pip install -v --no-cache-dir -r requirements.txt
+RUN pip install -v --no-cache-dir --use-pep517 -r requirements.txt
 
 COPY . .
 
