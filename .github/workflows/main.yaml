@@ -43,7 +43,7 @@ jobs:
               id: push_app
               uses: docker/build-push-action@master
               with:
-                  context: App
+                  context: ./App
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
@@ -54,7 +54,7 @@ jobs:
               id: push_video_generator
               uses: docker/build-push-action@master
               with:
-                  context: VideoGenerator
+                  context: ./VideoGenerator
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
@@ -65,7 +65,7 @@ jobs:
               id: push_voice_generator
               uses: docker/build-push-action@master
               with:
-                  context: VoiceGenerator
+                  context: ./VoiceGenerator
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
