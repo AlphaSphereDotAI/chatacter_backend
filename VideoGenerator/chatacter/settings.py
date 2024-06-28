@@ -14,16 +14,10 @@ class AssetsSettings(BaseModel):
     image: str = "chatacter/assets/image/"
     video: str = "chatacter/assets/video/VIDEO.mp4"
 
-
-class BarkSettings(BaseModel):
-    path: str = "chatacter/bark-small"
-
-
 class Settings(BaseModel):
     app_name: str = "Chatacter"
     assets: AssetsSettings = AssetsSettings()
     sadtalker: SadTalkerSettings = SadTalkerSettings()
-    bark: BarkSettings = BarkSettings()
     character: str = str()
 
 

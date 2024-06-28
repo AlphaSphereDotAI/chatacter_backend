@@ -4,17 +4,10 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
-
-from chatacter.sadtalker.predict import Predictor
 from chatacter.settings import get_settings
+import requests
 
 settings = get_settings()
-
-snapshot_download(repo_id="suno/bark-small", local_dir=settings.bark.path)
-processor = AutoProcessor.from_pretrained(settings.bark.path)
-model = AutoModel.from_pretrained(settings.bark.path, cache_dir=settings.bark.path)
-model = model.to_bettertransformer()
-model.enable_cpu_offload()
 chat = ChatGroq(model_name="llama3-70b-8192", verbose=True)
 logging.set_verbosity_debug()
 
@@ -22,8 +15,7 @@ logging.set_verbosity_debug()
 def generate_audio(response) -> dict:
     start_time = time.time()
     try:
-        inputs = processor(response, return_tensors="pt")
-        audio = model.generate(**inputs)
+        audio_response = requests.get(f"{settings.host.voice_generator}?text={response}")
     except Exception as e:
         end_time = time.time()
         return {"status": e, "time": end_time - start_time}
@@ -41,7 +33,7 @@ def generate_audio(response) -> dict:
         "audio": settings.assets.audio,
         "rate": model.generation_config.sample_rate,
         "text": response,
-        "status": "ok",
+        "status": audio_response.status_code,
         "time": end_time - start_time,
     }
 
