@@ -10,7 +10,9 @@
 .env.me
 .env.previous
 */checkpoints/
-
+./chatacter/sadtalker/checkpoints/
+./chatacter/sadtalker/gfpgan/weights/
+VoiceGenerator/chatacter/bark-small
 .ruff_cache
 **/__pycache__/
 # Flutter/Dart/Pub related
@@ -41,4 +43,3 @@ frontend/.pub/
 .flaskenv*
 !.env.project
 !.env.vault
-sadtalker/src/audio2pose_models/__pycache__/cvae.cpython-310.pyc
