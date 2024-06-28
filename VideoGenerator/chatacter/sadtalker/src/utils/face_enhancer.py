@@ -2,10 +2,9 @@ import os
 
 import cv2
 import torch
+from chatacter.sadtalker.src.utils.videoio import load_video_to_cv2
 from gfpgan import GFPGANer
 from tqdm import tqdm
-
-from chatacter.sadtalker.src.utils.videoio import load_video_to_cv2
 
 
 class GeneratorWithLen(object):

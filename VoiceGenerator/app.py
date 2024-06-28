@@ -1,7 +1,6 @@
+from chatacter.settings import get_settings
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
-
-from chatacter.settings import get_settings
 
 app = FastAPI(
     debug=True,

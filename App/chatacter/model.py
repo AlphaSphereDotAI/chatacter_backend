@@ -1,11 +1,12 @@
 import time
+
+import requests
+from chatacter.settings import get_settings
 from huggingface_hub import snapshot_download
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
-from chatacter.settings import get_settings
-import requests
 
 settings = get_settings()
 chat = ChatGroq(model_name="llama3-70b-8192", verbose=True)
@@ -15,7 +16,9 @@ logging.set_verbosity_debug()
 def generate_audio(response) -> dict:
     start_time = time.time()
     try:
-        audio_response = requests.get(f"{settings.host.voice_generator}?text={response}")
+        audio_response = requests.get(
+            f"{settings.host.voice_generator}?text={response}"
+        )
     except Exception as e:
         end_time = time.time()
         return {"status": e, "time": end_time - start_time}

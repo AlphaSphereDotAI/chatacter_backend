@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from pydantic import BaseModel
 
+
 class AssetsSettings(BaseModel):
     audio: str = "./chatacter/assets/audio/AUDIO.wav"
     image: str = "./chatacter/assets/image/"

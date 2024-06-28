@@ -1,12 +1,13 @@
 import time
-from transformers import  logging
 
 from chatacter.sadtalker.predict import Predictor
 from chatacter.settings import get_settings
+from transformers import logging
 
 settings = get_settings()
 
 logging.set_verbosity_debug()
+
 
 def generate_video() -> dict:
     start_time = time.time()

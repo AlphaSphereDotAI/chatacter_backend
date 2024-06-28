@@ -1,8 +1,7 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
-
 from chatacter.model import generate_audio, generate_video, get_response
 from chatacter.settings import get_settings
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
 
 app = FastAPI(debug=True)
 settings = get_settings()

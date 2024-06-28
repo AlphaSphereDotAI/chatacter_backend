@@ -8,9 +8,6 @@ import safetensors
 import safetensors.torch
 import torch
 import yaml
-from pydub import AudioSegment
-from skimage import img_as_ubyte
-
 from chatacter.sadtalker.src.facerender.modules.generator import (
     OcclusionAwareSPADEGenerator,
 )
@@ -26,6 +23,8 @@ from chatacter.sadtalker.src.utils.face_enhancer import (
 )
 from chatacter.sadtalker.src.utils.paste_pic import paste_pic
 from chatacter.sadtalker.src.utils.videoio import save_video_with_watermark
+from pydub import AudioSegment
+from skimage import img_as_ubyte
 
 warnings.filterwarnings("ignore")
 
@@ -36,7 +35,6 @@ except:
 
 
 class AnimateFromCoeff:
-
     def __init__(self, sadtalker_path, device):
         with open(sadtalker_path["facerender_yaml"]) as f:
             config = yaml.safe_load(f)

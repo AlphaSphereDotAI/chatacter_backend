@@ -14,6 +14,7 @@ class AssetsSettings(BaseModel):
     image: str = "chatacter/assets/image/"
     video: str = "chatacter/assets/video/VIDEO.mp4"
 
+
 class Settings(BaseModel):
     app_name: str = "Chatacter"
     assets: AssetsSettings = AssetsSettings()
