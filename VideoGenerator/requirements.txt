@@ -1,11 +1,9 @@
-basicsr
-cog~=0.9.8
-face_alignment~=1.3.5
+cog
+face-alignment~=1.3.5
 facexlib~=0.3.0
 fastapi
 fastapi-cli
 gfpgan~=1.3.8
-imageio[ffmpeg]
 imageio==2.19.3
 imageio-ffmpeg==0.4.7
 kornia~=0.6.8
@@ -24,8 +22,5 @@ trimesh~=3.9.20
 uvicorn
 wget
 yacs~=0.1.8
-opencv-python-headless
-numba
 resampy==0.3.1
-joblib
-av
+basicsr
