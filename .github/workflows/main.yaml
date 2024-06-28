@@ -37,17 +37,17 @@ jobs:
               id: meta_app
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/app
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_app
             - name: Extract metadata (tags, labels) for Docker for Video Generator
               id: meta_video_generator
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/video_generator
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_video_generator
             - name: Extract metadata (tags, labels) for Docker for Voice Generator
               id: meta_voice_generator
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/voice_generator
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_voice_generator
             # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
             # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
             # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
