@@ -88,8 +88,8 @@ jobs:
               with:
                   context: ./VideoGenerator
                   push: true
-                  tags: ${{ steps.meta_video_generator.outputs.tags }}
-                  labels: ${{ steps.meta_video_generator.outputs.labels }}
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
@@ -128,8 +128,8 @@ jobs:
               with:
                   context: ./VoiceGenerator
                   push: true
-                  tags: ${{ steps.meta_voice_generator.outputs.tags }}
-                  labels: ${{ steps.meta_voice_generator.outputs.labels }}
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
