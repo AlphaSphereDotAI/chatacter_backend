@@ -9,6 +9,7 @@ RUN apt-get update && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
+    apt-get autoclean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p ./chatacter/sadtalker/checkpoints && \
