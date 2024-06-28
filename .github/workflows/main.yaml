@@ -33,8 +33,18 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.TOKEN_KEY_GITHUB }}
             # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
-            - name: Extract metadata (tags, labels) for Docker
-              id: meta
+            - name: Extract metadata (tags, labels) for Docker for App
+              id: meta_app
+              uses: docker/metadata-action@master
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_app
+            - name: Extract metadata (tags, labels) for Docker for Video Generator
+              id: meta_video_generator
+              uses: docker/metadata-action@master
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_video_generator
+            - name: Extract metadata (tags, labels) for Docker for Voice Generator
+              id: meta_voice_generator
               uses: docker/metadata-action@master
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_app
@@ -47,8 +57,8 @@ jobs:
               with:
                   context: ./App
                   push: true
-                  tags: ${{ steps.meta.outputs.tags }}
-                  labels: ${{ steps.meta.outputs.labels }}
+                  tags: ${{ steps.meta_app.outputs.tags }}
+                  labels: ${{ steps.meta_app.outputs.labels }}
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
@@ -88,8 +98,8 @@ jobs:
               with:
                   context: ./VideoGenerator
                   push: true
-                  tags: ${{ steps.meta.outputs.tags }}
-                  labels: ${{ steps.meta.outputs.labels }}
+                  tags: ${{ steps.meta_video_generator.outputs.tags }}
+                  labels: ${{ steps.meta_video_generator.outputs.labels }}
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
@@ -128,8 +138,8 @@ jobs:
               with:
                   context: ./VoiceGenerator
                   push: true
-                  tags: ${{ steps.meta.outputs.tags }}
-                  labels: ${{ steps.meta.outputs.labels }}
+                  tags: ${{ steps.meta_voice_generator.outputs.tags }}
+                  labels: ${{ steps.meta_voice_generator.outputs.labels }}
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
