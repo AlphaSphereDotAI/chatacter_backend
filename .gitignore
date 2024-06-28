@@ -9,10 +9,12 @@
 .env
 .env.me
 .env.previous
-*/checkpoints/
+**/checkpoints/
+**/bark-small/
+**/weights/
 ./chatacter/sadtalker/checkpoints/
 ./chatacter/sadtalker/gfpgan/weights/
-VoiceGenerator/chatacter/bark-small
+VoiceGenerator/chatacter/bark-small/
 .ruff_cache
 **/__pycache__/
 # Flutter/Dart/Pub related
