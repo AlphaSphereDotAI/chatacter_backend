@@ -2,7 +2,6 @@ fastapi
 fastapi-cli
 langchain-groq
 pydantic
-setuptools~=59.8.0
 uvicorn
 langchain-community
 langchain-qdrant
