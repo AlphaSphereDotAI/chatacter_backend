@@ -8,7 +8,9 @@ on:
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
+    IMAGE_NAME_APP: ${{ github.repository }}_app
+    IMAGE_NAME_VIDEO_GENERATOR: ${{ github.repository }}_video_generator
+    IMAGE_NAME_VOICE_GENERATOR: ${{ github.repository }}_voice_generator
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -41,7 +43,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_app
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
                   tags: type=ref,event=branch
             # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
             # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
@@ -63,7 +65,7 @@ jobs:
               if: github.event_name != 'pull_request'
               uses: actions/attest-build-provenance@v1
               with:
-                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}_app
+                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
                   subject-digest: ${{ steps.push.outputs.digest }}
                   push-to-registry: true
     VideoGeneratorImage:
@@ -92,7 +94,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_video_generator
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
                   tags: type=ref,event=branch
             - name: Build and push Video Generator Docker image
               if: github.event_name != 'pull_request'
@@ -110,7 +112,7 @@ jobs:
               if: github.event_name != 'pull_request'
               uses: actions/attest-build-provenance@main
               with:
-                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}_video_generator
+                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}
                   push-to-registry: true
     VoiceGeneratorImage:
@@ -139,7 +141,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_voice_generator
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   tags: type=ref,event=branch
             - name: Build and push Voice Generator Docker image
               if: github.event_name != 'pull_request'
@@ -157,6 +159,6 @@ jobs:
               if: github.event_name != 'pull_request'
               uses: actions/attest-build-provenance@main
               with:
-                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}_voice_generator
+                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}
                   push-to-registry: true
