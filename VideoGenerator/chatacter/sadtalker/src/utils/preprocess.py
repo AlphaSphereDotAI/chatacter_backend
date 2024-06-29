@@ -8,15 +8,14 @@ import numpy as np
 import safetensors
 import safetensors.torch
 import torch
-from PIL import Image
-from scipy.io import savemat
-from tqdm import tqdm
-
 from chatacter.sadtalker.src.face3d.models import networks
 from chatacter.sadtalker.src.face3d.util.load_mats import load_lm3d
 from chatacter.sadtalker.src.face3d.util.preprocess import align_img
 from chatacter.sadtalker.src.utils.croper import Preprocesser
 from chatacter.sadtalker.src.utils.safetensor_helper import load_x_from_safetensor
+from PIL import Image
+from scipy.io import savemat
+from tqdm import tqdm
 
 warnings.filterwarnings("ignore")
 
@@ -46,7 +45,6 @@ def split_coeff(coeffs):
 
 
 class CropAndExtract:
-
     def __init__(self, sadtalker_path, device):
         self.propress = Preprocesser(device)
         self.net_recon = networks.define_net_recon(

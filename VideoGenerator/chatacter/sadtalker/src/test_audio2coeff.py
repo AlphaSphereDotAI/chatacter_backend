@@ -4,14 +4,13 @@ import numpy as np
 import safetensors
 import safetensors.torch
 import torch
-from scipy.io import loadmat, savemat
-from scipy.signal import savgol_filter
-from yacs.config import CfgNode as CN
-
 from chatacter.sadtalker.src.audio2exp_models.audio2exp import Audio2Exp
 from chatacter.sadtalker.src.audio2exp_models.networks import SimpleWrapperV2
 from chatacter.sadtalker.src.audio2pose_models.audio2pose import Audio2Pose
 from chatacter.sadtalker.src.utils.safetensor_helper import load_x_from_safetensor
+from scipy.io import loadmat, savemat
+from scipy.signal import savgol_filter
+from yacs.config import CfgNode as CN
 
 
 def load_cpk(checkpoint_path, model=None, optimizer=None, device="cpu"):
@@ -25,7 +24,6 @@ def load_cpk(checkpoint_path, model=None, optimizer=None, device="cpu"):
 
 
 class Audio2Coeff:
-
     def __init__(self, sadtalker_path, device):
         # load config
         fcfg_pose = open(sadtalker_path["audio2pose_yaml_path"])

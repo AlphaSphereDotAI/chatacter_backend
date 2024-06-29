@@ -1,12 +1,11 @@
 import os
 import random
 
+import chatacter.sadtalker.src.utils.audio as audio
 import numpy as np
 import scipy.io as scio
 import torch
 from tqdm import tqdm
-
-import chatacter.sadtalker.src.utils.audio as audio
 
 
 def crop_pad_audio(wav, audio_length):
