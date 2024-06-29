@@ -11,6 +11,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+RUN cat requirements.txt
 RUN pip install -v --no-cache-dir -r requirements.txt
 
 COPY . .
