@@ -31,5 +31,4 @@ COPY . .
 
 EXPOSE 8002
 
-CMD ["fastapi", "dev", "--port", "8002"]
-
+CMD ["fastapi", "dev", "--host", "0.0.0.0", "--port", "8000"]
