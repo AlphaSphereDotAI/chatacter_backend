@@ -1,17 +1,10 @@
-FROM python:3.10.14-slim-bullseye
+FROM downloads.unstructured.io/unstructured-io/unstructured:latest
 
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get full-upgrade -y && \
-    apt-get autoremove && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 COPY requirements.txt .
-RUN cat requirements.txt
 RUN pip install -v --no-cache-dir -r requirements.txt
 
 COPY . .
