@@ -1,7 +1,5 @@
 import torch
 import torch.nn.functional as F
-from torch import nn
-
 from chatacter.sadtalker.src.facerender.modules.dense_motion import DenseMotionNetwork
 from chatacter.sadtalker.src.facerender.modules.util import (
     DownBlock2d,
@@ -11,6 +9,7 @@ from chatacter.sadtalker.src.facerender.modules.util import (
     SPADEResnetBlock,
     UpBlock2d,
 )
+from torch import nn
 
 
 class OcclusionAwareGenerator(nn.Module):
@@ -173,7 +172,6 @@ class OcclusionAwareGenerator(nn.Module):
 
 
 class SPADEDecoder(nn.Module):
-
     def __init__(self):
         super().__init__()
         ic = 256
@@ -215,7 +213,6 @@ class SPADEDecoder(nn.Module):
 
 
 class OcclusionAwareSPADEGenerator(nn.Module):
-
     def __init__(
         self,
         image_channel,

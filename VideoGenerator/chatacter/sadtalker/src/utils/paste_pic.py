@@ -3,9 +3,8 @@ import uuid
 
 import cv2
 import numpy as np
-from tqdm import tqdm
-
 from chatacter.sadtalker.src.utils.videoio import save_video_with_watermark
+from tqdm import tqdm
 
 
 def paste_pic(

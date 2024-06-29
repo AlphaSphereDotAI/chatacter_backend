@@ -1,14 +1,12 @@
 import cv2
 import numpy as np
 import torch
+from chatacter.sadtalker.src.face3d.extract_kp_videos_safe import KeypointExtractor
 from facexlib.alignment import landmark_98_to_68
 from PIL import Image
 
-from chatacter.sadtalker.src.face3d.extract_kp_videos_safe import KeypointExtractor
-
 
 class Preprocesser:
-
     def __init__(self, device="cuda"):
         self.predictor = KeypointExtractor(device)
 

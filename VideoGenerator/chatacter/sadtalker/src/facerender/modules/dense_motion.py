@@ -1,7 +1,5 @@
 import torch
 import torch.nn.functional as F
-from torch import nn
-
 from chatacter.sadtalker.src.facerender.modules.util import (
     Hourglass,
     kp2gaussian,
@@ -10,6 +8,7 @@ from chatacter.sadtalker.src.facerender.modules.util import (
 from chatacter.sadtalker.src.facerender.sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
+from torch import nn
 
 
 class DenseMotionNetwork(nn.Module):

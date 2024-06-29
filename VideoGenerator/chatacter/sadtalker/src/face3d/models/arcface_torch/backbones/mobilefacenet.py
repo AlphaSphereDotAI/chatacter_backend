@@ -9,14 +9,12 @@ from torch.nn import BatchNorm1d, BatchNorm2d, Conv2d, Linear, Module, PReLU, Se
 
 
 class Flatten(Module):
-
     @staticmethod
     def forward(x):
         return x.view(x.size(0), -1)
 
 
 class ConvBlock(Module):
-
     def __init__(
         self, in_c, out_c, kernel=(1, 1), stride=(1, 1), padding=(0, 0), groups=1
     ):
@@ -40,7 +38,6 @@ class ConvBlock(Module):
 
 
 class LinearBlock(Module):
-
     def __init__(
         self, in_c, out_c, kernel=(1, 1), stride=(1, 1), padding=(0, 0), groups=1
     ):
@@ -55,7 +52,6 @@ class LinearBlock(Module):
 
 
 class DepthWise(Module):
-
     def __init__(
         self,
         in_c,
@@ -94,7 +90,6 @@ class DepthWise(Module):
 
 
 class Residual(Module):
-
     def __init__(
         self, c, num_block, groups, kernel=(3, 3), stride=(1, 1), padding=(1, 1)
     ):
@@ -109,7 +104,6 @@ class Residual(Module):
 
 
 class GDC(Module):
-
     def __init__(self, embedding_size):
         super(GDC, self).__init__()
         self.layers = nn.Sequential(
@@ -126,7 +120,6 @@ class GDC(Module):
 
 
 class MobileFaceNet(Module):
-
     def __init__(self, fp16=False, num_features=512):
         super(MobileFaceNet, self).__init__()
         scale = 2

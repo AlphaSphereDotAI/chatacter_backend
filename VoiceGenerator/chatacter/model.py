@@ -1,12 +1,10 @@
 import time
 
+from chatacter.settings import get_settings
 from fastapi.responses import FileResponse
 from huggingface_hub import snapshot_download
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
-
-
-from chatacter.settings import get_settings
 
 settings = get_settings()
 

@@ -1,14 +1,12 @@
 import torch
-from torch import nn
-
 from chatacter.sadtalker.src.audio2pose_models.audio_encoder import AudioEncoder
 from chatacter.sadtalker.src.audio2pose_models.discriminator import (
     PoseSequenceDiscriminator,
 )
+from torch import nn
 
 
 class Audio2Pose(nn.Module):
-
     def __init__(self, cfg, wav2lip_checkpoint, device="cuda"):
         super().__init__()
         self.cfg = cfg

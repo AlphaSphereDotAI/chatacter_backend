@@ -6,8 +6,6 @@ from argparse import Namespace
 
 import torch
 import wget
-from cog import BasePredictor, Input, Path
-
 from chatacter.sadtalker.src.facerender.animate import AnimateFromCoeff
 from chatacter.sadtalker.src.generate_batch import get_data
 from chatacter.sadtalker.src.generate_facerender_batch import get_facerender_data
@@ -15,12 +13,12 @@ from chatacter.sadtalker.src.test_audio2coeff import Audio2Coeff
 from chatacter.sadtalker.src.utils.init_path import init_path
 from chatacter.sadtalker.src.utils.preprocess import CropAndExtract
 from chatacter.settings import get_settings
+from cog import BasePredictor, Input, Path
 
 settings = get_settings()
 
 
 class Predictor(BasePredictor):
-
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
         device = "cuda"
