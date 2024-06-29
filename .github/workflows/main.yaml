@@ -8,7 +8,9 @@ on:
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
+    IMAGE_NAME_APP: ${{ github.repository }}_app
+    IMAGE_NAME_VIDEO_GENERATOR: ${{ github.repository }}_video_generator
+    IMAGE_NAME_VOICE_GENERATOR: ${{ github.repository }}_voice_generator
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -22,11 +24,14 @@ jobs:
             id-token: write
         steps:
             - name: Checkout repository
+              if: github.event_name != 'pull_request'
               uses: actions/checkout@v4
             - name: Set up Docker Buildx
+              if: github.event_name != 'pull_request'
               uses: docker/setup-buildx-action@master
             # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
             - name: Log in to the Container registry
+              if: github.event_name != 'pull_request'
               uses: docker/login-action@master
               with:
                   registry: ${{ env.REGISTRY }}
@@ -34,15 +39,17 @@ jobs:
                   password: ${{ secrets.TOKEN_KEY_GITHUB }}
             # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
             - name: Extract metadata (tags, labels) for Docker for App
+              if: github.event_name != 'pull_request'
               id: meta
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_app
-                  tags: latest
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
+                  tags: type=ref,event=branch
             # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
             # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.
             # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
             - name: Build and push App Docker image
+              if: github.event_name != 'pull_request'
               id: push
               uses: docker/build-push-action@master
               with:
@@ -55,9 +62,10 @@ jobs:
                   cache-to: type=gha,mode=max
             # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see "[AUTOTITLE](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds)."
             - name: Generate artifact attestation for App
+              if: github.event_name != 'pull_request'
               uses: actions/attest-build-provenance@v1
               with:
-                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}_app
+                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
                   subject-digest: ${{ steps.push.outputs.digest }}
                   push-to-registry: true
     VideoGeneratorImage:
@@ -69,22 +77,27 @@ jobs:
             id-token: write
         steps:
             - name: Checkout repository
+              if: github.event_name != 'pull_request'
               uses: actions/checkout@v4
             - name: Set up Docker Buildx
+              if: github.event_name != 'pull_request'
               uses: docker/setup-buildx-action@master
             - name: Log in to the Container registry
+              if: github.event_name != 'pull_request'
               uses: docker/login-action@master
               with:
                   registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.TOKEN_KEY_GITHUB }}
             - name: Extract metadata (tags, labels) for Docker
+              if: github.event_name != 'pull_request'
               id: meta
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_video_generator
-                  tags: latest
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
+                  tags: type=ref,event=branch
             - name: Build and push Video Generator Docker image
+              if: github.event_name != 'pull_request'
               id: push
               uses: docker/build-push-action@master
               with:
@@ -96,9 +109,10 @@ jobs:
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
             - name: Generate artifact attestation for Video Generator
+              if: github.event_name != 'pull_request'
               uses: actions/attest-build-provenance@main
               with:
-                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}_video_generator
+                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}
                   push-to-registry: true
     VoiceGeneratorImage:
@@ -110,22 +124,27 @@ jobs:
             id-token: write
         steps:
             - name: Checkout repository
+              if: github.event_name != 'pull_request'
               uses: actions/checkout@v4
             - name: Set up Docker Buildx
+              if: github.event_name != 'pull_request'
               uses: docker/setup-buildx-action@master
             - name: Log in to the Container registry
+              if: github.event_name != 'pull_request'
               uses: docker/login-action@master
               with:
                   registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.TOKEN_KEY_GITHUB }}
             - name: Extract metadata (tags, labels) for Docker
+              if: github.event_name != 'pull_request'
               id: meta
               uses: docker/metadata-action@master
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}_voice_generator
-                  tags: latest
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
+                  tags: type=ref,event=branch
             - name: Build and push Voice Generator Docker image
+              if: github.event_name != 'pull_request'
               id: push
               uses: docker/build-push-action@master
               with:
@@ -137,8 +156,9 @@ jobs:
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
             - name: Generate artifact attestation for Voice Generator
+              if: github.event_name != 'pull_request'
               uses: actions/attest-build-provenance@main
               with:
-                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}_voice_generator
+                  subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}
                   push-to-registry: true
