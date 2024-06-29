@@ -1,14 +1,16 @@
 services:
-  fastapi:
-    image: ghcr.io/alphaspheredotai/chatacter_backend:main
+  App:
+    image: ghcr.io/alphaspheredotai/chatacter_backend_app:main
     ports:
       - 8000:8000
-    container_name: chatacter_fastapi_server
+    container_name: chatacter_app
     volumes:
-      - .:/app:rw
+      - ./App:/app:rw
     restart: always
     depends_on:
-      - search
+      - VideoGenerator
+      - VoiceGenerator
+      - SearchEngine
       - VectorDatabase
     deploy:
       resources:
@@ -20,17 +22,55 @@ services:
     develop:
       watch:
         - action: sync+restart
-          path: .
+          path: ./App
           target: /app
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY}
 
+  VideoGenerator:
+    image: ghcr.io/alphaspheredotai/chatacter_backend_video_generator:main
+    container_name: chatacter_video_generator
+    volumes:
+      - ./VideoGenerator:/app:rw
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./VideoGenerator
+          target: /app
+        
+  VoiceGenerator:
+    image: ghcr.io/alphaspheredotai/chatacter_backend_voice_generator:main
+    container_name: chatacter_voice_generator
+    volumes:
+      - ./VoiceGenerator:/app:rw
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./VoiceGenerator
+          target: /app
+  
   SearchEngine:
     image: searxng/searxng:latest
     ports:
       - 8080:8080
     volumes:
-      - ./chatacter/searxng:/etc/searxng:rw
+      - ./SearchEngine:/etc/searxng:rw
     restart: always
     container_name: chatacter_search_engine
     environment:
@@ -39,7 +79,7 @@ services:
     develop:
       watch:
         - action: sync+restart
-          path: ./chatacter/searxng
+          path: ./SearchEngine
           target: /app/chatacter/searxng
 
   VectorDatabase:
@@ -48,5 +88,10 @@ services:
       - 6333:6333
     container_name: chatacter_vector_database
     volumes:
-      - ./chatacter/qdrant:/app/chatacter/qdrant:rw
+      - ./VectorDatabase:/qdrant/storage:z
     restart: always
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./VectorDatabase
+          target: /qdrant/storage
