@@ -21,3 +21,4 @@ uvicorn
 wget
 yacs~=0.1.8
 resampy==0.3.1
+transformers
