@@ -1,0 +1,26 @@
+{
+    "apply_progress_queue": null,
+    "latest_snapshot_meta": {
+        "index": 0,
+        "term": 0
+    },
+    "peer_address_by_id": {},
+    "peer_metadata_by_id": {},
+    "state": {
+        "conf_state": {
+            "auto_leave": false,
+            "learners": [],
+            "learners_next": [],
+            "voters": [
+                3133629994489986
+            ],
+            "voters_outgoing": []
+        },
+        "hard_state": {
+            "commit": 0,
+            "term": 0,
+            "vote": 0
+        }
+    },
+    "this_peer_id": 3133629994489986
+}
