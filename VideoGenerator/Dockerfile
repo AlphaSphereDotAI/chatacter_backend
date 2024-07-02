@@ -20,7 +20,8 @@ RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     pip install --no-cache-dir -v -r requirements.txt --use-pep517 && \
     pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
 
-RUN cd ./chatacter/GeneFacePlusPlus && \
+RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
+    cd GeneFacePlusPlus && \
     pip install ./modules/radnerfs/encoders/freqencoder -v && \
     pip install ./modules/radnerfs/encoders/shencoder -v && \
     pip install ./modules/radnerfs/encoders/gridencoder -v && \
