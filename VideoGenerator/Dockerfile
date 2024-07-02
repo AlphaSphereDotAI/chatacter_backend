@@ -18,19 +18,19 @@ RUN pixi init && \
 
 RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
     cd GeneFacePlusPlus && \
-    pip install ./modules/radnerfs/encoders/freqencoder -v && \
-    pip install ./modules/radnerfs/encoders/shencoder -v && \
-    pip install ./modules/radnerfs/encoders/gridencoder -v && \
-    pip install ./modules/radnerfs/raymarching -v && \
-    pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
+    pixi run pip install ./modules/radnerfs/encoders/freqencoder -v && \
+    pixi run pip install ./modules/radnerfs/encoders/shencoder -v && \
+    pixi run pip install ./modules/radnerfs/encoders/gridencoder -v && \
+    pixi run pip install ./modules/radnerfs/raymarching -v && \
+    pixi run pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
 
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install -v --no-cache-dir -r requirements.txt --use-pep517 && \
-    mim install mmcv==2.1.0
+RUN pixi run pip install -v --no-cache-dir -r requirements.txt --use-pep517 && \
+    pixi run mim install mmcv==2.1.0
 
 COPY . .
 
 EXPOSE 8002
 
-CMD ["fastapi", "dev", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["pixi", "run", "fastapi", "dev", "--host", "0.0.0.0", "--port", "8002"]
