@@ -15,6 +15,7 @@ RUN pixi init && \
     pixi add python==3.9 pip && \
     pixi project channel add pytorch nvidia conda-forge && \
     pixi add ffmpeg && \
+    pixi run pip install --upgrade pip setuptools wheel && \
     pixi run pip install --no-cache-dir -v torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
