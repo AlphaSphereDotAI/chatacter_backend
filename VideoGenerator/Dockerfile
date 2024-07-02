@@ -20,10 +20,10 @@ RUN pixi init && \
 
 RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     cd torch-ngp && \
-    pixi run pip install --no-cache-dir -v ./raymarching -v && \
-    pixi run pip install --no-cache-dir -v ./gridencoder -v && \
-    pixi run pip install --no-cache-dir -v ./shencoder -v && \
-    pixi run pip install --no-cache-dir -v ./freqencoder -v && \
+    # pixi run pip install --no-cache-dir -v ./raymarching -v && \
+    # pixi run pip install --no-cache-dir -v ./gridencoder -v && \
+    # pixi run pip install --no-cache-dir -v ./shencoder -v && \
+    # pixi run pip install --no-cache-dir -v ./freqencoder -v && \
     pixi run pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable && \
     pixi run pip install --no-cache-dir -v git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
 
