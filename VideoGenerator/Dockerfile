@@ -1,8 +1,7 @@
 FROM ghcr.io/prefix-dev/pixi:jammy-cuda-11.7.1
 
 SHELL ["/bin/bash", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive \
-    TCNN_CUDA_ARCHITECTURES=86
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install --no-install-recommends cuda-11-8 git -y && \
