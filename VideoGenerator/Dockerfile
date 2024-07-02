@@ -16,9 +16,8 @@ RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     pip install --no-cache-dir -v -r requirements.txt --use-pep517 && \
     pip installl --no-cache-dir -v git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch && \
     pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
-    
-RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
-    cd GeneFacePlusPlus && \
+
+RUN cd ./chatacter/GeneFacePlusPlus && \
     pip install ./modules/radnerfs/encoders/freqencoder -v && \
     pip install ./modules/radnerfs/encoders/shencoder -v && \
     pip install ./modules/radnerfs/encoders/gridencoder -v && \
