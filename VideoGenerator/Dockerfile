@@ -14,7 +14,7 @@ RUN apt-get update && \
 RUN pixi init && \
     pixi add python==3.9 pip && \
     pixi project channel add pytorch nvidia conda-forge && \
-    pixi add pytorch-cuda==11.8 ffmpeg && \
+    pixi add ffmpeg && \
     pixi run pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
