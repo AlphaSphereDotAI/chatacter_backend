@@ -1,9 +1,7 @@
-FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+FROM ghcr.io/prefix-dev/pixi:jammy-cuda-11.7.1
 
 SHELL ["/bin/bash", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive \
-    TCNN_CUDA_ARCHITECTURES=86 \
-    CUDA_HOME=/opt/conda
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install --no-install-recommends ffmpeg gcc git build-essential python3-dev libasound2-dev portaudio19-dev -y && \
@@ -13,7 +11,10 @@ RUN apt-get update && \
     apt-get autoclean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN conda install nvidia/label/cuda-11.7.0::cuda-toolkit -y
+RUN pixi init && \
+    pixi add python==3.9 pip && \
+    pixi project channel add pytorch nvidia conda-forge && \
+    pixi add pytorch=2.0.1 torchvision torchaudio pytorch-cuda=11.8
 
 RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
     cd GeneFacePlusPlus && \
