@@ -1,4 +1,4 @@
-FROM ubuntu22.04-cu118-conda:torch2.0.1-py39 
+FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -15,21 +15,17 @@ RUN apt-get update && \
 
 RUN conda install nvidia/label/cuda-11.7.0::cuda-toolkit -y
 
-RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
-    cd torch-ngp && \
-    pip install --no-cache-dir -v -r requirements.txt --use-pep517 && \
-    pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
-
 RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
     cd GeneFacePlusPlus && \
     pip install ./modules/radnerfs/encoders/freqencoder -v && \
     pip install ./modules/radnerfs/encoders/shencoder -v && \
     pip install ./modules/radnerfs/encoders/gridencoder -v && \
-    pip install ./modules/radnerfs/raymarching -v
+    pip install ./modules/radnerfs/raymarching -v && \
+    pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
 
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install -v --no-cache-dir -r requirements.txt && \
+RUN pip install -v --no-cache-dir -r requirements.txt --use-pep517 && \
     mim install mmcv==2.1.0
 
 COPY . .

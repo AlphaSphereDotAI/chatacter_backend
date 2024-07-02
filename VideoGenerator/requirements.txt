@@ -79,3 +79,14 @@ setproctitle
 # Gradio GUI
 httpx==0.23.3
 gradio==4.16.0
+torch-ema
+ninja
+trimesh
+opencv-python
+tensorboardX
+tqdm
+rich
+pysdf
+packaging
+imageio
+torchmetrics
