@@ -14,7 +14,7 @@ RUN apt-get update && \
 RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     cd torch-ngp && \
     pip install --no-cache-dir -v -r requirements.txt --use-pep517 && \
-    pip installl --no-cache-dir -v git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch && \
+    pip install --no-cache-dir -v git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch && \
     pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
 
 RUN cd ./chatacter/GeneFacePlusPlus && \
