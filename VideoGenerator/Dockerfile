@@ -11,10 +11,10 @@ RUN apt-get update && \
     apt-get autoclean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pixi init && \
+RUN pixi init /app && \
     pixi add python==3.9 pip && \
-    pixi project channel add https://repo.prefix.dev/pytorch https://repo.prefix.dev/nvidia https://repo.prefix.dev/conda-forge && \
-    pixi add pytorch=2.0.1 torchvision torchaudio pytorch-cuda=11.8
+    pixi project channel add pytorch nvidia conda-forge && \
+    pixi add pytorch==2.0.1 torchvision torchaudio pytorch-cuda==11.8 ffmpeg
 
 RUN git clone https://github.com/yerfor/GeneFacePlusPlus.git && \
     cd GeneFacePlusPlus && \
