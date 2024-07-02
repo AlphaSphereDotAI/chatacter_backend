@@ -17,16 +17,9 @@ RUN pixi init && \
     pixi project channel add pytorch nvidia conda-forge && \
     pixi add ffmpeg && \
     pixi run pip install --upgrade pip setuptools wheel && \
-    pixi run pip install --no-cache-dir -v torch==2.0.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+    pixi run pip install --no-cache-dir -v torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
 
-RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
-    cd torch-ngp && \
-    # pixi run pip install --no-cache-dir -v ./raymarching -v && \
-    # pixi run pip install --no-cache-dir -v ./gridencoder -v && \
-    # pixi run pip install --no-cache-dir -v ./shencoder -v && \
-    # pixi run pip install --no-cache-dir -v ./freqencoder -v && \
-    pixi run pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable && \
-    pixi run pip install --no-cache-dir -v git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
+RUN pixi run pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
 
 WORKDIR /app
 COPY requirements.txt .
