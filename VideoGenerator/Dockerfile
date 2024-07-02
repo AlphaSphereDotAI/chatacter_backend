@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends ffmpeg gcc git build-essential python3-dev libasound2-dev portaudio19-dev -y && \
+    apt-get install --no-install-recommends cuda -y && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
