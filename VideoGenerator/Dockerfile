@@ -16,7 +16,7 @@ RUN pixi init && \
     pixi project channel add pytorch nvidia conda-forge && \
     pixi add ffmpeg && \
     pixi run pip install --upgrade pip setuptools wheel && \
-    pixi run pip install --no-cache-dir -v torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+    pixi run pip install --no-cache-dir -v torch==1.11 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     cd torch-ngp && \
