@@ -3,7 +3,7 @@ FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive \
     TCNN_CUDA_ARCHITECTURES=86 \
-    CUDA_HOME=/usr/local/cuda
+    CUDA_HOME=/opt/conda
 
 RUN apt-get update && \
     apt-get install --no-install-recommends ffmpeg gcc git build-essential python3-dev libasound2-dev portaudio19-dev -y && \
@@ -12,6 +12,8 @@ RUN apt-get update && \
     apt-get clean && \
     apt-get autoclean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN conda install nvidia::cuda-toolkit -y
 
 RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     cd torch-ngp && \
