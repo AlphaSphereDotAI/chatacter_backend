@@ -12,7 +12,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pixi init && \
-    pixi add python==3.9 pip && \
+    pixi add python==3.10 pip && \
     pixi project channel add pytorch nvidia conda-forge && \
     pixi add ffmpeg && \
     pixi run pip install --upgrade pip setuptools wheel && \
