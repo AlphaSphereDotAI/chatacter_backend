@@ -1,24 +1,81 @@
-cog
-face-alignment~=1.3.5
-facexlib~=0.3.0
 fastapi
 fastapi-cli
-gfpgan~=1.3.8
-imageio==2.19.3
-kornia~=0.6.8
-librosa~=0.9.2
-opencv-python~=4.9.0.80
 pydantic
-pydub~=0.25.1
-pyyaml~=6.0.1
-safetensors~=0.4.3
-scikit-image~=0.19.3
-scikit-learn~=1.5.0
-scipy~=1.13.1
-tqdm~=4.66.4
-trimesh~=3.9.20
 uvicorn
 wget
-yacs~=0.1.8
-resampy==0.3.1
+openmim
+Cython
+numpy # ==1.23.0
+numba==0.56.4
+pandas
 transformers
+scipy==1.11.1 # required by cal_fid. https://github.com/mseitzer/pytorch-fid/issues/103
+scikit-learn
+scikit-image
+# tensorflow # you can flexible it, this is gpu version
+tensorboard
+tensorboardX
+python_speech_features
+resampy
+opencv_python
+face_alignment
+matplotlib
+configargparse
+librosa==0.9.2
+praat-parselmouth # ==0.4.3
+trimesh
+kornia==0.5.0
+PyMCubes
+lpips
+setuptools # ==59.5.0
+ffmpeg-python
+moviepy
+dearpygui
+ninja
+pyaudio # for extract esperanto
+mediapipe
+protobuf
+decord
+soundfile
+pillow
+# torch # it's better to install torch with conda 
+av
+timm
+pretrainedmodels
+faiss-cpu # for fast nearest camera pose retriveal
+einops
+# mmcv # use mim install is faster
+
+# conditional flow matching
+beartype
+torchode
+torchdiffeq
+
+# tts
+cython
+textgrid
+pyloudnorm
+websocket-client
+pyworld==0.2.1rc0
+pypinyin==0.42.0
+webrtcvad
+torchshow
+
+# cal spk sim
+s3prl
+fire
+
+# cal LMD
+dlib
+
+# debug
+ipykernel
+
+# lama
+hydra-core
+pytorch_lightning
+setproctitle
+
+# Gradio GUI
+httpx==0.23.3
+gradio==4.16.0
