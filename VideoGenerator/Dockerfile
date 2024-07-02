@@ -1,8 +1,9 @@
 FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 
 SHELL ["/bin/bash", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TCNN_CUDA_ARCHITECTURES=86
+ENV DEBIAN_FRONTEND=noninteractive \
+    TCNN_CUDA_ARCHITECTURES=86 \
+    CUDA_HOME=/usr/local/cuda
 
 RUN apt-get update && \
     apt-get install --no-install-recommends ffmpeg gcc git build-essential python3-dev libasound2-dev portaudio19-dev -y && \
