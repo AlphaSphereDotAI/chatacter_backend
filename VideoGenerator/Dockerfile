@@ -18,7 +18,6 @@ RUN conda install nvidia/label/cuda-11.7.0::cuda-toolkit -y
 RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     cd torch-ngp && \
     pip install --no-cache-dir -v -r requirements.txt --use-pep517 && \
-    pip install --no-cache-dir -v git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch && \
     pip install --no-cache-dir -v git+https://github.com/facebookresearch/pytorch3d.git@stable
 
 RUN cd ./chatacter/GeneFacePlusPlus && \
