@@ -12,7 +12,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /app && \
-    pixi init /app && \
+    pixi init /app --pyproject && \
     pixi add python==3.9 pip && \
     pixi project channel add pytorch nvidia conda-forge && \
     pixi add pytorch-cuda==11.8 ffmpeg && \
