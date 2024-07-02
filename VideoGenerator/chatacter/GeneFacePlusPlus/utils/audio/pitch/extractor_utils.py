@@ -26,11 +26,11 @@ def get_med_curve(f0, step_size=20):
             if v_end != -1:
                 if v_end - v_begin > 3:
                     for j in range(v_begin, v_end + 1 - step_size, step_size):
-                        frag_med = np.median(f0[j:j + step_size])
+                        frag_med = np.median(f0[j : j + step_size])
                         x_med_curve.append(j)
                         y_med_curve.append(frag_med)
                     x_med_curve.append(v_end)
-                    y_med_curve.append(np.median(f0[v_end - step_size:v_end + 1]))
+                    y_med_curve.append(np.median(f0[v_end - step_size : v_end + 1]))
             v_end = v_begin = -1
     x_med_curve = [0] + x_med_curve + [T]
     x_med_curve = np.array(x_med_curve)
@@ -53,13 +53,15 @@ def clean_short_v_frag(f0):
             if v_begin != -1:
                 v_end = i if f0[i] >= 1e-4 else i - 1
                 if v_end - v_begin + 1 < 3:
-                    uv[v_begin:v_end + 1] = 1
+                    uv[v_begin : v_end + 1] = 1
             v_begin = -1
     return uv
 
 
 @nb.njit()
-def find_best_f0_using_har_energy(spec, pitches, freqs, hars, hars_mhalf, f0_min, f0_max):
+def find_best_f0_using_har_energy(
+    spec, pitches, freqs, hars, hars_mhalf, f0_min, f0_max
+):
     re = np.zeros_like(spec)
     T = len(spec)
     for i in range(T):
@@ -77,12 +79,16 @@ def find_best_f0_using_har_energy(spec, pitches, freqs, hars, hars_mhalf, f0_min
                 b_mhalf = find_nearest_stft_bin(np.array((f0_j * (mul - 0.5),)), freqs)
                 for delta in range(-1, 2):
                     mask_mhalf[b_mhalf + delta] = 1
-            mask = mask[:len(spec_i)]
-            mask_mhalf = mask_mhalf[:len(spec_i)]
+            mask = mask[: len(spec_i)]
+            mask_mhalf = mask_mhalf[: len(spec_i)]
             energy = (np.exp(spec_i) * mask).sum() / mask.sum()
             energy_mhalf = (np.exp(spec_i) * mask_mhalf).sum() / mask_mhalf.sum()
             re[i, j] = energy / energy_mhalf
-    f0_2d_mask = 10000 * (re > 2) + 20000 * (re > 3) + np.expand_dims(np.arange(re.shape[1])[::-1], 0)
+    f0_2d_mask = (
+        10000 * (re > 2)
+        + 20000 * (re > 3)
+        + np.expand_dims(np.arange(re.shape[1])[::-1], 0)
+    )
     f0_idx = np.zeros((T,), dtype=np.int_)
     for i in range(T):
         f0_idx[i] = f0_2d_mask[i].argmax()

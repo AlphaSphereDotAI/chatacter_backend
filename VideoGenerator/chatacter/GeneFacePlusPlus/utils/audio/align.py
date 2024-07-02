@@ -1,9 +1,8 @@
 import re
 
-import torch
 import numpy as np
+import torch
 from textgrid import TextGrid
-
 from utils.text.text_encoder import is_sil_phoneme
 
 
@@ -12,7 +11,11 @@ def get_mel2ph(tg_fn, ph, mel, hop_size, audio_sample_rate, min_sil_duration=0):
     itvs = TextGrid.fromFile(tg_fn)[1]
     itvs_ = []
     for i in range(len(itvs)):
-        if itvs[i].maxTime - itvs[i].minTime < min_sil_duration and i > 0 and is_sil_phoneme(itvs[i].mark):
+        if (
+            itvs[i].maxTime - itvs[i].minTime < min_sil_duration
+            and i > 0
+            and is_sil_phoneme(itvs[i].mark)
+        ):
             itvs_[-1].maxTime = itvs[i].maxTime
         else:
             itvs_.append(itvs[i])
@@ -36,9 +39,17 @@ def get_mel2ph(tg_fn, ph, mel, hop_size, audio_sample_rate, min_sil_duration=0):
         elif not is_sil_phoneme(itv_ph) and is_sil_phoneme(ph):
             i_ph += 1
         else:
-            if not ((is_sil_phoneme(itv_ph) and is_sil_phoneme(ph)) \
-                    or re.sub(r'\d+', '', itv_ph.lower()) == re.sub(r'\d+', '', ph.lower())):
-                print(f"| WARN: {tg_fn} phs are not same: ", itv_ph, ph, itv_marks, ph_list)
+            if not (
+                (is_sil_phoneme(itv_ph) and is_sil_phoneme(ph))
+                or re.sub(r"\d+", "", itv_ph.lower()) == re.sub(r"\d+", "", ph.lower())
+            ):
+                print(
+                    f"| WARN: {tg_fn} phs are not same: ",
+                    itv_ph,
+                    ph,
+                    itv_marks,
+                    ph_list,
+                )
             mel2ph[start_frame:end_frame] = i_ph + 1
             i_ph += 1
             i_itv += 1
@@ -63,7 +74,7 @@ def split_audio_by_mel2ph(audio, mel2ph, hop_size, audio_num_mel_bins):
 
     new_audio = []
     for i in range(len(split_locs) - 1):
-        new_audio.append(audio[split_locs[i]:split_locs[i + 1]])
+        new_audio.append(audio[split_locs[i] : split_locs[i + 1]])
         new_audio.append(np.zeros([0.5 * audio_num_mel_bins]))
     return np.concatenate(new_audio)
 
@@ -79,7 +90,9 @@ def mel2token_to_dur(mel2token, T_txt=None, max_dur=None):
         mel2token = mel2token[None, ...]
         has_batch_dim = False
     B, _ = mel2token.shape
-    dur = mel2token.new_zeros(B, T_txt + 1).scatter_add(1, mel2token, torch.ones_like(mel2token))
+    dur = mel2token.new_zeros(B, T_txt + 1).scatter_add(
+        1, mel2token, torch.ones_like(mel2token)
+    )
     dur = dur[:, 1:]
     if max_dur is not None:
         dur = dur.clamp(max=max_dur)

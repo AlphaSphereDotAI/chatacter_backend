@@ -1,9 +1,15 @@
 import math
-import torch
 from typing import Optional, Tuple
-from torch import nn
-from utils.nn.seq_utils import get_incremental_state, set_incremental_state, softmax, make_positions
+
+import torch
 import torch.nn.functional as F
+from torch import nn
+from utils.nn.seq_utils import (
+    get_incremental_state,
+    make_positions,
+    set_incremental_state,
+    softmax,
+)
 
 # from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
@@ -17,12 +23,12 @@ class RotaryEmbeddings(nn.Module):
     theta: torch.Tensor
 
     def __init__(
-            self,
-            width: int,
-            *,
-            seq_len: int = 4000,
-            base: int = 10000,
-            device: Optional[torch.device] = None,
+        self,
+        width: int,
+        *,
+        seq_len: int = 4000,
+        base: int = 10000,
+        device: Optional[torch.device] = None,
     ):
         """Rotary embeddings (Su et al., 2021) layer. The rotary embedding
         will be precomputed for up to 'seq _len' positions. The embedding
@@ -127,7 +133,7 @@ class RotaryEmbeddings(nn.Module):
 
 
 class LayerNorm(nn.Module):
-    """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
+    """LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False"""
 
     def __init__(self, ndim, bias=False):
         super().__init__()
@@ -139,7 +145,8 @@ class LayerNorm(nn.Module):
 
 
 class CausalSelfAttention(nn.Module):
-    def __init__(self, embed_dim, num_heads, dropout=0.):
+
+    def __init__(self, embed_dim, num_heads, dropout=0.0):
         super().__init__()
         # Typically, bias = True in Linears and LayerNorms, like GPT-2. But we set bias = False: a bit better and faster (following https://github.com/karpathy/nanoGPT)
         assert embed_dim % num_heads == 0
@@ -147,8 +154,10 @@ class CausalSelfAttention(nn.Module):
         self.num_heads = num_heads
         self.dropout = dropout
         self.head_dim = embed_dim // num_heads
-        assert self.head_dim * num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
-        self.scaling = self.head_dim ** -0.5
+        assert (
+            self.head_dim * num_heads == self.embed_dim
+        ), "embed_dim must be divisible by num_heads"
+        self.scaling = self.head_dim**-0.5
         # key, query, value projections for all heads, but in a batch
         self.c_attn = nn.Linear(embed_dim, 3 * embed_dim, bias=False)
         # output projection
@@ -156,20 +165,24 @@ class CausalSelfAttention(nn.Module):
         # rotary embeddings
         self.rotary_embeds = RotaryEmbeddings(width=embed_dim // num_heads)
         # flash attention make GPU go brrrrr but support is only in PyTorch >= 2.0
-        self.flash = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
+        self.flash = hasattr(torch.nn.functional, "scaled_dot_product_attention")
         if not self.flash:
-            print("WARNING: using slow attention. Flash Attention requires PyTorch >= 2.0")
+            print(
+                "WARNING: using slow attention. Flash Attention requires PyTorch >= 2.0"
+            )
 
     def forward(
-            self,
-            query, key, value,
-            spk_pos_ids_flat=None,
-            incremental_state=None,
-            need_weights=True,
-            static_kv=False,
-            attn_mask=None,
-            need_head_weights=False,
-            enc_dec_attn_constraint_mask=None,
+        self,
+        query,
+        key,
+        value,
+        spk_pos_ids_flat=None,
+        incremental_state=None,
+        need_weights=True,
+        static_kv=False,
+        attn_mask=None,
+        need_head_weights=False,
+        enc_dec_attn_constraint_mask=None,
     ):
         """Input shape: Time x Batch x Channel
 
@@ -198,7 +211,11 @@ class CausalSelfAttention(nn.Module):
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
         q, k, v = self.c_attn(query).split(self.embed_dim, dim=2)
 
-        q = q.contiguous().view(tgt_len, bsz * self.num_heads, self.head_dim).transpose(0, 1)
+        q = (
+            q.contiguous()
+            .view(tgt_len, bsz * self.num_heads, self.head_dim)
+            .transpose(0, 1)
+        )
         k = k.contiguous().view(-1, bsz * self.num_heads, self.head_dim).transpose(0, 1)
         v = v.contiguous().view(-1, bsz * self.num_heads, self.head_dim).transpose(0, 1)
 
@@ -206,20 +223,26 @@ class CausalSelfAttention(nn.Module):
         q = self.rotary_embeds(q[None, :], positions=spk_pos_ids_flat)[0]
         if saved_state is not None:
             # saved states are stored with shape (bsz, num_heads, seq_len, head_dim)
-            if 'prev_key' in saved_state:
-                prev_key = saved_state['prev_key'].view(bsz * self.num_heads, -1, self.head_dim)
+            if "prev_key" in saved_state:
+                prev_key = saved_state["prev_key"].view(
+                    bsz * self.num_heads, -1, self.head_dim
+                )
                 if static_kv:
                     k = prev_key
                 else:
                     k = torch.cat((prev_key, k), dim=1)
-            if 'prev_value' in saved_state:
-                prev_value = saved_state['prev_value'].view(bsz * self.num_heads, -1, self.head_dim)
+            if "prev_value" in saved_state:
+                prev_value = saved_state["prev_value"].view(
+                    bsz * self.num_heads, -1, self.head_dim
+                )
                 if static_kv:
                     v = prev_value
                 else:
                     v = torch.cat((prev_value, v), dim=1)
-            saved_state['prev_key'], saved_state['prev_value'] = k.view(bsz, self.num_heads, -1, self.head_dim), v.view(
-                bsz, self.num_heads, -1, self.head_dim)
+            saved_state["prev_key"], saved_state["prev_value"] = (
+                k.view(bsz, self.num_heads, -1, self.head_dim),
+                v.view(bsz, self.num_heads, -1, self.head_dim),
+            )
             self._set_input_buffer(incremental_state, saved_state)
         if incremental_state is not None:
             key_pos = torch.arange(k.shape[-2], device=q.device).unsqueeze(0)
@@ -233,8 +256,8 @@ class CausalSelfAttention(nn.Module):
         if self.flash:
             # efficient attention using Flash Attention CUDA kernels
             attn = torch.nn.functional.scaled_dot_product_attention(
-                q, k, v, attn_mask=attn_mask, dropout_p=0,
-                is_causal=False)
+                q, k, v, attn_mask=attn_mask, dropout_p=0, is_causal=False
+            )
             assert list(attn.size()) == [bsz * self.num_heads, tgt_len, self.head_dim]
             attn = attn.transpose(0, 1).contiguous().view(tgt_len, bsz, embed_dim)
 
@@ -253,15 +276,22 @@ class CausalSelfAttention(nn.Module):
                 if len(attn_mask.shape) == 2:
                     attn_mask = attn_mask.unsqueeze(0)
                 elif len(attn_mask.shape) == 3:
-                    attn_mask = attn_mask[:, None].repeat([1, self.num_heads, 1, 1]).reshape(
-                        bsz * self.num_heads, tgt_len, src_len)
+                    attn_mask = (
+                        attn_mask[:, None]
+                        .repeat([1, self.num_heads, 1, 1])
+                        .reshape(bsz * self.num_heads, tgt_len, src_len)
+                    )
                 attn_weights = attn_weights + attn_mask
 
             attn_logits = attn_weights.view(bsz, self.num_heads, tgt_len, src_len)
 
             attn_weights_float = softmax(attn_weights, dim=-1)
             attn_weights = attn_weights_float.type_as(attn_weights)
-            attn_probs = F.dropout(attn_weights_float.type_as(attn_weights), p=self.dropout, training=self.training)
+            attn_probs = F.dropout(
+                attn_weights_float.type_as(attn_weights),
+                p=self.dropout,
+                training=self.training,
+            )
 
             attn = torch.bmm(attn_probs, v)
             assert list(attn.size()) == [bsz * self.num_heads, tgt_len, self.head_dim]
@@ -269,7 +299,9 @@ class CausalSelfAttention(nn.Module):
             attn = self.out_proj(attn)
 
         if need_weights:
-            attn_weights = attn_weights_float.view(bsz, self.num_heads, tgt_len, src_len).transpose(1, 0)
+            attn_weights = attn_weights_float.view(
+                bsz, self.num_heads, tgt_len, src_len
+            ).transpose(1, 0)
             if not need_head_weights:
                 # average attention weights over heads
                 attn_weights = attn_weights.mean(dim=0)
@@ -279,42 +311,60 @@ class CausalSelfAttention(nn.Module):
         return attn, (attn_weights, attn_logits)
 
     def _get_input_buffer(self, incremental_state):
-        return get_incremental_state(
-            self,
-            incremental_state,
-            'attn_state',
-        ) or {}
+        return (
+            get_incremental_state(
+                self,
+                incremental_state,
+                "attn_state",
+            )
+            or {}
+        )
 
     def _set_input_buffer(self, incremental_state, buffer):
         set_incremental_state(
             self,
             incremental_state,
-            'attn_state',
+            "attn_state",
             buffer,
         )
 
     def clear_buffer(self, incremental_state=None):
         if incremental_state is not None:
             saved_state = self._get_input_buffer(incremental_state)
-            if 'prev_key' in saved_state:
-                del saved_state['prev_key']
-            if 'prev_value' in saved_state:
-                del saved_state['prev_value']
+            if "prev_key" in saved_state:
+                del saved_state["prev_key"]
+            if "prev_value" in saved_state:
+                del saved_state["prev_value"]
             self._set_input_buffer(incremental_state, saved_state)
 
 
 class TransformerFFNLayer(nn.Module):
-    def __init__(self, hidden_size, filter_size, padding="SAME", kernel_size=1, dropout=0., act='gelu'):
+
+    def __init__(
+        self,
+        hidden_size,
+        filter_size,
+        padding="SAME",
+        kernel_size=1,
+        dropout=0.0,
+        act="gelu",
+    ):
         super().__init__()
         self.kernel_size = kernel_size
         self.dropout = dropout
         self.act = act
-        if padding == 'SAME':
-            self.ffn_1 = nn.Conv1d(hidden_size, filter_size, kernel_size, padding=kernel_size // 2, bias=False)
-        elif padding == 'LEFT':
+        if padding == "SAME":
+            self.ffn_1 = nn.Conv1d(
+                hidden_size,
+                filter_size,
+                kernel_size,
+                padding=kernel_size // 2,
+                bias=False,
+            )
+        elif padding == "LEFT":
             self.ffn_1 = nn.Sequential(
                 nn.ConstantPad1d((kernel_size - 1, 0), 0.0),
-                nn.Conv1d(hidden_size, filter_size, kernel_size, bias=False)
+                nn.Conv1d(hidden_size, filter_size, kernel_size, bias=False),
             )
         self.ffn_2 = nn.Linear(filter_size, hidden_size, bias=False)
 
@@ -323,15 +373,15 @@ class TransformerFFNLayer(nn.Module):
         if incremental_state is not None:
             T_inp = x.shape[0]
             saved_state = self._get_input_buffer(incremental_state)
-            if 'prev_input' in saved_state:
-                prev_input = saved_state['prev_input']
+            if "prev_input" in saved_state:
+                prev_input = saved_state["prev_input"]
                 x = torch.cat((prev_input, x), dim=0)
-            x = x[-self.kernel_size:]
-            saved_state['prev_input'] = x
+            x = x[-self.kernel_size :]
+            saved_state["prev_input"] = x
             self._set_input_buffer(incremental_state, saved_state)
 
         x = self.ffn_1(x.permute(1, 2, 0)).permute(2, 0, 1)
-        x = x * self.kernel_size ** -0.5
+        x = x * self.kernel_size**-0.5
 
         if incremental_state is not None:
             x = x[-T_inp:]
@@ -345,55 +395,74 @@ class TransformerFFNLayer(nn.Module):
         return x
 
     def _get_input_buffer(self, incremental_state):
-        return get_incremental_state(
-            self,
-            incremental_state,
-            'f',
-        ) or {}
+        return (
+            get_incremental_state(
+                self,
+                incremental_state,
+                "f",
+            )
+            or {}
+        )
 
     def _set_input_buffer(self, incremental_state, buffer):
         set_incremental_state(
             self,
             incremental_state,
-            'f',
+            "f",
             buffer,
         )
 
     def clear_buffer(self, incremental_state):
         if incremental_state is not None:
             saved_state = self._get_input_buffer(incremental_state)
-            if 'prev_input' in saved_state:
-                del saved_state['prev_input']
+            if "prev_input" in saved_state:
+                del saved_state["prev_input"]
             self._set_input_buffer(incremental_state, saved_state)
 
 
 class GPTBlock(nn.Module):
-    def __init__(self, c, num_heads, dropout, attention_dropout=0.1, relu_dropout=0.1,
-                 kernel_size=9, ffn_hidden_size=1024, act='gelu', post_ln=False, norm_cls=LayerNorm):
+
+    def __init__(
+        self,
+        c,
+        num_heads,
+        dropout,
+        attention_dropout=0.1,
+        relu_dropout=0.1,
+        kernel_size=9,
+        ffn_hidden_size=1024,
+        act="gelu",
+        post_ln=False,
+        norm_cls=LayerNorm,
+    ):
         super().__init__()
         self.c = c
         self.dropout = dropout
         self.layer_norm1 = norm_cls(c)
-        self.self_attn = CausalSelfAttention(
-            c, num_heads, dropout=attention_dropout
-        )
+        self.self_attn = CausalSelfAttention(c, num_heads, dropout=attention_dropout)
         self.layer_norm2 = norm_cls(c)
         self.ffn = TransformerFFNLayer(
-            c, ffn_hidden_size, padding='LEFT', kernel_size=kernel_size, dropout=relu_dropout, act=act)
+            c,
+            ffn_hidden_size,
+            padding="LEFT",
+            kernel_size=kernel_size,
+            dropout=relu_dropout,
+            act=act,
+        )
         self.post_ln = post_ln
 
     def forward(
-            self,
-            x,
-            encoder_out=None,
-            encoder_padding_mask=None,
-            incremental_state=None,
-            self_attn_mask=None,
-            attn_out=None,
-            spk_pos_ids_flat=None,
-            **kwargs,
+        self,
+        x,
+        encoder_out=None,
+        encoder_padding_mask=None,
+        incremental_state=None,
+        self_attn_mask=None,
+        attn_out=None,
+        spk_pos_ids_flat=None,
+        **kwargs,
     ):
-        layer_norm_training = kwargs.get('layer_norm_training', None)
+        layer_norm_training = kwargs.get("layer_norm_training", None)
         if layer_norm_training is not None:
             self.layer_norm1.training = layer_norm_training
             self.layer_norm2.training = layer_norm_training
@@ -408,7 +477,7 @@ class GPTBlock(nn.Module):
             incremental_state=incremental_state,
             attn_mask=self_attn_mask,
             spk_pos_ids_flat=spk_pos_ids_flat,
-            need_weights=False
+            need_weights=False,
         )
         x = F.dropout(x, self.dropout, training=self.training)
         x = residual + x
@@ -427,7 +496,9 @@ class GPTBlock(nn.Module):
             x = self.layer_norm2(x)
         return x, attn_logits
 
-    def clear_buffer(self, input, encoder_out=None, encoder_padding_mask=None, incremental_state=None):
+    def clear_buffer(
+        self, input, encoder_out=None, encoder_padding_mask=None, incremental_state=None
+    ):
         self.encoder_attn.clear_buffer(incremental_state)
         self.ffn.clear_buffer(incremental_state)
 
@@ -436,24 +507,42 @@ class GPTBlock(nn.Module):
 
 
 class GPTLayer(nn.Module):
-    def __init__(self, hidden_size, dropout, kernel_size=9, num_heads=8, ffn_hidden_size=1024, post_ln=False,
-                 lm_num_layers=10, norm_cls=LayerNorm):
+
+    def __init__(
+        self,
+        hidden_size,
+        dropout,
+        kernel_size=9,
+        num_heads=8,
+        ffn_hidden_size=1024,
+        post_ln=False,
+        lm_num_layers=10,
+        norm_cls=LayerNorm,
+    ):
         super().__init__()
         self.hidden_size = hidden_size
         self.dropout = dropout
         self.num_heads = num_heads
         self.op = GPTBlock(
-            hidden_size, num_heads, dropout=dropout,
-            attention_dropout=0.0, relu_dropout=dropout,
-            kernel_size=kernel_size, ffn_hidden_size=ffn_hidden_size,
-            post_ln=post_ln, norm_cls=norm_cls)
+            hidden_size,
+            num_heads,
+            dropout=dropout,
+            attention_dropout=0.0,
+            relu_dropout=dropout,
+            kernel_size=kernel_size,
+            ffn_hidden_size=ffn_hidden_size,
+            post_ln=post_ln,
+            norm_cls=norm_cls,
+        )
 
         # init all weights
         self.apply(self._init_weights)
         # apply special scaled init to the residual projections, per GPT-2 paper
         for pn, p in self.named_parameters():
-            if pn.endswith('ffn_2.weight') or pn.endswith('out_proj.weight'):
-                torch.nn.init.normal_(p, mean=0.0, std=0.02 / math.sqrt(2 * lm_num_layers))
+            if pn.endswith("ffn_2.weight") or pn.endswith("out_proj.weight"):
+                torch.nn.init.normal_(
+                    p, mean=0.0, std=0.02 / math.sqrt(2 * lm_num_layers)
+                )
 
     def _init_weights(self, module):
         if isinstance(module, nn.Linear):
@@ -463,7 +552,7 @@ class GPTLayer(nn.Module):
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
-    @torch.autocast(device_type='cuda')
+    @torch.autocast(device_type="cuda")
     def forward(self, x, **kwargs):
         return self.op(x, **kwargs)
 

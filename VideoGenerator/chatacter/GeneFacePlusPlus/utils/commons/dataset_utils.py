@@ -4,14 +4,16 @@ import traceback
 import types
 from functools import wraps
 from itertools import chain
+
 import numpy as np
 import torch.utils.data
 from torch.utils.data import ConcatDataset
 from utils.commons.hparams import hparams
 
 
-
-def collate_xd(values, pad_idx=0, left_pad=False, shift_right=False, max_len=None, shift_id=1):
+def collate_xd(
+    values, pad_idx=0, left_pad=False, shift_right=False, max_len=None, shift_id=1
+):
     if len(values[0].shape) == 1:
         return collate_1d(values, pad_idx, left_pad, shift_right, max_len, shift_id)
     elif len(values[0].shape) == 2:
@@ -19,14 +21,19 @@ def collate_xd(values, pad_idx=0, left_pad=False, shift_right=False, max_len=Non
     elif len(values[0].shape) == 3:
         return collate_3d(values, pad_idx, left_pad, shift_right, max_len)
 
-def collate_1d_or_2d(values, pad_idx=0, left_pad=False, shift_right=False, max_len=None, shift_id=1):
+
+def collate_1d_or_2d(
+    values, pad_idx=0, left_pad=False, shift_right=False, max_len=None, shift_id=1
+):
     if len(values[0].shape) == 1:
         return collate_1d(values, pad_idx, left_pad, shift_right, max_len, shift_id)
     else:
         return collate_2d(values, pad_idx, left_pad, shift_right, max_len)
 
 
-def collate_1d(values, pad_idx=0, left_pad=False, shift_right=False, max_len=None, shift_id=1):
+def collate_1d(
+    values, pad_idx=0, left_pad=False, shift_right=False, max_len=None, shift_id=1
+):
     """Convert a list of 1d tensors into a padded 2d tensor."""
     size = max(v.size(0) for v in values) if max_len is None else max_len
     res = values[0].new(len(values), size).fill_(pad_idx)
@@ -40,7 +47,7 @@ def collate_1d(values, pad_idx=0, left_pad=False, shift_right=False, max_len=Non
             dst.copy_(src)
 
     for i, v in enumerate(values):
-        copy_tensor(v, res[i][size - len(v):] if left_pad else res[i][:len(v)])
+        copy_tensor(v, res[i][size - len(v) :] if left_pad else res[i][: len(v)])
     return res
 
 
@@ -57,13 +64,18 @@ def collate_2d(values, pad_idx=0, left_pad=False, shift_right=False, max_len=Non
             dst.copy_(src)
 
     for i, v in enumerate(values):
-        copy_tensor(v, res[i][size - len(v):] if left_pad else res[i][:len(v)])
+        copy_tensor(v, res[i][size - len(v) :] if left_pad else res[i][: len(v)])
     return res
+
 
 def collate_3d(values, pad_idx=0, left_pad=False, shift_right=False, max_len=None):
     """Convert a list of 2d tensors into a padded 3d tensor."""
     size = max(v.size(0) for v in values) if max_len is None else max_len
-    res = values[0].new(len(values), size, values[0].shape[1], values[0].shape[2]).fill_(pad_idx)
+    res = (
+        values[0]
+        .new(len(values), size, values[0].shape[1], values[0].shape[2])
+        .fill_(pad_idx)
+    )
 
     def copy_tensor(src, dst):
         assert dst.numel() == src.numel()
@@ -73,7 +85,7 @@ def collate_3d(values, pad_idx=0, left_pad=False, shift_right=False, max_len=Non
             dst.copy_(src)
 
     for i, v in enumerate(values):
-        copy_tensor(v, res[i][size - len(v):] if left_pad else res[i][:len(v)])
+        copy_tensor(v, res[i][size - len(v) :] if left_pad else res[i][: len(v)])
     return res
 
 
@@ -88,8 +100,12 @@ def _is_batch_full(batch, num_tokens, max_tokens, max_sentences):
 
 
 def batch_by_size(
-        indices, num_tokens_fn, max_tokens=None, max_sentences=None,
-        required_batch_size_multiple=1, distributed=False
+    indices,
+    num_tokens_fn,
+    max_tokens=None,
+    max_sentences=None,
+    required_batch_size_multiple=1,
+    distributed=False,
 ):
     """
     Yield mini-batches of indices bucketed by size. Batches may contain
@@ -123,9 +139,10 @@ def batch_by_size(
         sample_lens.append(num_tokens)
         sample_len = max(sample_len, num_tokens)
 
-        assert sample_len <= max_tokens, (
-            "sentence at index {} of size {} exceeds max_tokens "
-            "limit of {}!".format(idx, sample_len, max_tokens)
+        assert (
+            sample_len <= max_tokens
+        ), "sentence at index {} of size {} exceeds max_tokens " "limit of {}!".format(
+            idx, sample_len, max_tokens
         )
         num_tokens = (len(batch) + 1) * sample_len
 
@@ -146,7 +163,7 @@ def batch_by_size(
 
 def unpack_dict_to_list(samples):
     samples_ = []
-    bsz = samples.get('outputs').size(0)
+    bsz = samples.get("outputs").size(0)
     for i in range(bsz):
         res = {}
         for k, v in samples.items():
@@ -176,7 +193,7 @@ def data_loader(fn):
     """
 
     wraps(fn)
-    attr_name = '_lazy_' + fn.__name__
+    attr_name = "_lazy_" + fn.__name__
 
     def _get_data_loader(self):
         try:
@@ -187,7 +204,7 @@ def data_loader(fn):
             except AttributeError as e:
                 # Guard against AttributeError suppression. (Issue #142)
                 traceback.print_exc()
-                error = f'{fn.__name__}: An AttributeError was encountered: ' + str(e)
+                error = f"{fn.__name__}: An AttributeError was encountered: " + str(e)
                 raise RuntimeError(error) from e
             setattr(self, attr_name, value)  # Memoize evaluation.
         return value
@@ -196,11 +213,12 @@ def data_loader(fn):
 
 
 class BaseDataset(torch.utils.data.Dataset):
+
     def __init__(self, shuffle):
         super().__init__()
         self.hparams = hparams
         self.shuffle = shuffle
-        self.sort_by_len = hparams['sort_by_len']
+        self.sort_by_len = hparams["sort_by_len"]
         self.sizes = None
 
     @property
@@ -222,7 +240,7 @@ class BaseDataset(torch.utils.data.Dataset):
     def size(self, index):
         """Return an example's size as a float or tuple. This value is used when
         filtering a dataset with ``--max-positions``."""
-        return min(self._sizes[index], hparams['max_frames'])
+        return min(self._sizes[index], hparams["max_frames"])
 
     def ordered_indices(self):
         """Return an ordered list of indices. Batches will be constructed based
@@ -230,28 +248,31 @@ class BaseDataset(torch.utils.data.Dataset):
         if self.shuffle:
             indices = np.random.permutation(len(self))
             if self.sort_by_len:
-                indices = indices[np.argsort(np.array(self._sizes)[indices], kind='mergesort')]
+                indices = indices[
+                    np.argsort(np.array(self._sizes)[indices], kind="mergesort")
+                ]
         else:
             indices = np.arange(len(self))
         return indices
 
     @property
     def num_workers(self):
-        return int(os.getenv('NUM_WORKERS', hparams['num_workers']))
+        return int(os.getenv("NUM_WORKERS", hparams["num_workers"]))
 
 
 class BaseConcatDataset(ConcatDataset):
+
     def collater(self, samples):
         return self.datasets[0].collater(samples)
 
     @property
     def _sizes(self):
-        if not hasattr(self, 'sizes'):
+        if not hasattr(self, "sizes"):
             self.sizes = list(chain.from_iterable([d._sizes for d in self.datasets]))
         return self.sizes
 
     def size(self, index):
-        return min(self._sizes[index], hparams['max_frames'])
+        return min(self._sizes[index], hparams["max_frames"])
 
     def num_tokens(self, index):
         return self.size(index)
@@ -262,7 +283,9 @@ class BaseConcatDataset(ConcatDataset):
         if self.datasets[0].shuffle:
             indices = np.random.permutation(len(self))
             if self.datasets[0].sort_by_len:
-                indices = indices[np.argsort(np.array(self._sizes)[indices], kind='mergesort')]
+                indices = indices[
+                    np.argsort(np.array(self._sizes)[indices], kind="mergesort")
+                ]
         else:
             indices = np.arange(len(self))
         return indices

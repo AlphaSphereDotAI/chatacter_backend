@@ -12,11 +12,21 @@ def fused_add_tanh_sigmoid_multiply(input_a, input_b, n_channels):
 
 
 class WN(torch.nn.Module):
-    def __init__(self, hidden_size, kernel_size, dilation_rate, n_layers, c_cond=0,
-                 p_dropout=0, share_cond_layers=False, is_BTC=False):
+
+    def __init__(
+        self,
+        hidden_size,
+        kernel_size,
+        dilation_rate,
+        n_layers,
+        c_cond=0,
+        p_dropout=0,
+        share_cond_layers=False,
+        is_BTC=False,
+    ):
         super(WN, self).__init__()
-        assert (kernel_size % 2 == 1)
-        assert (hidden_size % 2 == 0)
+        assert kernel_size % 2 == 1
+        assert hidden_size % 2 == 0
         self.is_BTC = is_BTC
         self.hidden_size = hidden_size
         self.kernel_size = kernel_size
@@ -32,14 +42,19 @@ class WN(torch.nn.Module):
 
         if c_cond != 0 and not share_cond_layers:
             cond_layer = torch.nn.Conv1d(c_cond, 2 * hidden_size * n_layers, 1)
-            self.cond_layer = torch.nn.utils.weight_norm(cond_layer, name='weight')
+            self.cond_layer = torch.nn.utils.weight_norm(cond_layer, name="weight")
 
         for i in range(n_layers):
-            dilation = dilation_rate ** i
+            dilation = dilation_rate**i
             padding = int((kernel_size * dilation - dilation) / 2)
-            in_layer = torch.nn.Conv1d(hidden_size, 2 * hidden_size, kernel_size,
-                                       dilation=dilation, padding=padding)
-            in_layer = torch.nn.utils.weight_norm(in_layer, name='weight')
+            in_layer = torch.nn.Conv1d(
+                hidden_size,
+                2 * hidden_size,
+                kernel_size,
+                dilation=dilation,
+                padding=padding,
+            )
+            in_layer = torch.nn.utils.weight_norm(in_layer, name="weight")
             self.in_layers.append(in_layer)
 
             # last one is not necessary
@@ -49,7 +64,7 @@ class WN(torch.nn.Module):
                 res_skip_channels = hidden_size
 
             res_skip_layer = torch.nn.Conv1d(hidden_size, res_skip_channels, 1)
-            res_skip_layer = torch.nn.utils.weight_norm(res_skip_layer, name='weight')
+            res_skip_layer = torch.nn.utils.weight_norm(res_skip_layer, name="weight")
             self.res_skip_layers.append(res_skip_layer)
 
     def forward(self, x, nonpadding=None, cond=None):
@@ -70,7 +85,7 @@ class WN(torch.nn.Module):
             x_in = self.drop(x_in)
             if cond is not None:
                 cond_offset = i * 2 * self.hidden_size
-                cond_l = cond[:, cond_offset:cond_offset + 2 * self.hidden_size, :]
+                cond_l = cond[:, cond_offset : cond_offset + 2 * self.hidden_size, :]
             else:
                 cond_l = torch.zeros_like(x_in)
 
@@ -78,8 +93,8 @@ class WN(torch.nn.Module):
 
             res_skip_acts = self.res_skip_layers[i](acts)
             if i < self.n_layers - 1:
-                x = (x + res_skip_acts[:, :self.hidden_size, :]) * nonpadding
-                output = output + res_skip_acts[:, self.hidden_size:, :]
+                x = (x + res_skip_acts[:, : self.hidden_size, :]) * nonpadding
+                output = output + res_skip_acts[:, self.hidden_size :, :]
             else:
                 output = output + res_skip_acts
         output = output * nonpadding
@@ -88,6 +103,7 @@ class WN(torch.nn.Module):
         return output
 
     def remove_weight_norm(self):
+
         def remove_weight_norm(m):
             try:
                 nn.utils.remove_weight_norm(m)

@@ -3,7 +3,6 @@
 
 # Copyright 2019 Shigeki Karita
 #  Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
-
 """Multi-Head Attention layer definition."""
 
 import math
@@ -34,10 +33,11 @@ class MultiHeadedAttention(nn.Module):
         self.linear_out = nn.Linear(n_feat, n_feat)
         self.attn = None
         self.dropout = nn.Dropout(p=dropout_rate)
-        self.flash = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
+        self.flash = hasattr(torch.nn.functional, "scaled_dot_product_attention")
         if not self.flash:
-            print("WARNING: using slow attention. Flash Attention requires PyTorch >= 2.0")
-
+            print(
+                "WARNING: using slow attention. Flash Attention requires PyTorch >= 2.0"
+            )
 
     def forward_qkv(self, query, key, value):
         """Transform query, key and value.
@@ -81,7 +81,8 @@ class MultiHeadedAttention(nn.Module):
                 mask, 0.0
             )  # (batch, head, time1, time2)
         else:
-            self.attn = torch.softmax(scores, dim=-1)  # (batch, head, time1, time2)
+            # (batch, head, time1, time2)
+            self.attn = torch.softmax(scores, dim=-1)
 
         p_attn = self.dropout(self.attn)
         x = torch.matmul(p_attn, value)  # (batch, head, time1, d_k)
@@ -109,7 +110,9 @@ class MultiHeadedAttention(nn.Module):
         mask = mask * mask[:, None, :, 0]
         mask = mask[:, None]
         if self.flash:
-            attn = torch.nn.functional.scaled_dot_product_attention(q, k, v, is_causal=False, attn_mask=mask)
+            attn = torch.nn.functional.scaled_dot_product_attention(
+                q, k, v, is_causal=False, attn_mask=mask
+            )
         else:
             attn = self.slow_attn(q, k, v, is_causal=False, attn_mask=mask)
         attn = attn.transpose(1, 2)
@@ -118,9 +121,16 @@ class MultiHeadedAttention(nn.Module):
         return attn
 
     def slow_attn(self, Q, K, V, is_causal, attn_mask):
-        attn_mask = attn_mask.masked_fill(not attn_mask, -float('inf')) if attn_mask.dtype == torch.bool else attn_mask
-        attn_weight = torch.softmax((Q @ K.transpose(-2, -1) / math.sqrt(Q.size(-1))) + attn_mask, dim=-1)
+        attn_mask = (
+            attn_mask.masked_fill(not attn_mask, -float("inf"))
+            if attn_mask.dtype == torch.bool
+            else attn_mask
+        )
+        attn_weight = torch.softmax(
+            (Q @ K.transpose(-2, -1) / math.sqrt(Q.size(-1))) + attn_mask, dim=-1
+        )
         return attn_weight @ V
+
 
 class RelPositionMultiHeadedAttention(MultiHeadedAttention):
     """Multi-Head Attention layer with relative position encoding.

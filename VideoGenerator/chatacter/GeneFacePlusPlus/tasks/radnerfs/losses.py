@@ -1,8 +1,9 @@
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
 import torchvision
 from torch import nn
+
 
 def apply_imagenet_normalization(input):
     mean = input.new_tensor([0.485, 0.456, 0.406]).reshape(1, 3, 1, 1)
@@ -12,7 +13,9 @@ def apply_imagenet_normalization(input):
 
 
 def apply_vggface_normalization(input):
-    mean = input.new_tensor([129.186279296875, 104.76238250732422, 93.59396362304688]).reshape(1, 3, 1, 1)
+    mean = input.new_tensor(
+        [129.186279296875, 104.76238250732422, 93.59396362304688]
+    ).reshape(1, 3, 1, 1)
     std = input.new_tensor([1, 1, 1]).reshape(1, 3, 1, 1)
     output = (input * 255 - mean) / std
     return output
@@ -37,6 +40,7 @@ def fuse_math_min_mean_neg(x):
 
 
 class _PerceptualNetwork(nn.Module):
+
     def __init__(self, network, layer_name_mapping, layers):
         super().__init__()
         self.network = network.cuda()
@@ -58,7 +62,9 @@ class _PerceptualNetwork(nn.Module):
 def _vgg19(layers):
     network = torchvision.models.vgg19()
     state_dict = torch.utils.model_zoo.load_url(
-        "https://download.pytorch.org/models/vgg19-dcbb9e9d.pth", map_location=torch.device("cpu"), progress=True
+        "https://download.pytorch.org/models/vgg19-dcbb9e9d.pth",
+        map_location=torch.device("cpu"),
+        progress=True,
     )
     network.load_state_dict(state_dict)
     network = network.features
@@ -83,7 +89,9 @@ def _vgg19(layers):
 def _vgg_face(layers):
     network = torchvision.models.vgg16(num_classes=2622)
     state_dict = torch.utils.model_zoo.load_url(
-        "http://www.robots.ox.ac.uk/~albanie/models/pytorch-mcn/" "vgg_face_dag.pth", map_location=torch.device("cpu"), progress=True
+        "http://www.robots.ox.ac.uk/~albanie/models/pytorch-mcn/" "vgg_face_dag.pth",
+        map_location=torch.device("cpu"),
+        progress=True,
     )
     feature_layer_name_mapping = {
         0: "conv1_1",
@@ -126,9 +134,16 @@ def _vgg_face(layers):
 
 
 class PerceptualLoss(nn.Module):
+
     def __init__(
-        self, 
-        layers_weight={"relu_1_1": 0.03125, "relu_2_1": 0.0625, "relu_3_1": 0.125, "relu_4_1": 0.25, "relu_5_1": 1.0}, 
+        self,
+        layers_weight={
+            "relu_1_1": 0.03125,
+            "relu_2_1": 0.0625,
+            "relu_3_1": 0.125,
+            "relu_4_1": 0.25,
+            "relu_5_1": 1.0,
+        },
         n_scale=3,
         vgg19_loss_weight=1.0,
         vggface_loss_weight=1.0,
@@ -150,8 +165,20 @@ class PerceptualLoss(nn.Module):
         """
         if input.shape[-1] != 512:
             assert input.ndim == 4
-            input = F.interpolate(input, mode="bilinear", size=(512,512), antialias=True, align_corners=False)
-            target = F.interpolate(target, mode="bilinear", size=(512,512), antialias=True, align_corners=False)
+            input = F.interpolate(
+                input,
+                mode="bilinear",
+                size=(512, 512),
+                antialias=True,
+                align_corners=False,
+            )
+            target = F.interpolate(
+                target,
+                mode="bilinear",
+                size=(512, 512),
+                antialias=True,
+                align_corners=False,
+            )
 
         self.vgg19.eval()
         self.vggface.eval()
@@ -163,22 +190,50 @@ class PerceptualLoss(nn.Module):
         features_vgg19_input = self.vgg19(input)
         features_vgg19_target = self.vgg19(target)
         for layer, weight in self.layers_weight.items():
-            tmp = self.vggface_loss_weight * weight * self.criterion(features_vggface_input[layer], features_vggface_target[layer].detach()) / 255
+            tmp = (
+                self.vggface_loss_weight
+                * weight
+                * self.criterion(
+                    features_vggface_input[layer],
+                    features_vggface_target[layer].detach(),
+                )
+                / 255
+            )
             if not torch.any(torch.isnan(tmp)):
                 loss += tmp
             else:
                 loss += torch.zeros_like(tmp)
-            tmp = self.vgg19_loss_weight * weight * self.criterion(features_vgg19_input[layer], features_vgg19_target[layer].detach())
+            tmp = (
+                self.vgg19_loss_weight
+                * weight
+                * self.criterion(
+                    features_vgg19_input[layer], features_vgg19_target[layer].detach()
+                )
+            )
             if not torch.any(torch.isnan(tmp)):
                 loss += tmp
             else:
                 loss += torch.zeros_like(tmp)
         for i in range(self.n_scale):
-            input = F.interpolate(input, mode="bilinear", scale_factor=0.5, align_corners=False, recompute_scale_factor=True)
-            target = F.interpolate(target, mode="bilinear", scale_factor=0.5, align_corners=False, recompute_scale_factor=True)
+            input = F.interpolate(
+                input,
+                mode="bilinear",
+                scale_factor=0.5,
+                align_corners=False,
+                recompute_scale_factor=True,
+            )
+            target = F.interpolate(
+                target,
+                mode="bilinear",
+                scale_factor=0.5,
+                align_corners=False,
+                recompute_scale_factor=True,
+            )
             features_vgg19_input = self.vgg19(input)
             features_vgg19_target = self.vgg19(target)
-            tmp = weight * self.criterion(features_vgg19_input[layer], features_vgg19_target[layer].detach())
+            tmp = weight * self.criterion(
+                features_vgg19_input[layer], features_vgg19_target[layer].detach()
+            )
             if not torch.any(torch.isnan(tmp)):
                 loss += tmp
             else:
@@ -215,6 +270,7 @@ class GANLoss(nn.Module):
 
 
 class FeatureMatchingLoss(nn.Module):
+
     def __init__(self):
         super().__init__()
         self.criterion = nn.L1Loss()
@@ -225,12 +281,15 @@ class FeatureMatchingLoss(nn.Module):
         loss = fake_features[0][0].new_tensor(0)
         for i in range(num_d):
             for j in range(len(fake_features[i])):
-                tmp_loss = self.criterion(fake_features[i][j], real_features[i][j].detach())
+                tmp_loss = self.criterion(
+                    fake_features[i][j], real_features[i][j].detach()
+                )
                 loss += dis_weight * tmp_loss
         return loss
 
 
 class EquivarianceLoss(nn.Module):
+
     def __init__(self):
         super().__init__()
         self.criterion = nn.L1Loss()
@@ -241,6 +300,7 @@ class EquivarianceLoss(nn.Module):
 
 
 class KeypointPriorLoss(nn.Module):
+
     def __init__(self, Dt=0.1, zt=0.33):
         super().__init__()
         self.Dt, self.zt = Dt, zt
@@ -257,16 +317,22 @@ class KeypointPriorLoss(nn.Module):
 
 
 class HeadPoseLoss(nn.Module):
+
     def __init__(self):
         super().__init__()
         self.criterion = nn.L1Loss()
 
     def forward(self, yaw, pitch, roll, real_yaw, real_pitch, real_roll):
-        loss = (self.criterion(yaw, real_yaw.detach()) + self.criterion(pitch, real_pitch.detach()) + self.criterion(roll, real_roll.detach())) / 3
+        loss = (
+            self.criterion(yaw, real_yaw.detach())
+            + self.criterion(pitch, real_pitch.detach())
+            + self.criterion(roll, real_roll.detach())
+        ) / 3
         return loss / np.pi * 180
 
 
 class DeformationPriorLoss(nn.Module):
+
     def __init__(self):
         super().__init__()
 
@@ -275,7 +341,7 @@ class DeformationPriorLoss(nn.Module):
         return loss
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loss_fn = PerceptualLoss()
     x1 = torch.randn([4, 3, 512, 512]).cuda()
     x2 = torch.randn([4, 3, 512, 512]).cuda()

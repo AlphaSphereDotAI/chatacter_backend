@@ -10,7 +10,7 @@ def squeeze(x, x_mask=None, n_sqz=2):
     x_sqz = x_sqz.permute(0, 3, 1, 2).contiguous().view(b, c * n_sqz, t // n_sqz)
 
     if x_mask is not None:
-        x_mask = x_mask[:, :, n_sqz - 1::n_sqz]
+        x_mask = x_mask[:, :, n_sqz - 1 :: n_sqz]
     else:
         x_mask = torch.ones(b, 1, t // n_sqz).to(device=x.device, dtype=x.dtype)
     return x_sqz * x_mask, x_mask

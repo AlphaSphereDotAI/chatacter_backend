@@ -1,5 +1,6 @@
 import torch
 
+
 def get_grad_norm(model, l=2):
     num_para = 0
     accu_grad = 0
@@ -18,22 +19,24 @@ def get_grad_norm(model, l=2):
         else:
             raise ValueError("Now we only implement l1/l2 norm !")
     if l == 2:
-        accu_grad = accu_grad ** 0.5
+        accu_grad = accu_grad**0.5
     if isinstance(accu_grad, float):
         return accu_grad
     return accu_grad.item()
 
+
 class GradBuffer:
+
     def __init__(self):
         self.buffer = {}
-    
+
     def add(self, model):
         for item in model.named_parameters():
             name, param = item
             if param.grad is None:
                 continue
             self.buffer[name] = self.buffer.get(name, 0) + param.grad.data
-    
+
     def apply(self, model):
         for item in model.named_parameters():
             name, param = item

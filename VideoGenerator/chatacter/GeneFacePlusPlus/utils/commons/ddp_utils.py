@@ -1,20 +1,21 @@
-from torch.nn.parallel import DistributedDataParallel
-from torch.nn.parallel.distributed import _find_tensors
+import torch
 import torch.optim
 import torch.utils.data
-import torch
 from packaging import version
+from torch.nn.parallel import DistributedDataParallel
+from torch.nn.parallel.distributed import _find_tensors
+
 
 def get_torch_version():
     torch_version = torch.__version__
     torch_version = torch_version.split("dev")[0]
     torch_version = torch_version.split("cu")[0]
-    if torch_version[-1] == '.':
+    if torch_version[-1] == ".":
         torch_version = torch_version[:-1]
-    torch_version = torch_version.replace("+","")
+    torch_version = torch_version.replace("+", "")
     return torch_version
 
-    
+
 class DDP(DistributedDataParallel):
     """
     Override the forward call in lightning so it goes to training and validation step respectively
@@ -43,9 +44,17 @@ class DDP(DistributedDataParallel):
                 else:
                     self.reducer.prepare_for_backward([])
         elif version.parse(torch_version) < version.parse("2.1"):
-            from torch.nn.parallel.distributed import \
-                logging, Join, _DDPSink, _tree_flatten_with_rref, _tree_unflatten_with_rref
-            with torch.autograd.profiler.record_function("DistributedDataParallel.forward"):
+            from torch.nn.parallel.distributed import (
+                Join,
+                _DDPSink,
+                _tree_flatten_with_rref,
+                _tree_unflatten_with_rref,
+                logging,
+            )
+
+            with torch.autograd.profiler.record_function(
+                "DistributedDataParallel.forward"
+            ):
                 if torch.is_grad_enabled() and self.require_backward_grad_sync:
                     self.logger.set_runtime_stats_and_log()
                     self.num_iterations += 1
@@ -71,7 +80,7 @@ class DDP(DistributedDataParallel):
 
                 # sync params according to location (before/after forward) user
                 # specified as part of hook, if hook was specified.
-                buffer_hook_registered = hasattr(self, 'buffer_hook')
+                buffer_hook_registered = hasattr(self, "buffer_hook")
                 if self._check_sync_bufs_pre_fwd():
                     self._sync_buffers()
 
@@ -110,11 +119,11 @@ class DDP(DistributedDataParallel):
             # TODO: DDPSink is currently enabled for unused parameter detection and
             # static graph training for first iteration.
             if (self.find_unused_parameters and not self.static_graph) or (
-                    self.static_graph and self.num_iterations == 1
+                self.static_graph and self.num_iterations == 1
             ):
                 state_dict = {
-                    'static_graph': self.static_graph,
-                    'num_iterations': self.num_iterations,
+                    "static_graph": self.static_graph,
+                    "num_iterations": self.num_iterations,
                 }
 
                 output_tensor_list, treespec, output_is_rref = _tree_flatten_with_rref(
@@ -146,7 +155,7 @@ class DDP(DistributedDataParallel):
                     output_placeholders, treespec, output_is_rref
                 )
         else:
-            output = super().forward(*inputs, **kwargs) # use _run_ddp_forward()
+            output = super().forward(*inputs, **kwargs)  # use _run_ddp_forward()
         return output
 
     def _run_ddp_forward(self, *inputs, **kwargs):

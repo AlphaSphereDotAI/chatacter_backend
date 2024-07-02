@@ -27,6 +27,7 @@ INITIAL_LOG_LOSS_SCALE = 20.0
 
 
 class TrainLoop:
+
     def __init__(
         self,
         *,
@@ -220,7 +221,7 @@ class TrainLoop:
                 self.diffusion, t, {k: v * weights for k, v in losses.items()}
             )
             if self.use_fp16:
-                loss_scale = 2 ** self.lg_loss_scale
+                loss_scale = 2**self.lg_loss_scale
                 (loss * loss_scale).backward()
             else:
                 loss.backward()
@@ -232,7 +233,7 @@ class TrainLoop:
             return
 
         model_grads_to_master_grads(self.model_params, self.master_params)
-        self.master_params[0].grad.mul_(1.0 / (2 ** self.lg_loss_scale))
+        self.master_params[0].grad.mul_(1.0 / (2**self.lg_loss_scale))
         self._log_grad_norm()
         self._anneal_lr()
         self.opt.step()
@@ -251,7 +252,7 @@ class TrainLoop:
     def _log_grad_norm(self):
         sqsum = 0.0
         for p in self.master_params:
-            sqsum += (p.grad ** 2).sum().item()
+            sqsum += (p.grad**2).sum().item()
         logger.logkv_mean("grad_norm", np.sqrt(sqsum))
 
     def _anneal_lr(self):
@@ -269,6 +270,7 @@ class TrainLoop:
             logger.logkv("lg_loss_scale", self.lg_loss_scale)
 
     def save(self):
+
         def save_checkpoint(rate, params):
             state_dict = self._master_params_to_state_dict(params)
             if dist.get_rank() == 0:

@@ -1,8 +1,10 @@
-from openTSNE import TSNE
-import numpy as np
+import random
+
 import matplotlib
 import matplotlib.pyplot as plt
-import random
+import numpy as np
+from openTSNE import TSNE
+
 
 def visualize(
     x,
@@ -15,9 +17,8 @@ def visualize(
     colors=None,
     legend_kwargs=None,
     label_order=None,
-    **kwargs
+    **kwargs,
 ):
-
     if ax is None:
         _, ax = matplotlib.pyplot.subplots(figsize=(10, 8))
 
@@ -83,7 +84,11 @@ def visualize(
             )
             for yi in classes
         ]
-        legend_kwargs_ = dict(loc="best", bbox_to_anchor=(0.05, 0.5), frameon=False, )
+        legend_kwargs_ = dict(
+            loc="best",
+            bbox_to_anchor=(0.05, 0.5),
+            frameon=False,
+        )
         if legend_kwargs is not None:
             legend_kwargs_.update(legend_kwargs)
         ax.legend(handles=legend_handles, **legend_kwargs_)
@@ -101,32 +106,64 @@ idexp_lm3d_pred_lrs3 = np.load("infer_out/tmp_npys/lrs3_pred_all.npy")
 idx = np.random.choice(np.arange(len(idexp_lm3d_pred_lrs3)), 10000)
 idexp_lm3d_pred_lrs3 = idexp_lm3d_pred_lrs3[idx]
 
-person_ds = np.load("data/binary/videos/May/trainval_dataset.npy", allow_pickle=True).tolist()
-person_idexp_mean = person_ds['idexp_lm3d_mean'].reshape([1,204])
-person_idexp_std = person_ds['idexp_lm3d_std'].reshape([1,204])
-person_idexp_lm3d_train = np.stack([s['idexp_lm3d_normalized'].reshape([204,]) for s in person_ds['train_samples']])
-person_idexp_lm3d_val = np.stack([s['idexp_lm3d_normalized'].reshape([204,]) for s in person_ds['val_samples']])
+person_ds = np.load(
+    "data/binary/videos/May/trainval_dataset.npy", allow_pickle=True
+).tolist()
+person_idexp_mean = person_ds["idexp_lm3d_mean"].reshape([1, 204])
+person_idexp_std = person_ds["idexp_lm3d_std"].reshape([1, 204])
+person_idexp_lm3d_train = np.stack(
+    [
+        s["idexp_lm3d_normalized"].reshape(
+            [
+                204,
+            ]
+        )
+        for s in person_ds["train_samples"]
+    ]
+)
+person_idexp_lm3d_val = np.stack(
+    [
+        s["idexp_lm3d_normalized"].reshape(
+            [
+                204,
+            ]
+        )
+        for s in person_ds["val_samples"]
+    ]
+)
 
-lrs3_stats = np.load('/home/yezhenhui/datasets/binary/lrs3_0702/stats.npy',allow_pickle=True).tolist()
-lrs3_idexp_mean = lrs3_stats['idexp_lm3d_mean'].reshape([1,204])
-lrs3_idexp_std = lrs3_stats['idexp_lm3d_std'].reshape([1,204])
+lrs3_stats = np.load(
+    "/home/yezhenhui/datasets/binary/lrs3_0702/stats.npy", allow_pickle=True
+).tolist()
+lrs3_idexp_mean = lrs3_stats["idexp_lm3d_mean"].reshape([1, 204])
+lrs3_idexp_std = lrs3_stats["idexp_lm3d_std"].reshape([1, 204])
 person_idexp_lm3d_train = person_idexp_lm3d_train * person_idexp_std + person_idexp_mean
 # person_idexp_lm3d_train = (person_idexp_lm3d_train - lrs3_idexp_mean) / lrs3_idexp_std
 person_idexp_lm3d_val = person_idexp_lm3d_val * person_idexp_std + person_idexp_mean
 # person_idexp_lm3d_val = (person_idexp_lm3d_val - lrs3_idexp_mean) / lrs3_idexp_std
 idexp_lm3d_pred_lrs3 = idexp_lm3d_pred_lrs3 * lrs3_idexp_std + lrs3_idexp_mean
 
-
-idexp_lm3d_pred_vae = np.load("infer_out/tmp_npys/pred_exp_0_vae.npy").reshape([-1,204])
-idexp_lm3d_pred_postnet = np.load("infer_out/tmp_npys/pred_exp_0_postnet_hubert.npy").reshape([-1,204])
+idexp_lm3d_pred_vae = np.load("infer_out/tmp_npys/pred_exp_0_vae.npy").reshape(
+    [-1, 204]
+)
+idexp_lm3d_pred_postnet = np.load(
+    "infer_out/tmp_npys/pred_exp_0_postnet_hubert.npy"
+).reshape([-1, 204])
 # idexp_lm3d_pred_postnet = idexp_lm3d_pred_postnet * lrs3_idexp_std + lrs3_idexp_mean
 
-idexp_lm3d_all = np.concatenate([idexp_lm3d_pred_lrs3, person_idexp_lm3d_train,idexp_lm3d_pred_vae, idexp_lm3d_pred_postnet])
-idexp_lm3d_all_emb = tsne.fit(idexp_lm3d_all) # array(float64) [B,50]==>[B, 2]
+idexp_lm3d_all = np.concatenate(
+    [
+        idexp_lm3d_pred_lrs3,
+        person_idexp_lm3d_train,
+        idexp_lm3d_pred_vae,
+        idexp_lm3d_pred_postnet,
+    ]
+)
+idexp_lm3d_all_emb = tsne.fit(idexp_lm3d_all)  # array(float64) [B,50]==>[B, 2]
 # z_p_emb = tsne.fit(z_p) # array(float64) [B,50]==>[B, 2]
 y1 = ["pred_lrs3" for _ in range(len(idexp_lm3d_pred_lrs3))]
 y2 = ["person_train" for _ in range(len(person_idexp_lm3d_train))]
 y3 = ["vae" for _ in range(len(idexp_lm3d_pred_vae))]
 y4 = ["postnet" for _ in range(len(idexp_lm3d_pred_postnet))]
-visualize(idexp_lm3d_all_emb, y1+y2+y3+y4)
+visualize(idexp_lm3d_all_emb, y1 + y2 + y3 + y4)
 plt.savefig("infer_out/tmp_npys/lrs3_pred_all_0k.png")
