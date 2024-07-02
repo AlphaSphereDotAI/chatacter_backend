@@ -13,7 +13,7 @@ RUN apt-get update && \
     apt-get autoclean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN conda install pytorch-cuda=11.8 -c pytorch -c nvidia -y
+RUN conda install nvidia::cuda-toolkit -y
 
 RUN git clone --recursive https://github.com/ashawkey/torch-ngp.git && \
     cd torch-ngp && \
