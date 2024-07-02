@@ -1,11 +1,11 @@
+import numpy as np
 import torch
+import torch.distributed as dist
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
+from einops import rearrange
 from scipy.cluster.vq import kmeans2
 from torch import einsum
-from einops import rearrange
-import torch.distributed as dist
 
 
 class VectorQuantizer(nn.Module):
@@ -48,17 +48,18 @@ class VectorQuantizer(nn.Module):
         z_flattened = z.view(-1, self.e_dim)
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
 
-        d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \
-            torch.sum(self.embedding.weight ** 2, dim=1) - 2 * \
-            torch.matmul(z_flattened, self.embedding.weight.t())
+        d = (
+            torch.sum(z_flattened**2, dim=1, keepdim=True)
+            + torch.sum(self.embedding.weight**2, dim=1)
+            - 2 * torch.matmul(z_flattened, self.embedding.weight.t())
+        )
 
-        ## could possible replace this here
+        # could possible replace this here
         # #\start...
         # find closest encodings
         min_encoding_indices = torch.argmin(d, dim=1).unsqueeze(1)
 
-        min_encodings = torch.zeros(
-            min_encoding_indices.shape[0], self.n_e).to(z)
+        min_encodings = torch.zeros(min_encoding_indices.shape[0], self.n_e).to(z)
         min_encodings.scatter_(1, min_encoding_indices, 1)
 
         # dtype min encodings: torch.float32
@@ -76,8 +77,9 @@ class VectorQuantizer(nn.Module):
         # ......\end......... (TODO)
 
         # compute loss for embedding
-        loss = torch.mean((z_q.detach() - z) ** 2) + self.beta * \
-               torch.mean((z_q - z.detach()) ** 2)
+        loss = torch.mean((z_q.detach() - z) ** 2) + self.beta * torch.mean(
+            (z_q - z.detach()) ** 2
+        )
 
         # preserve gradients
         z_q = z + (z_q - z).detach()
@@ -117,9 +119,18 @@ class GumbelQuantize(nn.Module):
     https://arxiv.org/abs/1611.01144
     """
 
-    def __init__(self, num_hiddens, embedding_dim, n_embed, straight_through=True,
-                 kl_weight=5e-4, temp_init=1.0, use_vqinterface=True,
-                 remap=None, unknown_index="random"):
+    def __init__(
+        self,
+        num_hiddens,
+        embedding_dim,
+        n_embed,
+        straight_through=True,
+        kl_weight=5e-4,
+        temp_init=1.0,
+        use_vqinterface=True,
+        remap=None,
+        unknown_index="random",
+    ):
         super().__init__()
 
         self.embedding_dim = embedding_dim
@@ -142,8 +153,10 @@ class GumbelQuantize(nn.Module):
             if self.unknown_index == "extra":
                 self.unknown_index = self.re_embed
                 self.re_embed = self.re_embed + 1
-            print(f"Remapping {self.n_embed} indices to {self.re_embed} indices. "
-                  f"Using {self.unknown_index} for unknown indices.")
+            print(
+                f"Remapping {self.n_embed} indices to {self.re_embed} indices. "
+                f"Using {self.unknown_index} for unknown indices."
+            )
         else:
             self.re_embed = n_embed
 
@@ -156,7 +169,9 @@ class GumbelQuantize(nn.Module):
         new = match.argmax(-1)
         unknown = match.sum(2) < 1
         if self.unknown_index == "random":
-            new[unknown] = torch.randint(0, self.re_embed, size=new[unknown].shape).to(device=new.device)
+            new[unknown] = torch.randint(0, self.re_embed, size=new[unknown].shape).to(
+                device=new.device
+            )
         else:
             new[unknown] = self.unknown_index
         return new.reshape(ishape)
@@ -187,11 +202,14 @@ class GumbelQuantize(nn.Module):
             # go back to all entries but unused set to zero
             full_zeros[:, self.used, ...] = soft_one_hot
             soft_one_hot = full_zeros
-        z_q = einsum('b n h w, n d -> b d h w', soft_one_hot, self.embed.weight)
+        z_q = einsum("b n h w, n d -> b d h w", soft_one_hot, self.embed.weight)
 
         # + kl divergence to the prior loss
         qy = F.softmax(logits, dim=1)
-        diff = self.kl_weight * torch.sum(qy * torch.log(qy * self.n_embed + 1e-10), dim=1).mean()
+        diff = (
+            self.kl_weight
+            * torch.sum(qy * torch.log(qy * self.n_embed + 1e-10), dim=1).mean()
+        )
 
         ind = soft_one_hot.argmax(dim=1)
         if self.remap is not None:
@@ -205,11 +223,13 @@ class GumbelQuantize(nn.Module):
     def get_codebook_entry(self, indices, shape):
         b, h, w, c = shape
         assert b * h * w == indices.shape[0]
-        indices = rearrange(indices, '(b h w) -> b h w', b=b, h=h, w=w)
+        indices = rearrange(indices, "(b h w) -> b h w", b=b, h=h, w=w)
         if self.remap is not None:
             indices = self.unmap_to_all(indices)
-        one_hot = F.one_hot(indices, num_classes=self.n_embed).permute(0, 3, 1, 2).float()
-        z_q = einsum('b n h w, n d -> b d h w', one_hot, self.embed.weight)
+        one_hot = (
+            F.one_hot(indices, num_classes=self.n_embed).permute(0, 3, 1, 2).float()
+        )
+        z_q = einsum("b n h w, n d -> b d h w", one_hot, self.embed.weight)
         return z_q
 
 
@@ -237,9 +257,14 @@ class VectorQuantizer2(nn.Module):
     def encode(self, z):
         B, T, _ = z.shape
         z_flattened = z.reshape(-1, self.e_dim)
-        d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \
-            torch.sum(self.embedding.weight ** 2, dim=1) - 2 * \
-            torch.einsum('bd,dn->bn', z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
+        d = (
+            torch.sum(z_flattened**2, dim=1, keepdim=True)
+            + torch.sum(self.embedding.weight**2, dim=1)
+            - 2
+            * torch.einsum(
+                "bd,dn->bn", z_flattened, rearrange(self.embedding.weight, "n d -> d n")
+            )
+        )
 
         min_encoding_indices = torch.argmin(d, dim=1)
         z_q = self.embedding(min_encoding_indices).reshape(z.shape)
@@ -248,7 +273,9 @@ class VectorQuantizer2(nn.Module):
         min_encoding_indices = min_encoding_indices.reshape(z.shape[:-1])
         return z_flattened, z_q, min_encoding_indices
 
-    def forward(self, z, mask=None, temp=None, rescale_logits=False, return_logits=False):
+    def forward(
+        self, z, mask=None, temp=None, rescale_logits=False, return_logits=False
+    ):
         if mask is not None:
             assert mask.shape[:2] == z.shape[:2], (mask.shape, z.shape)
             assert mask.shape[-1] == 1, (mask.shape,)
@@ -262,10 +289,13 @@ class VectorQuantizer2(nn.Module):
         z_flattened = z.reshape(-1, self.e_dim)
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
 
-        d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \
-            torch.sum(self.embedding.weight ** 2, dim=1) - 2 * \
-            torch.matmul(z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
-            #torch.einsum('bd,dn->bn', z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
+        d = (
+            torch.sum(z_flattened**2, dim=1, keepdim=True)
+            + torch.sum(self.embedding.weight**2, dim=1)
+            - 2
+            * torch.matmul(z_flattened, rearrange(self.embedding.weight, "n d -> d n"))
+        )
+        # torch.einsum('bd,dn->bn', z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
 
         min_encoding_indices = torch.argmin(d, dim=1)
         z_q = self.embedding(min_encoding_indices).reshape(z.shape)
@@ -273,11 +303,9 @@ class VectorQuantizer2(nn.Module):
 
         # compute loss for embedding
         if not self.legacy:
-            loss = self.beta * (z_q.detach() - z) ** 2 + \
-                   (z_q - z.detach()) ** 2
+            loss = self.beta * (z_q.detach() - z) ** 2 + (z_q - z.detach()) ** 2
         else:
-            loss = (z_q.detach() - z) ** 2 + self.beta * \
-                   (z_q - z.detach()) ** 2
+            loss = (z_q.detach() - z) ** 2 + self.beta * (z_q - z.detach()) ** 2
 
         # preserve gradients
         z_q = z + (z_q - z).detach()
@@ -302,6 +330,7 @@ class VectorQuantizer2(nn.Module):
 
 
 class VectorQuantizer4(nn.Module):
+
     def __init__(self, n_e, e_dim, beta, legacy=False, kmeans_reset_every=1000):
         super().__init__()
         self.n_e = n_e
@@ -316,15 +345,20 @@ class VectorQuantizer4(nn.Module):
         self.reset_every = kmeans_reset_every
         self.reset_thres = 20
         self.z_buffer = []
-        self.register_buffer('use_flag', torch.zeros(n_e))
-        self.register_buffer('steps', torch.zeros(1))
+        self.register_buffer("use_flag", torch.zeros(n_e))
+        self.register_buffer("steps", torch.zeros(1))
 
     def encode(self, z):
         B, T, _ = z.shape
         z_flattened = z.reshape(-1, self.e_dim)
-        d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \
-            torch.sum(self.embedding.weight ** 2, dim=1) - 2 * \
-            torch.einsum('bd,dn->bn', z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
+        d = (
+            torch.sum(z_flattened**2, dim=1, keepdim=True)
+            + torch.sum(self.embedding.weight**2, dim=1)
+            - 2
+            * torch.einsum(
+                "bd,dn->bn", z_flattened, rearrange(self.embedding.weight, "n d -> d n")
+            )
+        )
 
         min_encoding_indices = torch.argmin(d, dim=1)
         z_q = self.embedding(min_encoding_indices).reshape(z.shape)
@@ -333,7 +367,9 @@ class VectorQuantizer4(nn.Module):
         min_encoding_indices = min_encoding_indices.reshape(z.shape[:-1])
         return z_flattened, z_q, min_encoding_indices
 
-    def forward(self, z, mask=None, temp=None, rescale_logits=False, return_logits=False):
+    def forward(
+        self, z, mask=None, temp=None, rescale_logits=False, return_logits=False
+    ):
         if mask is not None:
             assert mask.shape[:2] == z.shape[:2], (mask.shape, z.shape)
             assert mask.shape[-1] == 1, (mask.shape,)
@@ -347,9 +383,14 @@ class VectorQuantizer4(nn.Module):
         z_flattened = z.reshape(-1, self.e_dim)
 
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
-        d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \
-            torch.sum(self.embedding.weight ** 2, dim=1) - 2 * \
-            torch.einsum('bd,dn->bn', z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
+        d = (
+            torch.sum(z_flattened**2, dim=1, keepdim=True)
+            + torch.sum(self.embedding.weight**2, dim=1)
+            - 2
+            * torch.einsum(
+                "bd,dn->bn", z_flattened, rearrange(self.embedding.weight, "n d -> d n")
+            )
+        )
 
         min_encoding_indices = torch.argmin(d, dim=1)
         z_q = self.embedding(min_encoding_indices).reshape(z.shape)
@@ -370,29 +411,51 @@ class VectorQuantizer4(nn.Module):
             if self.steps % self.reset_every == 0:
                 if dist.is_initialized():
                     dist.all_reduce(self.use_flag)
-                vq_usage = (self.use_flag > self.reset_thres).sum().item() / self.use_flag.shape[0]
+                vq_usage = (
+                    self.use_flag > self.reset_thres
+                ).sum().item() / self.use_flag.shape[0]
                 print("| VQ usage: ", vq_usage)
                 if vq_usage != 1:
                     if is_master:
                         if self.steps.item() == self.reset_every:
-                            print('| running kmeans in VQVAE')  # data driven initialization for the embeddings
+                            print(
+                                "| running kmeans in VQVAE"
+                            )  # data driven initialization for the embeddings
                             z_buffer = torch.cat(self.z_buffer, 0)
                             rp = torch.randperm(z_buffer.shape[0])
-                            kd = kmeans2(z_buffer[rp].numpy(), self.n_e, minit='points')[0]
-                            self.embedding.weight.data = torch.from_numpy(kd).to(z.device)
+                            kd = kmeans2(
+                                z_buffer[rp].numpy(), self.n_e, minit="points"
+                            )[0]
+                            self.embedding.weight.data = torch.from_numpy(kd).to(
+                                z.device
+                            )
                         else:
                             reset_ids = self.use_flag < self.reset_thres
                             keep_ids = self.use_flag >= self.reset_thres
-                            t = torch.randint(0, keep_ids.sum(), [reset_ids.sum()], device=self.use_flag.device)
+                            t = torch.randint(
+                                0,
+                                keep_ids.sum(),
+                                [reset_ids.sum()],
+                                device=self.use_flag.device,
+                            )
                             keep_ids = torch.where(keep_ids)[0][t]
-                            self.embedding.weight.data[reset_ids] = self.embedding.weight.data[keep_ids].clone()
+                            self.embedding.weight.data[reset_ids] = (
+                                self.embedding.weight.data[keep_ids].clone()
+                            )
                     if dist.is_initialized():
                         dist.broadcast(self.embedding.weight.data, 0)
 
                     # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
-                    d = torch.sum(z_flattened ** 2, dim=1, keepdim=True) + \
-                        torch.sum(self.embedding.weight ** 2, dim=1) - 2 * \
-                        torch.einsum('bd,dn->bn', z_flattened, rearrange(self.embedding.weight, 'n d -> d n'))
+                    d = (
+                        torch.sum(z_flattened**2, dim=1, keepdim=True)
+                        + torch.sum(self.embedding.weight**2, dim=1)
+                        - 2
+                        * torch.einsum(
+                            "bd,dn->bn",
+                            z_flattened,
+                            rearrange(self.embedding.weight, "n d -> d n"),
+                        )
+                    )
                     min_encoding_indices = torch.argmin(d, dim=1)
                     z_q = self.embedding(min_encoding_indices).reshape(z.shape)
                 self.use_flag.fill_(0)
@@ -400,11 +463,9 @@ class VectorQuantizer4(nn.Module):
 
         # compute loss for embedding
         if not self.legacy:
-            loss = self.beta * (z_q.detach() - z) ** 2 + \
-                   (z_q - z.detach()) ** 2
+            loss = self.beta * (z_q.detach() - z) ** 2 + (z_q - z.detach()) ** 2
         else:
-            loss = (z_q.detach() - z) ** 2 + self.beta * \
-                   (z_q - z.detach()) ** 2
+            loss = (z_q.detach() - z) ** 2 + self.beta * (z_q - z.detach()) ** 2
 
         # preserve gradients
         z_q = z + (z_q - z).detach()

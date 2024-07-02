@@ -1,9 +1,10 @@
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
 
 class PreNet(nn.Module):
+
     def __init__(self, in_dims, fc1_dims=256, fc2_dims=128, dropout=0.5):
         super().__init__()
         self.fc1 = nn.Linear(in_dims, fc1_dims)
@@ -21,24 +22,28 @@ class PreNet(nn.Module):
 
 
 class HighwayNetwork(nn.Module):
+
     def __init__(self, size):
         super().__init__()
         self.W1 = nn.Linear(size, size)
         self.W2 = nn.Linear(size, size)
-        self.W1.bias.data.fill_(0.)
+        self.W1.bias.data.fill_(0.0)
 
     def forward(self, x):
         x1 = self.W1(x)
         x2 = self.W2(x)
         g = torch.sigmoid(x2)
-        y = g * F.relu(x1) + (1. - g) * x
+        y = g * F.relu(x1) + (1.0 - g) * x
         return y
 
 
 class BatchNormConv(nn.Module):
+
     def __init__(self, in_channels, out_channels, kernel, relu=True):
         super().__init__()
-        self.conv = nn.Conv1d(in_channels, out_channels, kernel, stride=1, padding=kernel // 2, bias=False)
+        self.conv = nn.Conv1d(
+            in_channels, out_channels, kernel, stride=1, padding=kernel // 2, bias=False
+        )
         self.bnorm = nn.BatchNorm1d(out_channels)
         self.relu = relu
 
@@ -49,20 +54,36 @@ class BatchNormConv(nn.Module):
 
 
 class ConvNorm(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=1, stride=1,
-                 padding=None, dilation=1, bias=True, w_init_gain='linear'):
+
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size=1,
+        stride=1,
+        padding=None,
+        dilation=1,
+        bias=True,
+        w_init_gain="linear",
+    ):
         super(ConvNorm, self).__init__()
         if padding is None:
-            assert (kernel_size % 2 == 1)
+            assert kernel_size % 2 == 1
             padding = int(dilation * (kernel_size - 1) / 2)
 
-        self.conv = torch.nn.Conv1d(in_channels, out_channels,
-                                    kernel_size=kernel_size, stride=stride,
-                                    padding=padding, dilation=dilation,
-                                    bias=bias)
+        self.conv = torch.nn.Conv1d(
+            in_channels,
+            out_channels,
+            kernel_size=kernel_size,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
+            bias=bias,
+        )
 
         torch.nn.init.xavier_uniform_(
-            self.conv.weight, gain=torch.nn.init.calculate_gain(w_init_gain))
+            self.conv.weight, gain=torch.nn.init.calculate_gain(w_init_gain)
+        )
 
     def forward(self, signal):
         conv_signal = self.conv(signal)
@@ -70,6 +91,7 @@ class ConvNorm(torch.nn.Module):
 
 
 class CBHG(nn.Module):
+
     def __init__(self, K, in_channels, channels, proj_channels, num_highways):
         super().__init__()
 
@@ -84,8 +106,12 @@ class CBHG(nn.Module):
 
         self.maxpool = nn.MaxPool1d(kernel_size=2, stride=1, padding=1)
 
-        self.conv_project1 = BatchNormConv(len(self.bank_kernels) * channels, proj_channels[0], 3)
-        self.conv_project2 = BatchNormConv(proj_channels[0], proj_channels[1], 3, relu=False)
+        self.conv_project1 = BatchNormConv(
+            len(self.bank_kernels) * channels, proj_channels[0], 3
+        )
+        self.conv_project2 = BatchNormConv(
+            proj_channels[0], proj_channels[1], 3, relu=False
+        )
 
         # Fix the highway input if necessary
         if proj_channels[-1] != channels:
@@ -152,13 +178,18 @@ class CBHG(nn.Module):
 
 
 class TacotronEncoder(nn.Module):
+
     def __init__(self, embed_dims, num_chars, cbhg_channels, K, num_highways, dropout):
         super().__init__()
         self.embedding = nn.Embedding(num_chars, embed_dims)
         self.pre_net = PreNet(embed_dims, embed_dims, embed_dims, dropout=dropout)
-        self.cbhg = CBHG(K=K, in_channels=cbhg_channels, channels=cbhg_channels,
-                         proj_channels=[cbhg_channels, cbhg_channels],
-                         num_highways=num_highways)
+        self.cbhg = CBHG(
+            K=K,
+            in_channels=cbhg_channels,
+            channels=cbhg_channels,
+            proj_channels=[cbhg_channels, cbhg_channels],
+            num_highways=num_highways,
+        )
         self.proj_out = nn.Linear(cbhg_channels * 2, cbhg_channels)
 
     def forward(self, x):
@@ -171,23 +202,34 @@ class TacotronEncoder(nn.Module):
 
 
 class RNNEncoder(nn.Module):
+
     def __init__(self, num_chars, embedding_dim, n_convolutions=3, kernel_size=5):
         super(RNNEncoder, self).__init__()
         self.embedding = nn.Embedding(num_chars, embedding_dim, padding_idx=0)
         convolutions = []
         for _ in range(n_convolutions):
             conv_layer = nn.Sequential(
-                ConvNorm(embedding_dim,
-                         embedding_dim,
-                         kernel_size=kernel_size, stride=1,
-                         padding=int((kernel_size - 1) / 2),
-                         dilation=1, w_init_gain='relu'),
-                nn.BatchNorm1d(embedding_dim))
+                ConvNorm(
+                    embedding_dim,
+                    embedding_dim,
+                    kernel_size=kernel_size,
+                    stride=1,
+                    padding=int((kernel_size - 1) / 2),
+                    dilation=1,
+                    w_init_gain="relu",
+                ),
+                nn.BatchNorm1d(embedding_dim),
+            )
             convolutions.append(conv_layer)
         self.convolutions = nn.ModuleList(convolutions)
 
-        self.lstm = nn.LSTM(embedding_dim, int(embedding_dim / 2), 1,
-                            batch_first=True, bidirectional=True)
+        self.lstm = nn.LSTM(
+            embedding_dim,
+            int(embedding_dim / 2),
+            1,
+            batch_first=True,
+            bidirectional=True,
+        )
 
     def forward(self, x):
         input_lengths = (x > 0).sum(-1)
@@ -200,7 +242,9 @@ class RNNEncoder(nn.Module):
         x = x.transpose(1, 2)  # [B, T, H]
 
         # pytorch tensor are not reversible, hence the conversion
-        x = nn.utils.rnn.pack_padded_sequence(x, input_lengths, batch_first=True, enforce_sorted=False)
+        x = nn.utils.rnn.pack_padded_sequence(
+            x, input_lengths, batch_first=True, enforce_sorted=False
+        )
 
         self.lstm.flatten_parameters()
         outputs, _ = self.lstm(x)
@@ -210,19 +254,22 @@ class RNNEncoder(nn.Module):
 
 
 class DecoderRNN(torch.nn.Module):
+
     def __init__(self, hidden_size, decoder_rnn_dim, dropout):
         super(DecoderRNN, self).__init__()
         self.in_conv1d = nn.Sequential(
             torch.nn.Conv1d(
                 in_channels=hidden_size,
                 out_channels=hidden_size,
-                kernel_size=9, padding=4,
+                kernel_size=9,
+                padding=4,
             ),
             torch.nn.ReLU(),
             torch.nn.Conv1d(
                 in_channels=hidden_size,
                 out_channels=hidden_size,
-                kernel_size=9, padding=4,
+                kernel_size=9,
+                padding=4,
             ),
         )
         self.ln = nn.LayerNorm(hidden_size)
@@ -234,7 +281,7 @@ class DecoderRNN(torch.nn.Module):
             num_layers=1,
             batch_first=True,
             bidirectional=True,
-            dropout=dropout
+            dropout=dropout,
         )
         self.rnn.flatten_parameters()
         self.conv1d = torch.nn.Conv1d(
@@ -251,7 +298,9 @@ class DecoderRNN(torch.nn.Module):
 
         x = self.in_conv1d(x.transpose(1, 2)).transpose(1, 2)
         x = self.ln(x)
-        x = nn.utils.rnn.pack_padded_sequence(x, input_lengths, batch_first=True, enforce_sorted=False)
+        x = nn.utils.rnn.pack_padded_sequence(
+            x, input_lengths, batch_first=True, enforce_sorted=False
+        )
         self.rnn.flatten_parameters()
         x, _ = self.rnn(x)  # [B, T, C]
         x, _ = nn.utils.rnn.pad_packed_sequence(x, batch_first=True)

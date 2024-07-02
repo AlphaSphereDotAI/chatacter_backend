@@ -1,12 +1,13 @@
 import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-from modules.commons.layers import LayerNorm, Embedding
+from modules.commons.layers import Embedding, LayerNorm
 
 
 class LambdaLayer(nn.Module):
+
     def __init__(self, lambd):
         super(LambdaLayer, self).__init__()
         self.lambd = lambd
@@ -24,30 +25,66 @@ def init_weights_func(m):
 class ResidualBlock(nn.Module):
     """Implements conv->PReLU->norm n-times"""
 
-    def __init__(self, channels, kernel_size, dilation, n=2, norm_type='bn', dropout=0.0,
-                 c_multiple=2, ln_eps=1e-12, left_pad=False):
+    def __init__(
+        self,
+        channels,
+        kernel_size,
+        dilation,
+        n=2,
+        norm_type="bn",
+        dropout=0.0,
+        c_multiple=2,
+        ln_eps=1e-12,
+        left_pad=False,
+    ):
         super(ResidualBlock, self).__init__()
 
-        if norm_type == 'bn':
-            norm_builder = lambda: nn.BatchNorm1d(channels)
-        elif norm_type == 'in':
-            norm_builder = lambda: nn.InstanceNorm1d(channels, affine=True)
-        elif norm_type == 'gn':
-            norm_builder = lambda: nn.GroupNorm(8, channels)
-        elif norm_type == 'ln':
-            norm_builder = lambda: LayerNorm(channels, dim=1, eps=ln_eps)
+        if norm_type == "bn":
+
+            def norm_builder():
+                return nn.BatchNorm1d(channels)
+
+        elif norm_type == "in":
+
+            def norm_builder():
+                return nn.InstanceNorm1d(channels, affine=True)
+
+        elif norm_type == "gn":
+
+            def norm_builder():
+                return nn.GroupNorm(8, channels)
+
+        elif norm_type == "ln":
+
+            def norm_builder():
+                return LayerNorm(channels, dim=1, eps=ln_eps)
+
         else:
-            norm_builder = lambda: nn.Identity()
+
+            def norm_builder():
+                return nn.Identity()
 
         if left_pad:
             self.blocks = [
                 nn.Sequential(
                     norm_builder(),
                     nn.ConstantPad1d(((dilation * (kernel_size - 1)) // 2 * 2, 0), 0),
-                    nn.Conv1d(channels, c_multiple * channels, kernel_size, dilation=dilation, padding=0),
-                    LambdaLayer(lambda x: x * kernel_size ** -0.5),
+                    nn.Conv1d(
+                        channels,
+                        c_multiple * channels,
+                        kernel_size,
+                        dilation=dilation,
+                        padding=0,
+                    ),
+                    LambdaLayer(lambda x: x * kernel_size**-0.5),
                     nn.GELU(),
-                    nn.Conv1d(c_multiple * channels, channels, 1, dilation=dilation, padding_mode='reflect'),
+                    nn.Conv1d(
+                        c_multiple * channels,
+                        channels,
+                        1,
+                        dilation=dilation,
+                        padding_mode="reflect",
+                    ),
                 )
                 for i in range(n)
             ]
@@ -55,11 +92,23 @@ class ResidualBlock(nn.Module):
             self.blocks = [
                 nn.Sequential(
                     norm_builder(),
-                    nn.Conv1d(channels, c_multiple * channels, kernel_size, dilation=dilation,
-                              padding=(dilation * (kernel_size - 1)) // 2, padding_mode='reflect'),
-                    LambdaLayer(lambda x: x * kernel_size ** -0.5),
+                    nn.Conv1d(
+                        channels,
+                        c_multiple * channels,
+                        kernel_size,
+                        dilation=dilation,
+                        padding=(dilation * (kernel_size - 1)) // 2,
+                        padding_mode="reflect",
+                    ),
+                    LambdaLayer(lambda x: x * kernel_size**-0.5),
                     nn.GELU(),
-                    nn.Conv1d(c_multiple * channels, channels, 1, dilation=dilation, padding_mode='reflect'),
+                    nn.Conv1d(
+                        c_multiple * channels,
+                        channels,
+                        1,
+                        dilation=dilation,
+                        padding_mode="reflect",
+                    ),
                 )
                 for i in range(n)
             ]
@@ -81,41 +130,73 @@ class ResidualBlock(nn.Module):
 class ConvBlocks(nn.Module):
     """Decodes the expanded phoneme encoding into spectrograms"""
 
-    def __init__(self, hidden_size, out_dims, dilations, kernel_size,
-                 norm_type='ln', layers_in_block=2, c_multiple=2,
-                 dropout=0.0, ln_eps=1e-5,
-                 init_weights=True, is_BTC=True, num_layers=None, post_net_kernel=3,
-                 left_pad=False, c_in=None):
+    def __init__(
+        self,
+        hidden_size,
+        out_dims,
+        dilations,
+        kernel_size,
+        norm_type="ln",
+        layers_in_block=2,
+        c_multiple=2,
+        dropout=0.0,
+        ln_eps=1e-5,
+        init_weights=True,
+        is_BTC=True,
+        num_layers=None,
+        post_net_kernel=3,
+        left_pad=False,
+        c_in=None,
+    ):
         super(ConvBlocks, self).__init__()
         self.is_BTC = is_BTC
         if num_layers is not None:
             dilations = [1] * num_layers
         self.res_blocks = nn.Sequential(
-            *[ResidualBlock(hidden_size, kernel_size, d,
-                            n=layers_in_block, norm_type=norm_type, c_multiple=c_multiple,
-                            dropout=dropout, ln_eps=ln_eps, left_pad=left_pad)
-              for d in dilations],
+            *[
+                ResidualBlock(
+                    hidden_size,
+                    kernel_size,
+                    d,
+                    n=layers_in_block,
+                    norm_type=norm_type,
+                    c_multiple=c_multiple,
+                    dropout=dropout,
+                    ln_eps=ln_eps,
+                    left_pad=left_pad,
+                )
+                for d in dilations
+            ],
         )
-        if norm_type == 'bn':
+        if norm_type == "bn":
             norm = nn.BatchNorm1d(hidden_size)
-        elif norm_type == 'in':
+        elif norm_type == "in":
             norm = nn.InstanceNorm1d(hidden_size, affine=True)
-        elif norm_type == 'gn':
+        elif norm_type == "gn":
             norm = nn.GroupNorm(8, hidden_size)
-        elif norm_type == 'ln':
+        elif norm_type == "ln":
             norm = LayerNorm(hidden_size, dim=1, eps=ln_eps)
         self.last_norm = norm
         if left_pad:
             self.post_net1 = nn.Sequential(
                 nn.ConstantPad1d((post_net_kernel // 2 * 2, 0), 0),
-                nn.Conv1d(hidden_size, out_dims, kernel_size=post_net_kernel, padding=0),
+                nn.Conv1d(
+                    hidden_size, out_dims, kernel_size=post_net_kernel, padding=0
+                ),
             )
         else:
-            self.post_net1 = nn.Conv1d(hidden_size, out_dims, kernel_size=post_net_kernel,
-                                       padding=post_net_kernel // 2, padding_mode='reflect')
+            self.post_net1 = nn.Conv1d(
+                hidden_size,
+                out_dims,
+                kernel_size=post_net_kernel,
+                padding=post_net_kernel // 2,
+                padding_mode="reflect",
+            )
         self.c_in = c_in
         if c_in is not None:
-            self.in_conv = nn.Conv1d(c_in, hidden_size, kernel_size=1, padding_mode='reflect')
+            self.in_conv = nn.Conv1d(
+                c_in, hidden_size, kernel_size=1, padding_mode="reflect"
+            )
         if init_weights:
             self.apply(init_weights_func)
 
@@ -142,13 +223,37 @@ class ConvBlocks(nn.Module):
 
 
 class TextConvEncoder(ConvBlocks):
-    def __init__(self, dict_size, hidden_size, out_dims, dilations, kernel_size,
-                 norm_type='ln', layers_in_block=2, c_multiple=2,
-                 dropout=0.0, ln_eps=1e-5, init_weights=True, num_layers=None, post_net_kernel=3):
-        super().__init__(hidden_size, out_dims, dilations, kernel_size,
-                         norm_type, layers_in_block, c_multiple,
-                         dropout, ln_eps, init_weights, num_layers=num_layers,
-                         post_net_kernel=post_net_kernel)
+
+    def __init__(
+        self,
+        dict_size,
+        hidden_size,
+        out_dims,
+        dilations,
+        kernel_size,
+        norm_type="ln",
+        layers_in_block=2,
+        c_multiple=2,
+        dropout=0.0,
+        ln_eps=1e-5,
+        init_weights=True,
+        num_layers=None,
+        post_net_kernel=3,
+    ):
+        super().__init__(
+            hidden_size,
+            out_dims,
+            dilations,
+            kernel_size,
+            norm_type,
+            layers_in_block,
+            c_multiple,
+            dropout,
+            ln_eps,
+            init_weights,
+            num_layers=num_layers,
+            post_net_kernel=post_net_kernel,
+        )
         self.dict_size = dict_size
         if dict_size > 0:
             self.embed_tokens = Embedding(dict_size, hidden_size, 0)
@@ -171,13 +276,40 @@ class TextConvEncoder(ConvBlocks):
 
 
 class ConditionalConvBlocks(ConvBlocks):
-    def __init__(self, hidden_size, c_cond, c_out, dilations, kernel_size,
-                 norm_type='ln', layers_in_block=2, c_multiple=2,
-                 dropout=0.0, ln_eps=1e-5, init_weights=True, is_BTC=True, num_layers=None):
-        super().__init__(hidden_size, c_out, dilations, kernel_size,
-                         norm_type, layers_in_block, c_multiple,
-                         dropout, ln_eps, init_weights, is_BTC=False, num_layers=num_layers)
-        self.g_prenet = nn.Conv1d(c_cond, hidden_size, 3, padding=1, padding_mode='reflect')
+
+    def __init__(
+        self,
+        hidden_size,
+        c_cond,
+        c_out,
+        dilations,
+        kernel_size,
+        norm_type="ln",
+        layers_in_block=2,
+        c_multiple=2,
+        dropout=0.0,
+        ln_eps=1e-5,
+        init_weights=True,
+        is_BTC=True,
+        num_layers=None,
+    ):
+        super().__init__(
+            hidden_size,
+            c_out,
+            dilations,
+            kernel_size,
+            norm_type,
+            layers_in_block,
+            c_multiple,
+            dropout,
+            ln_eps,
+            init_weights,
+            is_BTC=False,
+            num_layers=num_layers,
+        )
+        self.g_prenet = nn.Conv1d(
+            c_cond, hidden_size, 3, padding=1, padding_mode="reflect"
+        )
         self.is_BTC_ = is_BTC
         if init_weights:
             self.g_prenet.apply(init_weights_func)

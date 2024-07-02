@@ -7,34 +7,62 @@
 # disclosure or distribution of this material and related documentation
 # without an express license agreement from NVIDIA CORPORATION or
 # its affiliates is strictly prohibited.
-
 """
 Helper functions for constructing camera parameter matrices. Primarily used in visualization and inference scripts.
 """
 
 import math
+
 import numpy as np
 import torch
 import torch.nn as nn
-
 from modules.eg3ds.volumetric_rendering import math_utils
 
 
-class UnifiedCameraPoseSampler():
+class UnifiedCameraPoseSampler:
     """
     A unified class for obtain camera pose, a 25 dimension vector that consists of camera2world matrix (4x4) and camera intrinsic (3,3)
         it utilize the samplers constructed below.
     """
-    def get_camera_pose(self, pitch, yaw, lookat_location=None, distance_to_orig=2.7, batch_size=1, device='cpu', roll=None):
-        if lookat_location is None:
-            lookat_location = torch.tensor([0., 0., -0.2], device=device)
 
-        c2w = LookAtPoseSampler.sample(yaw, pitch, lookat_location, 0, 0, distance_to_orig, batch_size, device, roll=roll).reshape([batch_size, 16])
-        intrinsics = torch.tensor([[4.2647, 0, 0.5], [0, 4.2647, 0.5], [0, 0, 1]], device=device).reshape([9,]).unsqueeze(0).repeat([batch_size, 1])
+    def get_camera_pose(
+        self,
+        pitch,
+        yaw,
+        lookat_location=None,
+        distance_to_orig=2.7,
+        batch_size=1,
+        device="cpu",
+        roll=None,
+    ):
+        if lookat_location is None:
+            lookat_location = torch.tensor([0.0, 0.0, -0.2], device=device)
+
+        c2w = LookAtPoseSampler.sample(
+            yaw,
+            pitch,
+            lookat_location,
+            0,
+            0,
+            distance_to_orig,
+            batch_size,
+            device,
+            roll=roll,
+        ).reshape([batch_size, 16])
+        intrinsics = (
+            torch.tensor([[4.2647, 0, 0.5], [0, 4.2647, 0.5], [0, 0, 1]], device=device)
+            .reshape(
+                [
+                    9,
+                ]
+            )
+            .unsqueeze(0)
+            .repeat([batch_size, 1])
+        )
         # intrinsics = FOV_to_intrinsics(fov_degrees, device=device).reshape([9,]).unsqueeze(0).repeat([batch_size, 1])
-        camera = torch.cat([c2w, intrinsics], dim=1) # [batch, 25]
+        camera = torch.cat([c2w, intrinsics], dim=1)  # [batch, 25]
         return camera
-    
+
 
 class GaussianCameraPoseSampler:
     """
@@ -53,30 +81,48 @@ class GaussianCameraPoseSampler:
     """
 
     @staticmethod
-    def sample(horizontal_mean, vertical_mean, horizontal_stddev=0, vertical_stddev=0, radius=1, batch_size=1, device='cpu'):
+    def sample(
+        horizontal_mean,
+        vertical_mean,
+        horizontal_stddev=0,
+        vertical_stddev=0,
+        radius=1,
+        batch_size=1,
+        device="cpu",
+    ):
         """
         horizontal_mean: 偏转角, 也叫方位角， -pi/2 denotes camera at left, 0 denotes forward, pi/2 denotes right,
         vertical_mean: 俯仰角, 0 denotes up, -pi/2 denotes camera at up, 0 means horizontal, pi/2 denotes down. however, 0.2 is a good choice for front face.
-        """ 
-        assert horizontal_mean < np.pi/2 + 1e-5 and horizontal_mean > - np.pi/2 - 1e-5
-        assert vertical_mean < np.pi/2 + 1e-5 and vertical_mean > - np.pi/2 - 1e-5
-        horizontal_mean += np.pi/2
-        vertical_mean += np.pi/2
-        h = torch.randn((batch_size, 1), device=device) * horizontal_stddev + horizontal_mean
-        v = torch.randn((batch_size, 1), device=device) * vertical_stddev + vertical_mean
+        """
+        assert (
+            horizontal_mean < np.pi / 2 + 1e-5 and horizontal_mean > -np.pi / 2 - 1e-5
+        )
+        assert vertical_mean < np.pi / 2 + 1e-5 and vertical_mean > -np.pi / 2 - 1e-5
+        horizontal_mean += np.pi / 2
+        vertical_mean += np.pi / 2
+        h = (
+            torch.randn((batch_size, 1), device=device) * horizontal_stddev
+            + horizontal_mean
+        )
+        v = (
+            torch.randn((batch_size, 1), device=device) * vertical_stddev
+            + vertical_mean
+        )
         v = torch.clamp(v, 1e-5, math.pi - 1e-5)
 
         theta = h
         v = v / math.pi
-        phi = torch.arccos(1 - 2*v)
+        phi = torch.arccos(1 - 2 * v)
 
         camera_origins = torch.zeros((batch_size, 3), device=device)
 
-        camera_origins[:, 0:1] = radius*torch.sin(phi) * torch.cos(math.pi-theta)
-        camera_origins[:, 2:3] = radius*torch.sin(phi) * torch.sin(math.pi-theta)
-        camera_origins[:, 1:2] = radius*torch.cos(phi)
+        camera_origins[:, 0:1] = radius * torch.sin(phi) * torch.cos(math.pi - theta)
+        camera_origins[:, 2:3] = radius * torch.sin(phi) * torch.sin(math.pi - theta)
+        camera_origins[:, 1:2] = radius * torch.cos(phi)
 
-        forward_vectors = math_utils.normalize_vecs(-camera_origins) # the direction the camera is pointing, pointing to origin in this func
+        forward_vectors = math_utils.normalize_vecs(
+            -camera_origins
+        )  # the direction the camera is pointing, pointing to origin in this func
         return create_cam2world_matrix(forward_vectors, camera_origins)
 
 
@@ -91,15 +137,25 @@ class LookAtPoseSampler:
     """
 
     @staticmethod
-    def sample(horizontal_mean, vertical_mean, lookat_position, horizontal_stddev=0, vertical_stddev=0, radius=1, batch_size=1, device='cpu', roll=None):
+    def sample(
+        horizontal_mean,
+        vertical_mean,
+        lookat_position,
+        horizontal_stddev=0,
+        vertical_stddev=0,
+        radius=1,
+        batch_size=1,
+        device="cpu",
+        roll=None,
+    ):
         """
         horizontal_mean: 偏转角, 也叫方位角， -pi/2 denotes camera at left, 0 denotes forward, pi/2 denotes right,
         vertical_mean: 俯仰角, 0 denotes up, -pi/2 denotes camera at up, 0 means horizontal, pi/2 denotes down. however, 0.2 is a good choice for front face.
-        """ 
+        """
         # assert horizontal_mean < np.pi + 1e-5 and horizontal_mean > - np.pi - 1e-5
         # assert vertical_mean < np.pi + 1e-5 and vertical_mean > - np.pi - 1e-5
-        horizontal_mean += np.pi/2
-        vertical_mean += np.pi/2
+        horizontal_mean += np.pi / 2
+        vertical_mean += np.pi / 2
 
         # if horizontal_mean < -np.pi:
         #     horizontal_mean += 2*np.pi
@@ -110,24 +166,32 @@ class LookAtPoseSampler:
         # if vertical_mean > np.pi:
         #     vertical_mean -= 2*np.pi
 
-        h = torch.randn((batch_size, 1), device=device) * horizontal_stddev + horizontal_mean
-        v = torch.randn((batch_size, 1), device=device) * vertical_stddev + vertical_mean
+        h = (
+            torch.randn((batch_size, 1), device=device) * horizontal_stddev
+            + horizontal_mean
+        )
+        v = (
+            torch.randn((batch_size, 1), device=device) * vertical_stddev
+            + vertical_mean
+        )
         v = torch.clamp(v, 1e-5, math.pi - 1e-5)
 
-        theta = h # 球坐标系里的滚转角
+        theta = h  # 球坐标系里的滚转角
         v = v / math.pi
-        phi = torch.arccos(1 - 2*v)
+        phi = torch.arccos(1 - 2 * v)
 
         camera_origins = torch.zeros((batch_size, 3), device=device)
 
         # radius*torch.sin(phi) 是球半径在水平平面上的投影，随后再根据yaw角来分别计算x和y
         # radius*torch.cos(phi)则是纵轴的分量
-        camera_origins[:, 0:1] = radius*torch.sin(phi) * torch.cos(math.pi-theta)
-        camera_origins[:, 2:3] = radius*torch.sin(phi) * torch.sin(math.pi-theta)
-        camera_origins[:, 1:2] = radius*torch.cos(phi)
+        camera_origins[:, 0:1] = radius * torch.sin(phi) * torch.cos(math.pi - theta)
+        camera_origins[:, 2:3] = radius * torch.sin(phi) * torch.sin(math.pi - theta)
+        camera_origins[:, 1:2] = radius * torch.cos(phi)
 
         # forward_vectors = math_utils.normalize_vecs(-camera_origins)
-        forward_vectors = math_utils.normalize_vecs(lookat_position.to(device) - camera_origins)  # the direction the camera is pointing, pointing to the lookat_position
+        forward_vectors = math_utils.normalize_vecs(
+            lookat_position.to(device) - camera_origins
+        )  # the direction the camera is pointing, pointing to the lookat_position
         return create_cam2world_matrix(forward_vectors, camera_origins, roll)
 
 
@@ -143,32 +207,50 @@ class UniformCameraPoseSampler:
     """
 
     @staticmethod
-    def sample(horizontal_mean, vertical_mean, horizontal_stddev=0, vertical_stddev=0, radius=1, batch_size=1, device='cpu'):
+    def sample(
+        horizontal_mean,
+        vertical_mean,
+        horizontal_stddev=0,
+        vertical_stddev=0,
+        radius=1,
+        batch_size=1,
+        device="cpu",
+    ):
         """
         horizontal_mean: 偏转角, 也叫方位角， -pi/2 denotes camera at left, 0 denotes forward, pi/2 denotes right,
         vertical_mean: 俯仰角, 0 denotes up, -pi/2 denotes camera at up, 0 means horizontal, pi/2 denotes down. however, 0.2 is a good choice for front face.
-        """ 
-        assert horizontal_mean < np.pi/2 + 1e-5 and horizontal_mean > - np.pi/2 - 1e-5
-        assert vertical_mean < np.pi/2 + 1e-5 and vertical_mean > - np.pi/2 - 1e-5
-        horizontal_mean += np.pi/2
-        vertical_mean += np.pi/2
-    
-        h = (torch.rand((batch_size, 1), device=device) * 2 - 1) * horizontal_stddev + horizontal_mean
-        v = (torch.rand((batch_size, 1), device=device) * 2 - 1) * vertical_stddev + vertical_mean
+        """
+        assert (
+            horizontal_mean < np.pi / 2 + 1e-5 and horizontal_mean > -np.pi / 2 - 1e-5
+        )
+        assert vertical_mean < np.pi / 2 + 1e-5 and vertical_mean > -np.pi / 2 - 1e-5
+        horizontal_mean += np.pi / 2
+        vertical_mean += np.pi / 2
+
+        h = (
+            torch.rand((batch_size, 1), device=device) * 2 - 1
+        ) * horizontal_stddev + horizontal_mean
+        v = (
+            torch.rand((batch_size, 1), device=device) * 2 - 1
+        ) * vertical_stddev + vertical_mean
         v = torch.clamp(v, 1e-5, math.pi - 1e-5)
 
         theta = h
         v = v / math.pi
-        phi = torch.arccos(1 - 2*v)
+        phi = torch.arccos(1 - 2 * v)
 
-        camera_origins = torch.zeros((batch_size, 3), device=device) # the location of camera
+        camera_origins = torch.zeros(
+            (batch_size, 3), device=device
+        )  # the location of camera
 
-        camera_origins[:, 0:1] = radius*torch.sin(phi) * torch.cos(math.pi-theta)
-        camera_origins[:, 2:3] = radius*torch.sin(phi) * torch.sin(math.pi-theta)
-        camera_origins[:, 1:2] = radius*torch.cos(phi)
+        camera_origins[:, 0:1] = radius * torch.sin(phi) * torch.cos(math.pi - theta)
+        camera_origins[:, 2:3] = radius * torch.sin(phi) * torch.sin(math.pi - theta)
+        camera_origins[:, 1:2] = radius * torch.cos(phi)
 
-        forward_vectors = math_utils.normalize_vecs(-camera_origins) # the direction the camera is pointing, pointing to origin in this func
-        return create_cam2world_matrix(forward_vectors, camera_origins)    
+        forward_vectors = math_utils.normalize_vecs(
+            -camera_origins
+        )  # the direction the camera is pointing, pointing to origin in this func
+        return create_cam2world_matrix(forward_vectors, camera_origins)
 
 
 def create_cam2world_matrix(forward_vector, origin, roll=None):
@@ -182,29 +264,47 @@ def create_cam2world_matrix(forward_vector, origin, roll=None):
     batch_size = len(forward_vector)
     forward_vector = math_utils.normalize_vecs(forward_vector)
     # up_vector 代表相机的正上方方向向量，所以可以通过旋转它来控制roll
-    up_vector = torch.zeros([batch_size, 3], dtype=forward_vector.dtype, device=forward_vector.device)
+    up_vector = torch.zeros(
+        [batch_size, 3], dtype=forward_vector.dtype, device=forward_vector.device
+    )
     if roll is None:
-        roll = torch.zeros([batch_size, 1], dtype=forward_vector.dtype, device=forward_vector.device)
+        roll = torch.zeros(
+            [batch_size, 1], dtype=forward_vector.dtype, device=forward_vector.device
+        )
     else:
         roll = roll.reshape([batch_size, 1])
 
     up_vector[:, 0] = torch.sin(roll)
     up_vector[:, 1] = torch.cos(roll)
 
-    right_vector = -math_utils.normalize_vecs(torch.cross(up_vector, forward_vector, dim=-1))
-    up_vector = math_utils.normalize_vecs(torch.cross(forward_vector, right_vector, dim=-1))
+    right_vector = -math_utils.normalize_vecs(
+        torch.cross(up_vector, forward_vector, dim=-1)
+    )
+    up_vector = math_utils.normalize_vecs(
+        torch.cross(forward_vector, right_vector, dim=-1)
+    )
 
-    rotation_matrix = torch.eye(4, device=origin.device).unsqueeze(0).repeat(forward_vector.shape[0], 1, 1)
-    rotation_matrix[:, :3, :3] = torch.stack((right_vector, up_vector, forward_vector), axis=-1)
+    rotation_matrix = (
+        torch.eye(4, device=origin.device)
+        .unsqueeze(0)
+        .repeat(forward_vector.shape[0], 1, 1)
+    )
+    rotation_matrix[:, :3, :3] = torch.stack(
+        (right_vector, up_vector, forward_vector), axis=-1
+    )
 
-    translation_matrix = torch.eye(4, device=origin.device).unsqueeze(0).repeat(forward_vector.shape[0], 1, 1)
+    translation_matrix = (
+        torch.eye(4, device=origin.device)
+        .unsqueeze(0)
+        .repeat(forward_vector.shape[0], 1, 1)
+    )
     translation_matrix[:, :3, 3] = origin
     cam2world = (translation_matrix @ rotation_matrix)[:, :, :]
-    assert(cam2world.shape[1:] == (4, 4))
+    assert cam2world.shape[1:] == (4, 4)
     return cam2world
 
 
-def FOV_to_intrinsics(fov_degrees=18.837, device='cpu'):
+def FOV_to_intrinsics(fov_degrees=18.837, device="cpu"):
     """
     Creates a 3x3 camera intrinsics matrix from the camera field of view, specified in degrees.
     Note the intrinsics are returned as normalized by image size, rather than in pixel units.
@@ -212,5 +312,7 @@ def FOV_to_intrinsics(fov_degrees=18.837, device='cpu'):
     """
 
     focal_length = float(1 / (math.tan(fov_degrees * 3.14159 / 360) * 1.414))
-    intrinsics = torch.tensor([[focal_length, 0, 0.5], [0, focal_length, 0.5], [0, 0, 1]], device=device)
+    intrinsics = torch.tensor(
+        [[focal_length, 0, 0.5], [0, focal_length, 0.5], [0, 0, 1]], device=device
+    )
     return intrinsics

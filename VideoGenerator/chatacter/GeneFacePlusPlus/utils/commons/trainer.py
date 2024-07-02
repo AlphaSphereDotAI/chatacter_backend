@@ -1,34 +1,33 @@
-import random
-import time
-import subprocess
-import traceback
-import socket
-import setproctitle
-
-from torch.cuda.amp import GradScaler, autocast
-import numpy as np
-import torch.optim
-import torch.utils.data
 import copy
+import datetime
 import logging
 import os
+import random
 import re
+import socket
+import subprocess
 import sys
+import time
+import traceback
+
+import numpy as np
+import setproctitle
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
+import torch.optim
+import torch.utils.data
 import tqdm
-import datetime
-
-from utils.commons.ckpt_utils import get_last_checkpoint, get_all_ckpts
+from torch.cuda.amp import GradScaler, autocast
+from utils.commons.ckpt_utils import get_all_ckpts, get_last_checkpoint
 from utils.commons.ddp_utils import DDP
 from utils.commons.hparams import hparams
-from utils.commons.tensor_utils import move_to_cuda
-from utils.commons.os_utils import remove_file
 from utils.commons.meters import Timer
+from utils.commons.os_utils import remove_file
+from utils.commons.tensor_utils import move_to_cuda
 
 
-def check_port_is_occupied(host='localhost', port=10080):
+def check_port_is_occupied(host="localhost", port=10080):
     s = socket.socket()
     try:
         s.connect((host, port))
@@ -42,6 +41,7 @@ def check_port_is_occupied(host='localhost', port=10080):
 
 
 class Tee(object):
+
     def __init__(self, name, mode):
         self.file = open(name, mode)
         self.stdout = sys.stdout
@@ -60,27 +60,28 @@ class Tee(object):
 
 
 class Trainer:
+
     def __init__(
-            self,
-            work_dir,
-            default_save_path=None,
-            accumulate_grad_batches=1,
-            max_updates=160000,
-            print_nan_grads=False,
-            val_check_interval=2000,
-            num_sanity_val_steps=5,
-            amp=False,
-            # tb logger
-            log_save_interval=100,
-            tb_log_interval=10,
-            # checkpoint
-            monitor_key='val_loss',
-            monitor_mode='min',
-            num_ckpt_keep=5,
-            save_best=True,
-            resume_from_checkpoint=0,
-            seed=1234,
-            debug=False,
+        self,
+        work_dir,
+        default_save_path=None,
+        accumulate_grad_batches=1,
+        max_updates=160000,
+        print_nan_grads=False,
+        val_check_interval=2000,
+        num_sanity_val_steps=5,
+        amp=False,
+        # tb logger
+        log_save_interval=100,
+        tb_log_interval=10,
+        # checkpoint
+        monitor_key="val_loss",
+        monitor_mode="min",
+        num_ckpt_keep=5,
+        save_best=True,
+        resume_from_checkpoint=0,
+        seed=1234,
+        debug=False,
     ):
         os.makedirs(work_dir, exist_ok=True)
         self.work_dir = work_dir
@@ -89,7 +90,9 @@ class Trainer:
         self.num_sanity_val_steps = num_sanity_val_steps
         self.print_nan_grads = print_nan_grads
         self.default_save_path = default_save_path
-        self.resume_from_checkpoint = resume_from_checkpoint if resume_from_checkpoint > 0 else None
+        self.resume_from_checkpoint = (
+            resume_from_checkpoint if resume_from_checkpoint > 0 else None
+        )
         self.seed = seed
         self.debug = debug
         # model and optm
@@ -106,21 +109,32 @@ class Trainer:
         self.monitor_key = monitor_key
         self.num_ckpt_keep = num_ckpt_keep
         self.save_best = save_best
-        self.monitor_op = np.less if monitor_mode == 'min' else np.greater
-        self.best_val_results = np.Inf if monitor_mode == 'min' else -np.Inf
-        self.mode = 'min'
+        self.monitor_op = np.less if monitor_mode == "min" else np.greater
+        self.best_val_results = np.Inf if monitor_mode == "min" else -np.Inf
+        self.mode = "min"
 
         # allow int, string and gpu list
         self.all_gpu_ids = [
-            int(x) for x in os.environ.get("CUDA_VISIBLE_DEVICES", "").split(",") if x != '']
-        
-        self.use_multi_machine_ddp = hparams['world_size'] != -1
-        self.num_local_gpus = len(self.all_gpu_ids) # if world_size is not -1, multi-machine setting
-        self.num_total_gpus = len(self.all_gpu_ids) if not self.use_multi_machine_ddp else hparams['world_size'] # if world_size is not -1, multi-machine setting
-        # self.num_gpus = len(self.all_gpu_ids) 
+            int(x)
+            for x in os.environ.get("CUDA_VISIBLE_DEVICES", "").split(",")
+            if x != ""
+        ]
+
+        self.use_multi_machine_ddp = hparams["world_size"] != -1
+        self.num_local_gpus = len(
+            self.all_gpu_ids
+        )  # if world_size is not -1, multi-machine setting
+        self.num_total_gpus = (
+            len(self.all_gpu_ids)
+            if not self.use_multi_machine_ddp
+            else hparams["world_size"]
+        )  # if world_size is not -1, multi-machine setting
+        # self.num_gpus = len(self.all_gpu_ids)
         self.on_gpu = self.num_local_gpus > 0
         self.root_gpu = 0
-        logging.info(f'GPU available: {torch.cuda.is_available()}, GPU used: {self.all_gpu_ids}, world_size: {self.num_total_gpus}, multi-machine training: {self.use_multi_machine_ddp}')
+        logging.info(
+            f"GPU available: {torch.cuda.is_available()}, GPU used: {self.all_gpu_ids}, world_size: {self.num_total_gpus}, multi-machine training: {self.use_multi_machine_ddp}"
+        )
         self.use_ddp = self.num_local_gpus > 1 or self.use_multi_machine_ddp
         self.proc_rank = 0
         # Tensorboard logging
@@ -138,12 +152,17 @@ class Trainer:
         try:
             if self.use_ddp:
                 # mp.spawn(self.ddp_run, nprocs=self.num_local_gpus, args=(task_cls, copy.deepcopy(hparams)))
-                mp.start_processes(self.ddp_run,nprocs=self.num_local_gpus, args=(task_cls, copy.deepcopy(hparams)), start_method='spawn')
+                mp.start_processes(
+                    self.ddp_run,
+                    nprocs=self.num_local_gpus,
+                    args=(task_cls, copy.deepcopy(hparams)),
+                    start_method="spawn",
+                )
             else:
                 # File "/mnt/bn/ailabrenyi/entries/yezhenhui/projects/GeneFace_private/venv_113/lib/python3.9/site-packages/torch/nn/modules/batchnorm.py", line 735, in forward
                 # world_size = torch.distributed.get_world_size(process_group)
                 # to address the error in batchNorm using venv_113
-                # self.init_ddp_connection_tcp(0, 1) 
+                # self.init_ddp_connection_tcp(0, 1)
                 self.task = task_cls()
                 self.task.trainer = self
                 setproctitle.setproctitle(f'GeneFace_worker ({hparams["work_dir"]})')
@@ -151,7 +170,9 @@ class Trainer:
         except:
             traceback.print_exc()
             time.sleep(5)
-            subprocess.check_call(f'pkill -f "GeneFace_worker \({hparams["work_dir"]}"', shell=True)
+            subprocess.check_call(
+                f'pkill -f "GeneFace_worker \({hparams["work_dir"]}"', shell=True
+            )
         return 1
 
         return 1
@@ -160,16 +181,18 @@ class Trainer:
         hparams.update(hparams_)
         setproctitle.setproctitle(f'GeneFace_worker ({hparams_["work_dir"]}_{gpu_idx})')
 
-        if hparams.get('use_file_system_mp'):
-            torch.multiprocessing.set_sharing_strategy('file_system')
-        if hparams.get('use_fork', True):
-            torch.multiprocessing.set_start_method('fork', force=True)
+        if hparams.get("use_file_system_mp"):
+            torch.multiprocessing.set_sharing_strategy("file_system")
+        if hparams.get("use_fork", True):
+            torch.multiprocessing.set_start_method("fork", force=True)
         self.root_gpu = gpu_idx
-        self.proc_rank = gpu_idx + hparams['start_rank'] if self.use_multi_machine_ddp else gpu_idx
+        self.proc_rank = (
+            gpu_idx + hparams["start_rank"] if self.use_multi_machine_ddp else gpu_idx
+        )
         print("before init_tcp!")
-        if hparams['init_method'] == 'file':
+        if hparams["init_method"] == "file":
             self.init_ddp_connection_file(self.proc_rank, self.num_total_gpus)
-        elif hparams['init_method'] == 'tcp':
+        elif hparams["init_method"] == "tcp":
             self.init_ddp_connection_tcp(self.proc_rank, self.num_total_gpus)
         else:
             raise NotImplementedError()
@@ -224,10 +247,10 @@ class Trainer:
         task_ref.testing = self.testing
         # link up experiment object
         if self.proc_rank == 0:
-            task_ref.build_tensorboard(save_dir=self.work_dir, name='tb_logs')
+            task_ref.build_tensorboard(save_dir=self.work_dir, name="tb_logs")
         else:
-            os.makedirs('tmp', exist_ok=True)
-            task_ref.build_tensorboard(save_dir='tmp', name='tb_tmp')
+            os.makedirs("tmp", exist_ok=True)
+            task_ref.build_tensorboard(save_dir="tmp", name="tb_tmp")
         self.logger = task_ref.logger
         try:
             if self.testing:
@@ -239,21 +262,27 @@ class Trainer:
             task_ref.on_keyboard_interrupt()
             time.sleep(5)
             if self.proc_rank == 0:
-                subprocess.check_call(f'pkill -f "GeneFace_worker \({hparams["work_dir"]}"', shell=True)
+                subprocess.check_call(
+                    f'pkill -f "GeneFace_worker \({hparams["work_dir"]}"', shell=True
+                )
 
     ####################
     # valid and test
     ####################
     def run_evaluation(self, test=False):
-        eval_results = self.evaluate(self.task, test, tqdm_desc='Valid' if not test else 'test',
-                                     max_batches=hparams['eval_max_batches'])
-        if eval_results is not None and 'tb_log' in eval_results:
-            tb_log_output = eval_results['tb_log']
+        eval_results = self.evaluate(
+            self.task,
+            test,
+            tqdm_desc="Valid" if not test else "test",
+            max_batches=hparams["eval_max_batches"],
+        )
+        if eval_results is not None and "tb_log" in eval_results:
+            tb_log_output = eval_results["tb_log"]
             self.log_metrics_to_tb(tb_log_output)
         if self.proc_rank == 0 and not test:
             self.save_checkpoint(epoch=self.current_epoch, logs=eval_results)
 
-    def evaluate(self, task, test=False, tqdm_desc='Valid', max_batches=None):
+    def evaluate(self, task, test=False, tqdm_desc="Valid", max_batches=None):
         if max_batches == -1:
             max_batches = None
         # enable eval mode
@@ -264,14 +293,20 @@ class Trainer:
         task_ref = self.get_task_ref()
         if test:
             ret = task_ref.test_start()
-            if ret == 'EXIT':
+            if ret == "EXIT":
                 return
         else:
             task_ref.validation_start()
         outputs = []
         dataloader = task_ref.test_dataloader() if test else task_ref.val_dataloader()
-        pbar = tqdm.tqdm(dataloader, desc=tqdm_desc, total=max_batches, dynamic_ncols=True, unit='step',
-                         disable=self.root_gpu > 0)
+        pbar = tqdm.tqdm(
+            dataloader,
+            desc=tqdm_desc,
+            total=max_batches,
+            dynamic_ncols=True,
+            unit="step",
+            disable=self.root_gpu > 0,
+        )
         # give model a chance to do something with the outputs (and method defined)
         for batch_idx, batch in enumerate(pbar):
             if batch is None:  # pragma: no cover
@@ -311,7 +346,9 @@ class Trainer:
         task_ref.on_train_start()
         if self.num_sanity_val_steps > 0:
             # run tiny validation (if validation defined) to make sure program won't crash during val
-            self.evaluate(self.task, False, 'Sanity Val', max_batches=self.num_sanity_val_steps)
+            self.evaluate(
+                self.task, False, "Sanity Val", max_batches=self.num_sanity_val_steps
+            )
         # clear cache before training
         if self.on_gpu:
             torch.cuda.empty_cache()
@@ -320,7 +357,7 @@ class Trainer:
         # run all epochs
         while True:
             # set seed for distributed sampler (enables shuffling for each epoch)
-            if self.use_ddp and hasattr(dataloader.sampler, 'set_epoch'):
+            if self.use_ddp and hasattr(dataloader.sampler, "set_epoch"):
                 dataloader.sampler.set_epoch(epoch)
             # update training progress in trainer and model
             task_ref.current_epoch = epoch
@@ -331,8 +368,14 @@ class Trainer:
             task_ref.on_epoch_start()
 
             # run epoch
-            train_pbar = tqdm.tqdm(dataloader, initial=self.global_step, total=float('inf'),
-                                   dynamic_ncols=True, unit='step', disable=self.root_gpu > 0)
+            train_pbar = tqdm.tqdm(
+                dataloader,
+                initial=self.global_step,
+                total=float("inf"),
+                dynamic_ncols=True,
+                unit="step",
+                disable=self.root_gpu > 0,
+            )
             # for batch_idx, batch in enumerate(train_pbar):
             train_iterator = iter(enumerate(train_pbar))
             while True:
@@ -343,7 +386,10 @@ class Trainer:
                         train_iterator = iter(enumerate(train_pbar))
                         batch_idx, batch = next(train_iterator)
 
-                if self.global_step % self.val_check_interval == 0 and not self.fisrt_epoch:
+                if (
+                    self.global_step % self.val_check_interval == 0
+                    and not self.fisrt_epoch
+                ):
                     self.run_evaluation()
                 pbar_metrics, tb_metrics = self.run_training_batch(batch_idx, batch)
                 train_pbar.set_postfix(**pbar_metrics)
@@ -381,7 +427,7 @@ class Trainer:
                 for k, param in task_ref.named_parameters():
                     param.requires_grad = False
                 for group in optimizer.param_groups:
-                    for param in group['params']:
+                    for param in group["params"]:
                         param.requires_grad = True
 
             # forward pass
@@ -394,14 +440,14 @@ class Trainer:
                         output = self.task(*args)
                     else:
                         output = task_ref.training_step(*args)
-                    loss = output['loss']
+                    loss = output["loss"]
                     if loss is None:
                         continue
-                    progress_bar_metrics = output['progress_bar']
-                    log_metrics = output['tb_log']
+                    progress_bar_metrics = output["progress_bar"]
+                    log_metrics = output["tb_log"]
                     # accumulate loss
                     loss = loss / self.accumulate_grad_batches
-                
+
             # backward pass
             with Timer("backward_training_step", enable=self.debug):
                 if loss.requires_grad:
@@ -423,19 +469,25 @@ class Trainer:
                 nan_params_names = []
                 if self.print_nan_grads:
                     for name, param in task_ref.named_parameters():
-                        if (param.grad is not None) and torch.isnan(param.grad.float()).any():
+                        if (param.grad is not None) and torch.isnan(
+                            param.grad.float()
+                        ).any():
                             print("| NaN params: ", name, param, param.grad)
                             has_nan_grad = True
                             nan_params_names.append(name)
                     if has_nan_grad:
                         # exit(0)
-                        print(f"| WARN: found nan in grad! first nan params: {nan_params_names[0]}; last nan params: {nan_params_names[-1]}.")
+                        print(
+                            f"| WARN: found nan in grad! first nan params: {nan_params_names[0]}; last nan params: {nan_params_names[-1]}."
+                        )
                         pass
 
             # gradient update with accumulated gradients
             with Timer("optimUpdate_training_step", enable=self.debug):
-                if (self.global_step + 1) % self.accumulate_grad_batches == 0 and not has_nan_grad:
-                # if (self.global_step + 1) % self.accumulate_grad_batches == 0:
+                if (
+                    self.global_step + 1
+                ) % self.accumulate_grad_batches == 0 and not has_nan_grad:
+                    # if (self.global_step + 1) % self.accumulate_grad_batches == 0:
                     # Unscales the gradients of optimizer's assigned params in-place
                     if self.amp:
                         self.amp_scalar.unscale_(optimizer)
@@ -448,10 +500,14 @@ class Trainer:
                     else:
                         optimizer.step()
                     optimizer.zero_grad()
-                    task_ref.on_after_optimization(self.current_epoch, batch_idx, optimizer, opt_idx)
+                    task_ref.on_after_optimization(
+                        self.current_epoch, batch_idx, optimizer, opt_idx
+                    )
 
         # collapse all metrics into one dict
-        all_progress_bar_metrics = {k: v for d in all_progress_bar_metrics for k, v in d.items()}
+        all_progress_bar_metrics = {
+            k: v for d in all_progress_bar_metrics for k, v in d.items()
+        }
         all_log_metrics = {k: v for d in all_log_metrics for k, v in d.items()}
         return all_progress_bar_metrics, all_log_metrics
 
@@ -462,7 +518,7 @@ class Trainer:
         # load model state
         task_ref = self.get_task_ref()
 
-        for k, v in checkpoint['state_dict'].items():
+        for k, v in checkpoint["state_dict"].items():
             if hasattr(task_ref, k):
                 getattr(task_ref, k).load_state_dict(v, strict=True)
             else:
@@ -471,9 +527,9 @@ class Trainer:
         if self.on_gpu:
             task_ref.cuda(self.root_gpu)
         # load training state (affects trainer only)
-        self.best_val_results = checkpoint['checkpoint_callback_best']
-        self.global_step = checkpoint['global_step']
-        self.current_epoch = checkpoint['epoch']
+        self.best_val_results = checkpoint["checkpoint_callback_best"]
+        self.global_step = checkpoint["global_step"]
+        self.current_epoch = checkpoint["epoch"]
         task_ref.global_step = self.global_step
 
         # wait for all models to restore weights
@@ -485,7 +541,7 @@ class Trainer:
         if self.testing:
             return
         # restore the optimizers
-        optimizer_states = checkpoint['optimizer_states']
+        optimizer_states = checkpoint["optimizer_states"]
         for optimizer, opt_state in zip(self.optimizers, optimizer_states):
             if optimizer is None:
                 return
@@ -510,18 +566,27 @@ class Trainer:
 
     def save_checkpoint(self, epoch, logs=None):
         monitor_op = np.less
-        ckpt_path = f'{self.work_dir}/model_ckpt_steps_{self.global_step}.ckpt'
-        logging.info(f'Epoch {epoch:05d}@{self.global_step}: saving model to {ckpt_path}')
+        ckpt_path = f"{self.work_dir}/model_ckpt_steps_{self.global_step}.ckpt"
+        logging.info(
+            f"Epoch {epoch:05d}@{self.global_step}: saving model to {ckpt_path}"
+        )
         self._atomic_save(ckpt_path)
 
-        get_ckpt_step_fn = lambda x: int(re.findall('.*steps\_(\d+)\.ckpt', x)[0])
-        for old_ckpt in get_all_ckpts(self.work_dir)[self.num_ckpt_keep:]:
+        def get_ckpt_step_fn(x):
+            return int(re.findall(".*steps\_(\d+)\.ckpt", x)[0])
+
+        for old_ckpt in get_all_ckpts(self.work_dir)[self.num_ckpt_keep :]:
             # leave the milestone ckpts
-            if hparams.get("ckpt_milestone_interval", 10_0000) != 0 and get_ckpt_step_fn(old_ckpt) % hparams.get("ckpt_milestone_interval", 10_0000) == 0:
+            if (
+                hparams.get("ckpt_milestone_interval", 10_0000) != 0
+                and get_ckpt_step_fn(old_ckpt)
+                % hparams.get("ckpt_milestone_interval", 10_0000)
+                == 0
+            ):
                 pass
             else:
                 remove_file(old_ckpt)
-                logging.info(f'Delete ckpt: {os.path.basename(old_ckpt)}')
+                logging.info(f"Delete ckpt: {os.path.basename(old_ckpt)}")
         current = None
         if logs is not None and self.monitor_key in logs:
             current = logs[self.monitor_key]
@@ -539,32 +604,40 @@ class Trainer:
         tmp_path = str(filepath) + ".part"
         torch.save(checkpoint, tmp_path, _use_new_zipfile_serialization=False)
         os.replace(tmp_path, filepath)
-    
+
     def dump_checkpoint(self):
-        checkpoint = {'epoch': self.current_epoch, 'global_step': self.global_step,
-                      'checkpoint_callback_best': self.best_val_results}
+        checkpoint = {
+            "epoch": self.current_epoch,
+            "global_step": self.global_step,
+            "checkpoint_callback_best": self.best_val_results,
+        }
         # save optimizers
         optimizer_states = []
         for i, optimizer in enumerate(self.optimizers):
             if optimizer is not None:
                 state_dict = optimizer.state_dict()
-                state_dict = {k.replace('_orig_mod.', ''): v for k, v in state_dict.items()}
+                state_dict = {
+                    k.replace("_orig_mod.", ""): v for k, v in state_dict.items()
+                }
                 optimizer_states.append(state_dict)
 
-        checkpoint['optimizer_states'] = optimizer_states
+        checkpoint["optimizer_states"] = optimizer_states
         task_ref = self.get_task_ref()
         state_dict = {
-            k: v.state_dict() for k, v in task_ref.named_children()
-            if len(list(v.parameters())) > 0 and (k not in hparams.get('not_save_modules', []))
+            k: v.state_dict()
+            for k, v in task_ref.named_children()
+            if len(list(v.parameters())) > 0
+            and (k not in hparams.get("not_save_modules", []))
         }
         for module_k, module_k_dict in list(state_dict.items()):
             for k, v in list(module_k_dict.items()):
-                if '_orig_mod.' in k:
-                    module_k_dict[k.replace('_orig_mod.', '')] = v
+                if "_orig_mod." in k:
+                    module_k_dict[k.replace("_orig_mod.", "")] = v
                     del module_k_dict[k]
-            
-        checkpoint['state_dict'] = state_dict
+
+        checkpoint["state_dict"] = state_dict
         return checkpoint
+
     ####################
     # DDP
     ####################
@@ -581,31 +654,39 @@ class Trainer:
         use a shared file in the network file system to bind all process
         if you found num_worker is larger than world_size, remove the old shard_file_name
         """
-        exp_name = hparams['exp_name']
-        shared_file_name = f'file:///home/tiger/nfs/pytorch_ddp_sharedfile/{exp_name}'
-        os.makedirs(os.path.dirname(shared_file_name).replace("file://",""), exist_ok=True)
-        dist.init_process_group('nccl', init_method=shared_file_name,
-                            world_size=world_size, rank=proc_rank)
-        
+        exp_name = hparams["exp_name"]
+        shared_file_name = f"file:///home/tiger/nfs/pytorch_ddp_sharedfile/{exp_name}"
+        os.makedirs(
+            os.path.dirname(shared_file_name).replace("file://", ""), exist_ok=True
+        )
+        dist.init_process_group(
+            "nccl", init_method=shared_file_name, world_size=world_size, rank=proc_rank
+        )
+
     def init_ddp_connection_tcp(self, proc_rank, world_size):
         if self.use_multi_machine_ddp:
-            root_node, port = os.environ['ARNOLD_WORKER_HOSTS'].split(",")[0].split(":")
-            os.environ['MASTER_PORT'] = '6668'
+            root_node, port = os.environ["ARNOLD_WORKER_HOSTS"].split(",")[0].split(":")
+            os.environ["MASTER_PORT"] = "6668"
         else:
-            root_node = '127.0.0.1'
+            root_node = "127.0.0.1"
         root_node = self.resolve_root_node_address(root_node)
-        os.environ['MASTER_ADDR'] = root_node
+        os.environ["MASTER_ADDR"] = root_node
 
-        dist.init_process_group('nccl', rank=proc_rank, world_size=world_size, timeout=datetime.timedelta(seconds=600))
+        dist.init_process_group(
+            "nccl",
+            rank=proc_rank,
+            world_size=world_size,
+            timeout=datetime.timedelta(seconds=600),
+        )
         # dist.init_process_group('gloo', rank=proc_rank, world_size=world_size)
 
     def resolve_root_node_address(self, root_node):
-        if '[' in root_node:
-            name = root_node.split('[')[0]
-            number = root_node.split(',')[0]
-            if '-' in number:
-                number = number.split('-')[0]
-            number = re.sub('[^0-9]', '', number)
+        if "[" in root_node:
+            name = root_node.split("[")[0]
+            number = root_node.split(",")[0]
+            if "-" in number:
+                number = number.split("-")[0]
+            number = re.sub("[^0-9]", "", number)
             root_node = name + number
         return root_node
 
@@ -614,6 +695,7 @@ class Trainer:
     ####################
     def get_task_ref(self):
         from utils.commons.base_task import BaseTask
+
         task: BaseTask = self.task.module if isinstance(self.task, DDP) else self.task
         return task
 
@@ -651,24 +733,25 @@ class Trainer:
         return new_metrics
 
     def save_terminal_logs(self):
-        t = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-        os.makedirs(f'{self.work_dir}/terminal_logs', exist_ok=True)
-        Tee(f'{self.work_dir}/terminal_logs/log_{t}.txt', 'w')
+        t = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        os.makedirs(f"{self.work_dir}/terminal_logs", exist_ok=True)
+        Tee(f"{self.work_dir}/terminal_logs/log_{t}.txt", "w")
 
     def save_codes(self):
-        if len(hparams['save_codes']) > 0:
-            t = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            code_dir = f'{self.work_dir}/codes/{t}'
+        if len(hparams["save_codes"]) > 0:
+            t = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            code_dir = f"{self.work_dir}/codes/{t}"
             subprocess.check_call(f'mkdir -p "{code_dir}"', shell=True)
-            for c in hparams['save_codes']:
+            for c in hparams["save_codes"]:
                 if os.path.exists(c):
                     subprocess.check_call(
-                        f'rsync -aR '
+                        f"rsync -aR "
                         f'--include="*.py" '
                         f'--include="*.yaml" '
                         f'--exclude="__pycache__" '
                         f'--include="*/" '
                         f'--exclude="*" '
                         f'"./{c}" "{code_dir}/"',
-                        shell=True)
+                        shell=True,
+                    )
             print(f"| Copied codes to {code_dir}.")

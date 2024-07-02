@@ -17,6 +17,7 @@ def round_ste(z: Tensor) -> Tensor:
 
 
 class FSQ(nn.Module):
+
     def __init__(self, levels: List[int]):
         super().__init__()
         _levels = torch.tensor(levels, dtype=int32)

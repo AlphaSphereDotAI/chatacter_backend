@@ -1,7 +1,7 @@
-from PIL import Image
 import blobfile as bf
-from mpi4py import MPI
 import numpy as np
+from mpi4py import MPI
+from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
 
@@ -66,6 +66,7 @@ def _list_image_files_recursively(data_dir):
 
 
 class ImageDataset(Dataset):
+
     def __init__(self, resolution, image_paths, classes=None, shard=0, num_shards=1):
         super().__init__()
         self.resolution = resolution

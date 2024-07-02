@@ -8,8 +8,15 @@ def uv_energy_corrector(wav_data_16k, f0_func, f0_min=50, f0_max=1000):
     win_size = hop_size * 6
     sr = 16000
 
-    spec = np.abs(librosa.stft(wav_data_16k, n_fft=win_size, hop_length=hop_size,
-                               win_length=win_size, pad_mode="constant").T)
+    spec = np.abs(
+        librosa.stft(
+            wav_data_16k,
+            n_fft=win_size,
+            hop_length=hop_size,
+            win_length=win_size,
+            pad_mode="constant",
+        ).T
+    )
     T = spec.shape[0]
     x_h256 = np.arange(0, 1, 1 / T)[:T]
     x_h256[-1] = 1
@@ -38,11 +45,13 @@ def uv_energy_corrector(wav_data_16k, f0_func, f0_min=50, f0_max=1000):
 
     # find uv first (for obtaining mean_energy_mharfhar)
     energy_har, mask_har = get_energy_mask(lambda f0, m: f0 * m, [1, 2], 3)
-    energy_mhalfhar, mask_mhalfhar = get_energy_mask(lambda f0, m: f0 * (m - 0.5), [1], 5)
+    energy_mhalfhar, mask_mhalfhar = get_energy_mask(
+        lambda f0, m: f0 * (m - 0.5), [1], 5
+    )
     r_energy = energy_har / np.clip(energy_mhalfhar, 1e-8, None)
 
     uv = np.zeros_like(f0).astype(bool)
     uv |= r_energy < 10
     uv |= (f0 > f0_max) | (f0 < f0_min)
-    func_uv = interp1d(x_h256, uv, 'nearest', fill_value='extrapolate')
+    func_uv = interp1d(x_h256, uv, "nearest", fill_value="extrapolate")
     return func_uv

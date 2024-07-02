@@ -7,8 +7,6 @@
 # disclosure or distribution of this material and related documentation
 # without an express license agreement from NVIDIA CORPORATION or
 # its affiliates is strictly prohibited.
-
-
 """
 Utils for extracting 3D shapes using marching cubes. Based on code from DeepSDF (Park et al.)
 
@@ -20,22 +18,22 @@ Ex.
     python shape_utils.py myshapes_directory --level=12
 """
 
-
-import time
-import plyfile
+import argparse
 import glob
 import logging
-import numpy as np
 import os
 import random
+import time
+
+import mrcfile
+import numpy as np
+import plyfile
+import skimage.measure
 import torch
 import torch.utils.data
 import trimesh
-import skimage.measure
-import argparse
-import mrcfile
 from tqdm import tqdm
-        
+
 
 def convert_sdf_samples_to_ply(
     numpy_3d_sdf_tensor,
@@ -44,7 +42,7 @@ def convert_sdf_samples_to_ply(
     ply_filename_out,
     offset=None,
     scale=None,
-    level=0.0
+    level=0.0,
 ):
     """
     Convert sdf samples to .ply
@@ -56,7 +54,12 @@ def convert_sdf_samples_to_ply(
     """
     start_time = time.time()
 
-    verts, faces, normals, values = np.zeros((0, 3)), np.zeros((0, 3)), np.zeros((0, 3)), np.zeros(0)
+    verts, faces, normals, values = (
+        np.zeros((0, 3)),
+        np.zeros((0, 3)),
+        np.zeros((0, 3)),
+        np.zeros(0),
+    )
     # try:
     verts, faces, normals, values = skimage.measure.marching_cubes(
         numpy_3d_sdf_tensor, level=level, spacing=[voxel_size] * 3
@@ -102,23 +105,38 @@ def convert_sdf_samples_to_ply(
 
 def convert_mrc(input_filename, output_filename, isosurface_level=1):
     with mrcfile.open(input_filename) as mrc:
-        convert_sdf_samples_to_ply(np.transpose(mrc.data, (2, 1, 0)), [0, 0, 0], 1, output_filename, level=isosurface_level)
+        convert_sdf_samples_to_ply(
+            np.transpose(mrc.data, (2, 1, 0)),
+            [0, 0, 0],
+            1,
+            output_filename,
+            level=isosurface_level,
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     start_time = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument('input_mrc_path')
-    parser.add_argument('--level', type=float, default=10, help="The isosurface level for marching cubes")
+    parser.add_argument("input_mrc_path")
+    parser.add_argument(
+        "--level",
+        type=float,
+        default=10,
+        help="The isosurface level for marching cubes",
+    )
     args = parser.parse_args()
 
-    if os.path.isfile(args.input_mrc_path) and args.input_mrc_path.split('.')[-1] == 'ply':
-        output_obj_path = args.input_mrc_path.split('.mrc')[0] + '.ply'
+    if (
+        os.path.isfile(args.input_mrc_path)
+        and args.input_mrc_path.split(".")[-1] == "ply"
+    ):
+        output_obj_path = args.input_mrc_path.split(".mrc")[0] + ".ply"
         convert_mrc(args.input_mrc_path, output_obj_path, isosurface_level=1)
 
         print(f"{time.time() - start_time:02f} s")
     else:
         assert os.path.isdir(args.input_mrc_path)
 
-        for mrc_path in tqdm(glob.glob(os.path.join(args.input_mrc_path, '*.mrc'))):
-            output_obj_path = mrc_path.split('.mrc')[0] + '.ply'
+        for mrc_path in tqdm(glob.glob(os.path.join(args.input_mrc_path, "*.mrc"))):
+            output_obj_path = mrc_path.split(".mrc")[0] + ".ply"
             convert_mrc(mrc_path, output_obj_path, isosurface_level=args.level)

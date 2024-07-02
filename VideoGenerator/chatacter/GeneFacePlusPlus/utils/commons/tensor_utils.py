@@ -1,6 +1,6 @@
+import numpy as np
 import torch
 import torch.distributed as dist
-import numpy as np
 
 
 def reduce_tensors(metrics):
@@ -58,7 +58,7 @@ def convert_to_np(tensors):
             v = convert_to_np(v)
         new_np = v
     else:
-        raise Exception(f'tensors_to_np does not support type {type(tensors)}.')
+        raise Exception(f"tensors_to_np does not support type {type(tensors)}.")
     return new_np
 
 
@@ -80,16 +80,18 @@ def convert_to_tensor(arrays):
             ret[k] = v
     return ret
 
+
 def convert_like(inp, target):
     if isinstance(target, np.ndarray):
         return convert_to_np(inp)
     elif isinstance(target, torch.Tensor):
         inp = convert_to_tensor(inp)
         inp = inp.to()
-        if target.device == 'cpu':
+        if target.device == "cpu":
             return move_to_cpu(inp)
         else:
             return move_to_cuda(inp)
+
 
 def move_to_cpu(tensors):
     ret = {}
@@ -104,10 +106,10 @@ def move_to_cpu(tensors):
 
 def move_to_cuda(batch, gpu_id=0):
     # base case: object can be directly moved using `cuda` or `to`
-    if callable(getattr(batch, 'cuda', None)):
+    if callable(getattr(batch, "cuda", None)):
         return batch.cuda(gpu_id, non_blocking=True)
-    elif callable(getattr(batch, 'to', None)):
-        return batch.to(torch.device('cuda', gpu_id), non_blocking=True)
+    elif callable(getattr(batch, "to", None)):
+        return batch.to(torch.device("cuda", gpu_id), non_blocking=True)
     elif isinstance(batch, list):
         for i, x in enumerate(batch):
             batch[i] = move_to_cuda(x, gpu_id)
@@ -126,9 +128,10 @@ def move_to_cuda(batch, gpu_id=0):
     elif batch is None:
         return None
     else:
-        print("| Error in move_to_batch: ",type(batch), batch)
+        print("| Error in move_to_batch: ", type(batch), batch)
         raise NotImplementedError()
     return batch
+
 
 def convert_to_half(arrays):
     if isinstance(arrays, np.ndarray):

@@ -1,10 +1,11 @@
 import math
+from collections import defaultdict
+
 import torch
+import torch.nn.functional as F
+import torch.onnx.operators
 from torch import nn
 from torch.nn import Parameter
-import torch.onnx.operators
-import torch.nn.functional as F
-from collections import defaultdict
 
 
 def make_positions(tensor, padding_idx):
@@ -17,9 +18,7 @@ def make_positions(tensor, padding_idx):
     # prefers ints, cumsum defaults to output longs, and ONNX doesn't know
     # how to handle the dtype kwarg in cumsum.
     mask = tensor.ne(padding_idx).int()
-    return (
-                   torch.cumsum(mask, dim=1).type_as(mask) * mask
-           ).long() + padding_idx
+    return (torch.cumsum(mask, dim=1).type_as(mask) * mask).long() + padding_idx
 
 
 def softmax(x, dim):
@@ -28,17 +27,17 @@ def softmax(x, dim):
 
 INCREMENTAL_STATE_INSTANCE_ID = defaultdict(lambda: 0)
 
+
 def _get_full_incremental_state_key(module_instance, key):
     module_name = module_instance.__class__.__name__
 
     # assign a unique ID to each module instance, so that incremental state is
     # not shared across module instances
-    if not hasattr(module_instance, '_instance_id'):
+    if not hasattr(module_instance, "_instance_id"):
         INCREMENTAL_STATE_INSTANCE_ID[module_name] += 1
         module_instance._instance_id = INCREMENTAL_STATE_INSTANCE_ID[module_name]
 
-    return '{}.{}.{}'.format(module_name, module_instance._instance_id, key)
-
+    return "{}.{}.{}".format(module_name, module_instance._instance_id, key)
 
 
 def get_incremental_state(module, incremental_state, key):
@@ -56,8 +55,8 @@ def set_incremental_state(module, incremental_state, key, value):
         incremental_state[full_key] = value
 
 
-
 class Reshape(nn.Module):
+
     def __init__(self, *args):
         super(Reshape, self).__init__()
         self.shape = args
@@ -67,6 +66,7 @@ class Reshape(nn.Module):
 
 
 class Permute(nn.Module):
+
     def __init__(self, *args):
         super(Permute, self).__init__()
         self.args = args
@@ -76,33 +76,50 @@ class Permute(nn.Module):
 
 
 class LinearNorm(torch.nn.Module):
-    def __init__(self, in_dim, out_dim, bias=True, w_init_gain='linear'):
+
+    def __init__(self, in_dim, out_dim, bias=True, w_init_gain="linear"):
         super(LinearNorm, self).__init__()
         self.linear_layer = torch.nn.Linear(in_dim, out_dim, bias=bias)
 
         torch.nn.init.xavier_uniform_(
-            self.linear_layer.weight,
-            gain=torch.nn.init.calculate_gain(w_init_gain))
+            self.linear_layer.weight, gain=torch.nn.init.calculate_gain(w_init_gain)
+        )
 
     def forward(self, x):
         return self.linear_layer(x)
 
 
 class ConvNorm(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=1, stride=1,
-                 padding=None, dilation=1, bias=True, w_init_gain='linear'):
+
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size=1,
+        stride=1,
+        padding=None,
+        dilation=1,
+        bias=True,
+        w_init_gain="linear",
+    ):
         super(ConvNorm, self).__init__()
         if padding is None:
-            assert (kernel_size % 2 == 1)
+            assert kernel_size % 2 == 1
             padding = int(dilation * (kernel_size - 1) / 2)
 
-        self.conv = torch.nn.Conv1d(in_channels, out_channels,
-                                    kernel_size=kernel_size, stride=stride,
-                                    padding=padding, dilation=dilation,
-                                    bias=bias)
+        self.conv = torch.nn.Conv1d(
+            in_channels,
+            out_channels,
+            kernel_size=kernel_size,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
+            bias=bias,
+        )
 
         torch.nn.init.xavier_uniform_(
-            self.conv.weight, gain=torch.nn.init.calculate_gain(w_init_gain))
+            self.conv.weight, gain=torch.nn.init.calculate_gain(w_init_gain)
+        )
 
     def forward(self, signal):
         conv_signal = self.conv(signal)
@@ -111,21 +128,25 @@ class ConvNorm(torch.nn.Module):
 
 def Embedding(num_embeddings, embedding_dim, padding_idx=None):
     m = nn.Embedding(num_embeddings, embedding_dim, padding_idx=padding_idx)
-    nn.init.normal_(m.weight, mean=0, std=embedding_dim ** -0.5)
+    nn.init.normal_(m.weight, mean=0, std=embedding_dim**-0.5)
     if padding_idx is not None:
         nn.init.constant_(m.weight[padding_idx], 0)
     return m
 
 
 class GroupNorm1DTBC(nn.GroupNorm):
+
     def forward(self, input):
-        return super(GroupNorm1DTBC, self).forward(input.permute(1, 2, 0)).permute(2, 0, 1)
+        return (
+            super(GroupNorm1DTBC, self).forward(input.permute(1, 2, 0)).permute(2, 0, 1)
+        )
 
 
 def LayerNorm(normalized_shape, eps=1e-5, elementwise_affine=True, export=False):
     if not export and torch.cuda.is_available():
         try:
             from apex.normalization import FusedLayerNorm
+
             return FusedLayerNorm(normalized_shape, eps, elementwise_affine)
         except ImportError:
             pass
@@ -136,7 +157,7 @@ def Linear(in_features, out_features, bias=True):
     m = nn.Linear(in_features, out_features, bias)
     nn.init.xavier_uniform_(m.weight)
     if bias:
-        nn.init.constant_(m.bias, 0.)
+        nn.init.constant_(m.bias, 0.0)
     return m
 
 
@@ -155,7 +176,7 @@ class SinusoidalPositionalEmbedding(nn.Module):
             embedding_dim,
             padding_idx,
         )
-        self.register_buffer('_float_tensor', torch.FloatTensor(1))
+        self.register_buffer("_float_tensor", torch.FloatTensor(1))
 
     @staticmethod
     def get_embedding(num_embeddings, embedding_dim, padding_idx=None):
@@ -167,8 +188,12 @@ class SinusoidalPositionalEmbedding(nn.Module):
         half_dim = embedding_dim // 2
         emb = math.log(10000) / (half_dim - 1)
         emb = torch.exp(torch.arange(half_dim, dtype=torch.float) * -emb)
-        emb = torch.arange(num_embeddings, dtype=torch.float).unsqueeze(1) * emb.unsqueeze(0)
-        emb = torch.cat([torch.sin(emb), torch.cos(emb)], dim=1).view(num_embeddings, -1)
+        emb = torch.arange(num_embeddings, dtype=torch.float).unsqueeze(
+            1
+        ) * emb.unsqueeze(0)
+        emb = torch.cat([torch.sin(emb), torch.cos(emb)], dim=1).view(
+            num_embeddings, -1
+        )
         if embedding_dim % 2 == 1:
             # zero pad
             emb = torch.cat([emb, torch.zeros(num_embeddings, 1)], dim=1)
@@ -176,7 +201,9 @@ class SinusoidalPositionalEmbedding(nn.Module):
             emb[padding_idx, :] = 0
         return emb
 
-    def forward(self, input, incremental_state=None, timestep=None, positions=None, **kwargs):
+    def forward(
+        self, input, incremental_state=None, timestep=None, positions=None, **kwargs
+    ):
         """Input is expected to be of size [bsz x seqlen]."""
         bsz, seq_len = input.shape[:2]
         max_pos = self.padding_idx + 1 + seq_len
@@ -194,8 +221,14 @@ class SinusoidalPositionalEmbedding(nn.Module):
             pos = timestep.view(-1)[0] + 1 if timestep is not None else seq_len
             return self.weights[self.padding_idx + pos, :].expand(bsz, 1, -1)
 
-        positions = make_positions(input, self.padding_idx) if positions is None else positions
-        return self.weights.index_select(0, positions.view(-1)).view(bsz, seq_len, -1).detach()
+        positions = (
+            make_positions(input, self.padding_idx) if positions is None else positions
+        )
+        return (
+            self.weights.index_select(0, positions.view(-1))
+            .view(bsz, seq_len, -1)
+            .detach()
+        )
 
     def max_positions(self):
         """Maximum number of supported positions."""
@@ -203,6 +236,7 @@ class SinusoidalPositionalEmbedding(nn.Module):
 
 
 class ConvTBC(nn.Module):
+
     def __init__(self, in_channels, out_channels, kernel_size, padding=0):
         super(ConvTBC, self).__init__()
         self.in_channels = in_channels
@@ -210,8 +244,9 @@ class ConvTBC(nn.Module):
         self.kernel_size = kernel_size
         self.padding = padding
 
-        self.weight = torch.nn.Parameter(torch.Tensor(
-            self.kernel_size, in_channels, out_channels))
+        self.weight = torch.nn.Parameter(
+            torch.Tensor(self.kernel_size, in_channels, out_channels)
+        )
         self.bias = torch.nn.Parameter(torch.Tensor(out_channels))
 
     def forward(self, input):
@@ -219,9 +254,20 @@ class ConvTBC(nn.Module):
 
 
 class MultiheadAttention(nn.Module):
-    def __init__(self, embed_dim, num_heads, kdim=None, vdim=None, dropout=0., bias=True,
-                 add_bias_kv=False, add_zero_attn=False, self_attention=False,
-                 encoder_decoder_attention=False):
+
+    def __init__(
+        self,
+        embed_dim,
+        num_heads,
+        kdim=None,
+        vdim=None,
+        dropout=0.0,
+        bias=True,
+        add_bias_kv=False,
+        add_zero_attn=False,
+        self_attention=False,
+        encoder_decoder_attention=False,
+    ):
         super().__init__()
         self.embed_dim = embed_dim
         self.kdim = kdim if kdim is not None else embed_dim
@@ -231,14 +277,17 @@ class MultiheadAttention(nn.Module):
         self.num_heads = num_heads
         self.dropout = dropout
         self.head_dim = embed_dim // num_heads
-        assert self.head_dim * num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
-        self.scaling = self.head_dim ** -0.5
+        assert (
+            self.head_dim * num_heads == self.embed_dim
+        ), "embed_dim must be divisible by num_heads"
+        self.scaling = self.head_dim**-0.5
 
         self.self_attention = self_attention
         self.encoder_decoder_attention = encoder_decoder_attention
 
-        assert not self.self_attention or self.qkv_same_dim, 'Self-attention requires query, key and ' \
-                                                             'value to be of the same size'
+        assert not self.self_attention or self.qkv_same_dim, (
+            "Self-attention requires query, key and " "value to be of the same size"
+        )
 
         if self.qkv_same_dim:
             self.in_proj_weight = Parameter(torch.Tensor(3 * embed_dim, embed_dim))
@@ -250,7 +299,7 @@ class MultiheadAttention(nn.Module):
         if bias:
             self.in_proj_bias = Parameter(torch.Tensor(3 * embed_dim))
         else:
-            self.register_parameter('in_proj_bias', None)
+            self.register_parameter("in_proj_bias", None)
 
         self.out_proj = nn.Linear(embed_dim, embed_dim, bias=bias)
 
@@ -281,25 +330,27 @@ class MultiheadAttention(nn.Module):
 
         nn.init.xavier_uniform_(self.out_proj.weight)
         if self.in_proj_bias is not None:
-            nn.init.constant_(self.in_proj_bias, 0.)
-            nn.init.constant_(self.out_proj.bias, 0.)
+            nn.init.constant_(self.in_proj_bias, 0.0)
+            nn.init.constant_(self.out_proj.bias, 0.0)
         if self.bias_k is not None:
             nn.init.xavier_normal_(self.bias_k)
         if self.bias_v is not None:
             nn.init.xavier_normal_(self.bias_v)
 
     def forward(
-            self,
-            query, key, value,
-            key_padding_mask=None,
-            incremental_state=None,
-            need_weights=True,
-            static_kv=False,
-            attn_mask=None,
-            before_softmax=False,
-            need_head_weights=False,
-            enc_dec_attn_constraint_mask=None,
-            reset_attn_weight=None
+        self,
+        query,
+        key,
+        value,
+        key_padding_mask=None,
+        incremental_state=None,
+        need_weights=True,
+        static_kv=False,
+        attn_mask=None,
+        before_softmax=False,
+        need_head_weights=False,
+        enc_dec_attn_constraint_mask=None,
+        reset_attn_weight=None,
     ):
         """Input shape: Time x Batch x Channel
 
@@ -324,32 +375,60 @@ class MultiheadAttention(nn.Module):
         tgt_len, bsz, embed_dim = query.size()
         assert embed_dim == self.embed_dim
         assert list(query.size()) == [tgt_len, bsz, embed_dim]
-        if self.enable_torch_version and incremental_state is None and not static_kv and reset_attn_weight is None:
+        if (
+            self.enable_torch_version
+            and incremental_state is None
+            and not static_kv
+            and reset_attn_weight is None
+        ):
             if self.qkv_same_dim:
-                return F.multi_head_attention_forward(query, key, value,
-                                                      self.embed_dim, self.num_heads,
-                                                      self.in_proj_weight,
-                                                      self.in_proj_bias, self.bias_k, self.bias_v,
-                                                      self.add_zero_attn, self.dropout,
-                                                      self.out_proj.weight, self.out_proj.bias,
-                                                      self.training, key_padding_mask, need_weights,
-                                                      attn_mask)
+                return F.multi_head_attention_forward(
+                    query,
+                    key,
+                    value,
+                    self.embed_dim,
+                    self.num_heads,
+                    self.in_proj_weight,
+                    self.in_proj_bias,
+                    self.bias_k,
+                    self.bias_v,
+                    self.add_zero_attn,
+                    self.dropout,
+                    self.out_proj.weight,
+                    self.out_proj.bias,
+                    self.training,
+                    key_padding_mask,
+                    need_weights,
+                    attn_mask,
+                )
             else:
-                return F.multi_head_attention_forward(query, key, value,
-                                                      self.embed_dim, self.num_heads,
-                                                      torch.empty([0]),
-                                                      self.in_proj_bias, self.bias_k, self.bias_v,
-                                                      self.add_zero_attn, self.dropout,
-                                                      self.out_proj.weight, self.out_proj.bias,
-                                                      self.training, key_padding_mask, need_weights,
-                                                      attn_mask, use_separate_proj_weight=True,
-                                                      q_proj_weight=self.q_proj_weight,
-                                                      k_proj_weight=self.k_proj_weight,
-                                                      v_proj_weight=self.v_proj_weight)
+                return F.multi_head_attention_forward(
+                    query,
+                    key,
+                    value,
+                    self.embed_dim,
+                    self.num_heads,
+                    torch.empty([0]),
+                    self.in_proj_bias,
+                    self.bias_k,
+                    self.bias_v,
+                    self.add_zero_attn,
+                    self.dropout,
+                    self.out_proj.weight,
+                    self.out_proj.bias,
+                    self.training,
+                    key_padding_mask,
+                    need_weights,
+                    attn_mask,
+                    use_separate_proj_weight=True,
+                    q_proj_weight=self.q_proj_weight,
+                    k_proj_weight=self.k_proj_weight,
+                    v_proj_weight=self.v_proj_weight,
+                )
 
         if incremental_state is not None:
             saved_state = self._get_input_buffer(incremental_state)
-            if 'prev_key' in saved_state:
+            if "prev_key" in saved_state:
                 # previous time steps are cached - no need to recompute
                 # key and value if they are static
                 if static_kv:
@@ -382,41 +461,69 @@ class MultiheadAttention(nn.Module):
             k = torch.cat([k, self.bias_k.repeat(1, bsz, 1)])
             v = torch.cat([v, self.bias_v.repeat(1, bsz, 1)])
             if attn_mask is not None:
-                attn_mask = torch.cat([attn_mask, attn_mask.new_zeros(attn_mask.size(0), 1)], dim=1)
+                attn_mask = torch.cat(
+                    [attn_mask, attn_mask.new_zeros(attn_mask.size(0), 1)], dim=1
+                )
             if key_padding_mask is not None:
                 key_padding_mask = torch.cat(
-                    [key_padding_mask, key_padding_mask.new_zeros(key_padding_mask.size(0), 1)], dim=1)
+                    [
+                        key_padding_mask,
+                        key_padding_mask.new_zeros(key_padding_mask.size(0), 1),
+                    ],
+                    dim=1,
+                )
 
-        q = q.contiguous().view(tgt_len, bsz * self.num_heads, self.head_dim).transpose(0, 1)
+        q = (
+            q.contiguous()
+            .view(tgt_len, bsz * self.num_heads, self.head_dim)
+            .transpose(0, 1)
+        )
         if k is not None:
-            k = k.contiguous().view(-1, bsz * self.num_heads, self.head_dim).transpose(0, 1)
+            k = (
+                k.contiguous()
+                .view(-1, bsz * self.num_heads, self.head_dim)
+                .transpose(0, 1)
+            )
         if v is not None:
-            v = v.contiguous().view(-1, bsz * self.num_heads, self.head_dim).transpose(0, 1)
+            v = (
+                v.contiguous()
+                .view(-1, bsz * self.num_heads, self.head_dim)
+                .transpose(0, 1)
+            )
 
         if saved_state is not None:
             # saved states are stored with shape (bsz, num_heads, seq_len, head_dim)
-            if 'prev_key' in saved_state:
-                prev_key = saved_state['prev_key'].view(bsz * self.num_heads, -1, self.head_dim)
+            if "prev_key" in saved_state:
+                prev_key = saved_state["prev_key"].view(
+                    bsz * self.num_heads, -1, self.head_dim
+                )
                 if static_kv:
                     k = prev_key
                 else:
                     k = torch.cat((prev_key, k), dim=1)
-            if 'prev_value' in saved_state:
-                prev_value = saved_state['prev_value'].view(bsz * self.num_heads, -1, self.head_dim)
+            if "prev_value" in saved_state:
+                prev_value = saved_state["prev_value"].view(
+                    bsz * self.num_heads, -1, self.head_dim
+                )
                 if static_kv:
                     v = prev_value
                 else:
                     v = torch.cat((prev_value, v), dim=1)
-            if 'prev_key_padding_mask' in saved_state and saved_state['prev_key_padding_mask'] is not None:
-                prev_key_padding_mask = saved_state['prev_key_padding_mask']
+            if (
+                "prev_key_padding_mask" in saved_state
+                and saved_state["prev_key_padding_mask"] is not None
+            ):
+                prev_key_padding_mask = saved_state["prev_key_padding_mask"]
                 if static_kv:
                     key_padding_mask = prev_key_padding_mask
                 else:
-                    key_padding_mask = torch.cat((prev_key_padding_mask, key_padding_mask), dim=1)
+                    key_padding_mask = torch.cat(
+                        (prev_key_padding_mask, key_padding_mask), dim=1
+                    )
 
-            saved_state['prev_key'] = k.view(bsz, self.num_heads, -1, self.head_dim)
-            saved_state['prev_value'] = v.view(bsz, self.num_heads, -1, self.head_dim)
-            saved_state['prev_key_padding_mask'] = key_padding_mask
+            saved_state["prev_key"] = k.view(bsz, self.num_heads, -1, self.head_dim)
+            saved_state["prev_value"] = v.view(bsz, self.num_heads, -1, self.head_dim)
+            saved_state["prev_key_padding_mask"] = key_padding_mask
 
             self._set_input_buffer(incremental_state, saved_state)
 
@@ -436,10 +543,19 @@ class MultiheadAttention(nn.Module):
             k = torch.cat([k, k.new_zeros((k.size(0), 1) + k.size()[2:])], dim=1)
             v = torch.cat([v, v.new_zeros((v.size(0), 1) + v.size()[2:])], dim=1)
             if attn_mask is not None:
-                attn_mask = torch.cat([attn_mask, attn_mask.new_zeros(attn_mask.size(0), 1)], dim=1)
+                attn_mask = torch.cat(
+                    [attn_mask, attn_mask.new_zeros(attn_mask.size(0), 1)], dim=1
+                )
             if key_padding_mask is not None:
                 key_padding_mask = torch.cat(
-                    [key_padding_mask, torch.zeros(key_padding_mask.size(0), 1).type_as(key_padding_mask)], dim=1)
+                    [
+                        key_padding_mask,
+                        torch.zeros(key_padding_mask.size(0), 1).type_as(
+                            key_padding_mask
+                        ),
+                    ],
+                    dim=1,
+                )
 
         attn_weights = torch.bmm(q, k.transpose(1, 2))
         attn_weights = self.apply_sparse_mask(attn_weights, tgt_len, src_len, bsz)
@@ -450,8 +566,11 @@ class MultiheadAttention(nn.Module):
             if len(attn_mask.shape) == 2:
                 attn_mask = attn_mask.unsqueeze(0)
             elif len(attn_mask.shape) == 3:
-                attn_mask = attn_mask[:, None].repeat([1, self.num_heads, 1, 1]).reshape(
-                    bsz * self.num_heads, tgt_len, src_len)
+                attn_mask = (
+                    attn_mask[:, None]
+                    .repeat([1, self.num_heads, 1, 1])
+                    .reshape(bsz * self.num_heads, tgt_len, src_len)
+                )
             attn_weights = attn_weights + attn_mask
 
         if enc_dec_attn_constraint_mask is not None:  # bs x head x L_kv
@@ -478,7 +597,11 @@ class MultiheadAttention(nn.Module):
 
         attn_weights_float = softmax(attn_weights, dim=-1)
         attn_weights = attn_weights_float.type_as(attn_weights)
-        attn_probs = F.dropout(attn_weights_float.type_as(attn_weights), p=self.dropout, training=self.training)
+        attn_probs = F.dropout(
+            attn_weights_float.type_as(attn_weights),
+            p=self.dropout,
+            training=self.training,
+        )
 
         if reset_attn_weight is not None:
             if reset_attn_weight:
@@ -492,7 +615,9 @@ class MultiheadAttention(nn.Module):
         attn = self.out_proj(attn)
 
         if need_weights:
-            attn_weights = attn_weights_float.view(bsz, self.num_heads, tgt_len, src_len).transpose(1, 0)
+            attn_weights = attn_weights_float.view(
+                bsz, self.num_heads, tgt_len, src_len
+            ).transpose(1, 0)
             if not need_head_weights:
                 # average attention weights over heads
                 attn_weights = attn_weights.mean(dim=0)
@@ -510,7 +635,7 @@ class MultiheadAttention(nn.Module):
         else:
             bias = self.in_proj_bias
             if bias is not None:
-                bias = bias[:self.embed_dim]
+                bias = bias[: self.embed_dim]
             return F.linear(query, self.q_proj_weight, bias)
 
     def in_proj_k(self, key):
@@ -520,7 +645,7 @@ class MultiheadAttention(nn.Module):
             weight = self.k_proj_weight
             bias = self.in_proj_bias
             if bias is not None:
-                bias = bias[self.embed_dim:2 * self.embed_dim]
+                bias = bias[self.embed_dim : 2 * self.embed_dim]
             return F.linear(key, weight, bias)
 
     def in_proj_v(self, value):
@@ -530,7 +655,7 @@ class MultiheadAttention(nn.Module):
             weight = self.v_proj_weight
             bias = self.in_proj_bias
             if bias is not None:
-                bias = bias[2 * self.embed_dim:]
+                bias = bias[2 * self.embed_dim :]
             return F.linear(value, weight, bias)
 
     def _in_proj(self, input, start=0, end=None):
@@ -542,17 +667,20 @@ class MultiheadAttention(nn.Module):
         return F.linear(input, weight, bias)
 
     def _get_input_buffer(self, incremental_state):
-        return get_incremental_state(
-            self,
-            incremental_state,
-            'attn_state',
-        ) or {}
+        return (
+            get_incremental_state(
+                self,
+                incremental_state,
+                "attn_state",
+            )
+            or {}
+        )
 
     def _set_input_buffer(self, incremental_state, buffer):
         set_incremental_state(
             self,
             incremental_state,
-            'attn_state',
+            "attn_state",
             buffer,
         )
 
@@ -562,14 +690,15 @@ class MultiheadAttention(nn.Module):
     def clear_buffer(self, incremental_state=None):
         if incremental_state is not None:
             saved_state = self._get_input_buffer(incremental_state)
-            if 'prev_key' in saved_state:
-                del saved_state['prev_key']
-            if 'prev_value' in saved_state:
-                del saved_state['prev_value']
+            if "prev_key" in saved_state:
+                del saved_state["prev_key"]
+            if "prev_value" in saved_state:
+                del saved_state["prev_value"]
             self._set_input_buffer(incremental_state, saved_state)
 
 
 class Swish(torch.autograd.Function):
+
     @staticmethod
     def forward(ctx, i):
         result = i * torch.sigmoid(i)
@@ -584,77 +713,93 @@ class Swish(torch.autograd.Function):
 
 
 class CustomSwish(nn.Module):
+
     def forward(self, input_tensor):
         return Swish.apply(input_tensor)
 
 
 class TransformerFFNLayer(nn.Module):
-    def __init__(self, hidden_size, filter_size, padding="SAME", kernel_size=1, dropout=0., act='gelu'):
+
+    def __init__(
+        self,
+        hidden_size,
+        filter_size,
+        padding="SAME",
+        kernel_size=1,
+        dropout=0.0,
+        act="gelu",
+    ):
         super().__init__()
         self.kernel_size = kernel_size
         self.dropout = dropout
         self.act = act
-        if padding == 'SAME':
-            self.ffn_1 = nn.Conv1d(hidden_size, filter_size, kernel_size, padding=kernel_size // 2)
-        elif padding == 'LEFT':
+        if padding == "SAME":
+            self.ffn_1 = nn.Conv1d(
+                hidden_size, filter_size, kernel_size, padding=kernel_size // 2
+            )
+        elif padding == "LEFT":
             self.ffn_1 = nn.Sequential(
                 nn.ConstantPad1d((kernel_size - 1, 0), 0.0),
-                nn.Conv1d(hidden_size, filter_size, kernel_size)
+                nn.Conv1d(hidden_size, filter_size, kernel_size),
             )
         self.ffn_2 = Linear(filter_size, hidden_size)
-        if self.act == 'swish':
+        if self.act == "swish":
             self.swish_fn = CustomSwish()
 
     def forward(self, x, incremental_state=None):
         # x: T x B x C
         if incremental_state is not None:
             saved_state = self._get_input_buffer(incremental_state)
-            if 'prev_input' in saved_state:
-                prev_input = saved_state['prev_input']
+            if "prev_input" in saved_state:
+                prev_input = saved_state["prev_input"]
                 x = torch.cat((prev_input, x), dim=0)
-            x = x[-self.kernel_size:]
-            saved_state['prev_input'] = x
+            x = x[-self.kernel_size :]
+            saved_state["prev_input"] = x
             self._set_input_buffer(incremental_state, saved_state)
 
         x = self.ffn_1(x.permute(1, 2, 0)).permute(2, 0, 1)
-        x = x * self.kernel_size ** -0.5
+        x = x * self.kernel_size**-0.5
 
         if incremental_state is not None:
             x = x[-1:]
-        if self.act == 'gelu':
+        if self.act == "gelu":
             x = F.gelu(x)
-        if self.act == 'relu':
+        if self.act == "relu":
             x = F.relu(x)
-        if self.act == 'swish':
+        if self.act == "swish":
             x = self.swish_fn(x)
         x = F.dropout(x, self.dropout, training=self.training)
         x = self.ffn_2(x)
         return x
 
     def _get_input_buffer(self, incremental_state):
-        return get_incremental_state(
-            self,
-            incremental_state,
-            'f',
-        ) or {}
+        return (
+            get_incremental_state(
+                self,
+                incremental_state,
+                "f",
+            )
+            or {}
+        )
 
     def _set_input_buffer(self, incremental_state, buffer):
         set_incremental_state(
             self,
             incremental_state,
-            'f',
+            "f",
             buffer,
         )
 
     def clear_buffer(self, incremental_state):
         if incremental_state is not None:
             saved_state = self._get_input_buffer(incremental_state)
-            if 'prev_input' in saved_state:
-                del saved_state['prev_input']
+            if "prev_input" in saved_state:
+                del saved_state["prev_input"]
             self._set_input_buffer(incremental_state, saved_state)
 
 
 class BatchNorm1dTBC(nn.Module):
+
     def __init__(self, c):
         super(BatchNorm1dTBC, self).__init__()
         self.bn = nn.BatchNorm1d(c)
@@ -672,43 +817,65 @@ class BatchNorm1dTBC(nn.Module):
 
 
 class EncSALayer(nn.Module):
-    def __init__(self, c, num_heads, dropout, attention_dropout=0.1,
-                 relu_dropout=0.1, kernel_size=9, padding='SAME', norm='ln', act='gelu'):
+
+    def __init__(
+        self,
+        c,
+        num_heads,
+        dropout,
+        attention_dropout=0.1,
+        relu_dropout=0.1,
+        kernel_size=9,
+        padding="SAME",
+        norm="ln",
+        act="gelu",
+    ):
         super().__init__()
         self.c = c
         self.dropout = dropout
         self.num_heads = num_heads
         if num_heads > 0:
-            if norm == 'ln':
+            if norm == "ln":
                 self.layer_norm1 = LayerNorm(c)
-            elif norm == 'bn':
+            elif norm == "bn":
                 self.layer_norm1 = BatchNorm1dTBC(c)
-            elif norm == 'gn':
+            elif norm == "gn":
                 self.layer_norm1 = GroupNorm1DTBC(8, c)
             self.self_attn = MultiheadAttention(
-                self.c, num_heads, self_attention=True, dropout=attention_dropout, bias=False)
-        if norm == 'ln':
+                self.c,
+                num_heads,
+                self_attention=True,
+                dropout=attention_dropout,
+                bias=False,
+            )
+        if norm == "ln":
             self.layer_norm2 = LayerNorm(c)
-        elif norm == 'bn':
+        elif norm == "bn":
             self.layer_norm2 = BatchNorm1dTBC(c)
-        elif norm == 'gn':
+        elif norm == "gn":
             self.layer_norm2 = GroupNorm1DTBC(8, c)
         self.ffn = TransformerFFNLayer(
-            c, 4 * c, kernel_size=kernel_size, dropout=relu_dropout, padding=padding, act=act)
+            c,
+            4 * c,
+            kernel_size=kernel_size,
+            dropout=relu_dropout,
+            padding=padding,
+            act=act,
+        )
 
     def forward(self, x, encoder_padding_mask=None, **kwargs):
-        layer_norm_training = kwargs.get('layer_norm_training', None)
+        layer_norm_training = kwargs.get("layer_norm_training", None)
         if layer_norm_training is not None:
             self.layer_norm1.training = layer_norm_training
             self.layer_norm2.training = layer_norm_training
         if self.num_heads > 0:
             residual = x
             x = self.layer_norm1(x)
-            x, _, = self.self_attn(
-                query=x,
-                key=x,
-                value=x,
-                key_padding_mask=encoder_padding_mask
+            (
+                x,
+                _,
+            ) = self.self_attn(
+                query=x, key=x, value=x, key_padding_mask=encoder_padding_mask
             )
             x = F.dropout(x, self.dropout, training=self.training)
             x = residual + x
@@ -724,45 +891,65 @@ class EncSALayer(nn.Module):
 
 
 class DecSALayer(nn.Module):
-    def __init__(self, c, num_heads, dropout, attention_dropout=0.1, relu_dropout=0.1,
-                 kernel_size=9, act='gelu', norm='ln'):
+
+    def __init__(
+        self,
+        c,
+        num_heads,
+        dropout,
+        attention_dropout=0.1,
+        relu_dropout=0.1,
+        kernel_size=9,
+        act="gelu",
+        norm="ln",
+    ):
         super().__init__()
         self.c = c
         self.dropout = dropout
-        if norm == 'ln':
+        if norm == "ln":
             self.layer_norm1 = LayerNorm(c)
-        elif norm == 'gn':
+        elif norm == "gn":
             self.layer_norm1 = GroupNorm1DTBC(8, c)
         self.self_attn = MultiheadAttention(
             c, num_heads, self_attention=True, dropout=attention_dropout, bias=False
         )
-        if norm == 'ln':
+        if norm == "ln":
             self.layer_norm2 = LayerNorm(c)
-        elif norm == 'gn':
+        elif norm == "gn":
             self.layer_norm2 = GroupNorm1DTBC(8, c)
         self.encoder_attn = MultiheadAttention(
-            c, num_heads, encoder_decoder_attention=True, dropout=attention_dropout, bias=False,
+            c,
+            num_heads,
+            encoder_decoder_attention=True,
+            dropout=attention_dropout,
+            bias=False,
         )
-        if norm == 'ln':
+        if norm == "ln":
             self.layer_norm3 = LayerNorm(c)
-        elif norm == 'gn':
+        elif norm == "gn":
             self.layer_norm3 = GroupNorm1DTBC(8, c)
         self.ffn = TransformerFFNLayer(
-            c, 4 * c, padding='LEFT', kernel_size=kernel_size, dropout=relu_dropout, act=act)
+            c,
+            4 * c,
+            padding="LEFT",
+            kernel_size=kernel_size,
+            dropout=relu_dropout,
+            act=act,
+        )
 
     def forward(
-            self,
-            x,
-            encoder_out=None,
-            encoder_padding_mask=None,
-            incremental_state=None,
-            self_attn_mask=None,
-            self_attn_padding_mask=None,
-            attn_out=None,
-            reset_attn_weight=None,
-            **kwargs,
+        self,
+        x,
+        encoder_out=None,
+        encoder_padding_mask=None,
+        incremental_state=None,
+        self_attn_mask=None,
+        self_attn_padding_mask=None,
+        attn_out=None,
+        reset_attn_weight=None,
+        **kwargs,
     ):
-        layer_norm_training = kwargs.get('layer_norm_training', None)
+        layer_norm_training = kwargs.get("layer_norm_training", None)
         if layer_norm_training is not None:
             self.layer_norm1.training = layer_norm_training
             self.layer_norm2.training = layer_norm_training
@@ -775,7 +962,7 @@ class DecSALayer(nn.Module):
             value=x,
             key_padding_mask=self_attn_padding_mask,
             incremental_state=incremental_state,
-            attn_mask=self_attn_mask
+            attn_mask=self_attn_mask,
         )
         x = F.dropout(x, self.dropout, training=self.training)
         x = residual + x
@@ -792,9 +979,10 @@ class DecSALayer(nn.Module):
                 key_padding_mask=encoder_padding_mask,
                 incremental_state=incremental_state,
                 static_kv=True,
-                enc_dec_attn_constraint_mask=get_incremental_state(self, incremental_state,
-                                                                   'enc_dec_attn_constraint_mask'),
-                reset_attn_weight=reset_attn_weight
+                enc_dec_attn_constraint_mask=get_incremental_state(
+                    self, incremental_state, "enc_dec_attn_constraint_mask"
+                ),
+                reset_attn_weight=reset_attn_weight,
             )
             attn_logits = attn[1]
         elif attn_out is not None:
@@ -810,7 +998,9 @@ class DecSALayer(nn.Module):
         x = residual + x
         return x, attn_logits
 
-    def clear_buffer(self, input, encoder_out=None, encoder_padding_mask=None, incremental_state=None):
+    def clear_buffer(
+        self, input, encoder_out=None, encoder_padding_mask=None, incremental_state=None
+    ):
         self.encoder_attn.clear_buffer(incremental_state)
         self.ffn.clear_buffer(incremental_state)
 
@@ -819,19 +1009,22 @@ class DecSALayer(nn.Module):
 
 
 class ConvBlock(nn.Module):
-    def __init__(self, idim=80, n_chans=256, kernel_size=3, stride=1, norm='gn', dropout=0):
+
+    def __init__(
+        self, idim=80, n_chans=256, kernel_size=3, stride=1, norm="gn", dropout=0
+    ):
         super().__init__()
         self.conv = ConvNorm(idim, n_chans, kernel_size, stride=stride)
         self.norm = norm
-        if self.norm == 'bn':
+        if self.norm == "bn":
             self.norm = nn.BatchNorm1d(n_chans)
-        elif self.norm == 'in':
+        elif self.norm == "in":
             self.norm = nn.InstanceNorm1d(n_chans, affine=True)
-        elif self.norm == 'gn':
+        elif self.norm == "gn":
             self.norm = nn.GroupNorm(n_chans // 16, n_chans)
-        elif self.norm == 'ln':
+        elif self.norm == "ln":
             self.norm = LayerNorm(n_chans // 16, n_chans)
-        elif self.norm == 'wn':
+        elif self.norm == "wn":
             self.conv = torch.nn.utils.weight_norm(self.conv.conv)
         self.dropout = nn.Dropout(dropout)
         self.relu = nn.ReLU()
@@ -844,9 +1037,9 @@ class ConvBlock(nn.Module):
         """
         x = self.conv(x)
         if not isinstance(self.norm, str):
-            if self.norm == 'none':
+            if self.norm == "none":
                 pass
-            elif self.norm == 'ln':
+            elif self.norm == "ln":
                 x = self.norm(x.transpose(1, 2)).transpose(1, 2)
             else:
                 x = self.norm(x)
@@ -856,8 +1049,19 @@ class ConvBlock(nn.Module):
 
 
 class ConvStacks(nn.Module):
-    def __init__(self, idim=80, n_layers=5, n_chans=256, odim=32, kernel_size=5, norm='gn',
-                 dropout=0, strides=None, res=True):
+
+    def __init__(
+        self,
+        idim=80,
+        n_layers=5,
+        n_chans=256,
+        odim=32,
+        kernel_size=5,
+        norm="gn",
+        dropout=0,
+        strides=None,
+        res=True,
+    ):
         super().__init__()
         self.conv = torch.nn.ModuleList()
         self.kernel_size = kernel_size
@@ -868,8 +1072,16 @@ class ConvStacks(nn.Module):
         else:
             assert len(strides) == n_layers
         for idx in range(n_layers):
-            self.conv.append(ConvBlock(
-                n_chans, n_chans, kernel_size, stride=strides[idx], norm=norm, dropout=dropout))
+            self.conv.append(
+                ConvBlock(
+                    n_chans,
+                    n_chans,
+                    kernel_size,
+                    stride=strides[idx],
+                    norm=norm,
+                    dropout=dropout,
+                )
+            )
         self.out_proj = Linear(n_chans, odim)
 
     def forward(self, x, return_hiddens=False):
@@ -894,16 +1106,34 @@ class ConvStacks(nn.Module):
 
 
 class ConvGlobalStacks(nn.Module):
-    def __init__(self, idim=80, n_layers=5, n_chans=256, odim=32, kernel_size=5, norm='gn', dropout=0,
-                 strides=[2, 2, 2, 2, 2]):
+
+    def __init__(
+        self,
+        idim=80,
+        n_layers=5,
+        n_chans=256,
+        odim=32,
+        kernel_size=5,
+        norm="gn",
+        dropout=0,
+        strides=[2, 2, 2, 2, 2],
+    ):
         super().__init__()
         self.conv = torch.nn.ModuleList()
         self.pooling = torch.nn.ModuleList()
         self.kernel_size = kernel_size
         self.in_proj = Linear(idim, n_chans)
         for idx in range(n_layers):
-            self.conv.append(ConvBlock(n_chans, n_chans, kernel_size, stride=strides[idx],
-                                       norm=norm, dropout=dropout))
+            self.conv.append(
+                ConvBlock(
+                    n_chans,
+                    n_chans,
+                    kernel_size,
+                    stride=strides[idx],
+                    norm=norm,
+                    dropout=dropout,
+                )
+            )
             self.pooling.append(nn.MaxPool1d(strides[idx]))
         self.out_proj = Linear(n_chans, odim)
 
@@ -923,7 +1153,8 @@ class ConvGlobalStacks(nn.Module):
 
 
 class ConvDecoder(nn.Module):
-    def __init__(self, c, dropout, kernel_size=9, act='gelu'):
+
+    def __init__(self, c, dropout, kernel_size=9, act="gelu"):
         super().__init__()
         self.c = c
         self.dropout = dropout
@@ -931,27 +1162,45 @@ class ConvDecoder(nn.Module):
         self.pre_convs = nn.ModuleList()
         self.pre_lns = nn.ModuleList()
         for i in range(2):
-            self.pre_convs.append(TransformerFFNLayer(
-                c, c * 2, padding='LEFT', kernel_size=kernel_size, dropout=dropout, act=act))
+            self.pre_convs.append(
+                TransformerFFNLayer(
+                    c,
+                    c * 2,
+                    padding="LEFT",
+                    kernel_size=kernel_size,
+                    dropout=dropout,
+                    act=act,
+                )
+            )
             self.pre_lns.append(LayerNorm(c))
 
         self.layer_norm_attn = LayerNorm(c)
-        self.encoder_attn = MultiheadAttention(c, 1, encoder_decoder_attention=True, bias=False)
+        self.encoder_attn = MultiheadAttention(
+            c, 1, encoder_decoder_attention=True, bias=False
+        )
 
         self.post_convs = nn.ModuleList()
         self.post_lns = nn.ModuleList()
         for i in range(8):
-            self.post_convs.append(TransformerFFNLayer(
-                c, c * 2, padding='LEFT', kernel_size=kernel_size, dropout=dropout, act=act))
+            self.post_convs.append(
+                TransformerFFNLayer(
+                    c,
+                    c * 2,
+                    padding="LEFT",
+                    kernel_size=kernel_size,
+                    dropout=dropout,
+                    act=act,
+                )
+            )
             self.post_lns.append(LayerNorm(c))
 
     def forward(
-            self,
-            x,
-            encoder_out=None,
-            encoder_padding_mask=None,
-            incremental_state=None,
-            **kwargs,
+        self,
+        x,
+        encoder_out=None,
+        encoder_padding_mask=None,
+        incremental_state=None,
+        **kwargs,
     ):
         attn_logits = None
         for conv, ln in zip(self.pre_convs, self.pre_lns):
@@ -968,8 +1217,9 @@ class ConvDecoder(nn.Module):
                 key_padding_mask=encoder_padding_mask,
                 incremental_state=incremental_state,
                 static_kv=True,
-                enc_dec_attn_constraint_mask=get_incremental_state(self, incremental_state,
-                                                                   'enc_dec_attn_constraint_mask'),
+                enc_dec_attn_constraint_mask=get_incremental_state(
+                    self, incremental_state, "enc_dec_attn_constraint_mask"
+                ),
             )
             attn_logits = attn[1]
             x = F.dropout(x, self.dropout, training=self.training)
@@ -980,7 +1230,9 @@ class ConvDecoder(nn.Module):
             x = conv(x) + residual
         return x, attn_logits
 
-    def clear_buffer(self, input, encoder_out=None, encoder_padding_mask=None, incremental_state=None):
+    def clear_buffer(
+        self, input, encoder_out=None, encoder_padding_mask=None, incremental_state=None
+    ):
         self.encoder_attn.clear_buffer(incremental_state)
         self.ffn.clear_buffer(incremental_state)
 

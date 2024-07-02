@@ -4,17 +4,19 @@ import torch.nn.functional as F
 
 
 def split_heads(x, num_heads):
-    """ Split heads
+    """Split heads
     :param x: A tensor with shape [batch, length, channels]
     :param num_heads: An integer
     :returns: A tensor with shape [batch, heads, length, channels / heads]
     """
     assert x.shape[-1] % num_heads == 0, str(x.shape)
-    return x.reshape(x.shape[:-1] + (num_heads, x.shape[-1] // num_heads)).permute(0, 2, 1, 3)
+    return x.reshape(x.shape[:-1] + (num_heads, x.shape[-1] // num_heads)).permute(
+        0, 2, 1, 3
+    )
 
 
 def combine_heads(x):
-    """ Combine heads
+    """Combine heads
     :param x: A tensor with shape [batch, heads, length, channels]
     :returns: A tensor with shape [batch, length, heads * channels]
     """
@@ -23,6 +25,7 @@ def combine_heads(x):
 
 
 class SimpleAttention(nn.Module):
+
     def __init__(self, query_size=192, key_size=192, value_size=192, num_heads=1):
         super(SimpleAttention, self).__init__()
         self.q_transform = nn.Linear(query_size, query_size, bias=False)
