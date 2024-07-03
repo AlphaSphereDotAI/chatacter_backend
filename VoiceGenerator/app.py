@@ -1,3 +1,4 @@
+from chatacter.model import generate_audio
 from chatacter.settings import get_settings
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
@@ -24,6 +25,7 @@ async def get_settings():
 
 @app.get("/get_audio")
 def get_audio(text: str):
+    generate_audio(text)
     return FileResponse(
         path=settings.assets.audio, media_type="audio/wav", filename="AUDIO.wav"
     )

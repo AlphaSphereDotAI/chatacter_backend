@@ -16,35 +16,21 @@ model.enable_cpu_offload()
 logging.set_verbosity_debug()
 
 
-def generate_audio(response) -> FileResponse:
+def generate_audio(response):
     start_time = time.time()
-    try:
-        inputs = processor(response, return_tensors="pt")
-        audio = model.generate(**inputs)
-    except Exception as e:
-        end_time = time.time()
-        print(e)
-        return {"error1": e, "time": end_time - start_time}
-    try:
-        write(
-            settings.assets.audio,
-            model.generation_config.sample_rate,
-            audio.cpu().squeeze(0).numpy(),
-        )
-        print(audio.cpu().squeeze(0).numpy())
-    except Exception as e:
-        end_time = time.time()
-        print(e)
-        return {"error2": e, "time": end_time - start_time}
-    end_time = time.time()
-    # return {
-    #     "audio_dir": settings.assets.audio,
-    #     "rate": model.generation_config.sample_rate,
-    #     "audio": FileResponse(path=settings.assets.audio, media_type="audio/wav", filename="AUDIO.wav"),
-    #     "text": response,
-    #     "status": "ok",
-    #     "time": end_time - start_time,
-    # }
-    return FileResponse(
-        path=settings.assets.audio, media_type="audio/wav", filename="AUDIO.wav"
+    inputs = processor(response, return_tensors="pt")
+    audio = model.generate(**inputs)
+    write(
+        settings.assets.audio,
+        model.generation_config.sample_rate,
+        audio.cpu().squeeze(0).numpy(),
     )
+    print(audio.cpu().squeeze(0).numpy())
+    end_time = time.time()
+    return {
+        "audio_dir": settings.assets.audio,
+        "rate": model.generation_config.sample_rate,
+        "text": response,
+        "status": "ok",
+        "time": end_time - start_time,
+    }
