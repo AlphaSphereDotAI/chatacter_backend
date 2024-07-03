@@ -18,7 +18,7 @@ RUN pixi init && \
     pixi run pip install -v --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
 RUN mkdir -p ./chatacter/bark-small && \
-    huggingface-cli download suno/bark-small --local-dir ./chatacter/bark-small
+    pixi run huggingface-cli download suno/bark-small --local-dir ./chatacter/bark-small
 
 COPY . .
 
