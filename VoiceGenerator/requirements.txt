@@ -1,8 +1,8 @@
+torch
 accelerate
 transformers
 scipy~=1.13.1
 SoundFile
-pydantic
 optimum
 fastapi
 fastapi-cli
