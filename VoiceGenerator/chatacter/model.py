@@ -1,7 +1,6 @@
 import time
 
 from chatacter.settings import get_settings
-from fastapi.responses import FileResponse
 from huggingface_hub import snapshot_download
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
@@ -25,7 +24,6 @@ def generate_audio(response):
         model.generation_config.sample_rate,
         audio.cpu().squeeze(0).numpy(),
     )
-    print(audio.cpu().squeeze(0).numpy())
     end_time = time.time()
     return {
         "audio_dir": settings.assets.audio,

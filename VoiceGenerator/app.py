@@ -25,9 +25,16 @@ async def get_settings():
 
 @app.get("/get_audio")
 def get_audio(text: str):
-    generate_audio(text)
+    results = generate_audio(text)
     return FileResponse(
-        path=settings.assets.audio, media_type="audio/wav", filename="AUDIO.wav"
+        path=settings.assets.audio,
+        media_type="audio/wav",
+        filename="AUDIO.wav",
+        headers={
+            "text": results["text"],
+            "time": str(results["time"]),
+            "rate": str(results["rate"]),
+        },
     )
 
 
