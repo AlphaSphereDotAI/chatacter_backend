@@ -1,18 +1,15 @@
 import time
 from transformers import logging
 import subprocess
-from chatacter.settings import get_settings
 
-settings = get_settings()
 logging.set_verbosity_debug()
 
 
 def generate_video(character : str) -> str:
     start_time = time.time()
-    subprocess.run(
-        [
+    command =[
             "python",
-            "inference.py",
+            "chatacter/inference.py",
             "--driven_audio",
             "./assets/audio/AUDIO.wav",
             "--source_image",
@@ -25,6 +22,9 @@ def generate_video(character : str) -> str:
             "--enhancer",
             "gfpgan",
         ]
+    print(' '.join(command))
+    subprocess.run(
+        command
     )
     end_time = time.time()
     return str(end_time - start_time)

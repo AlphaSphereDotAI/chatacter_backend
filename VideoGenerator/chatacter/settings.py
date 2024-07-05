@@ -10,9 +10,9 @@ class SadTalkerSettings(BaseModel):
 
 
 class AssetsSettings(BaseModel):
-    audio: str = "chatacter/assets/audio/AUDIO.wav"
-    image: str = "chatacter/assets/image/"
-    video: str = "chatacter/assets/video/VIDEO.mp4"
+    audio: str = "./assets/audio/"
+    image: str = "./assets/image/"
+    video: str = "./assets/results/"
 
 
 class Settings(BaseModel):

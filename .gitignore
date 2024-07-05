@@ -1,3 +1,4 @@
+**/AUDIO.wav
 # IntelliJ related
 *.iml
 *.ipr
@@ -27,7 +28,7 @@ VoiceGenerator/chatacter/bark-small/
 .pub-cache/
 .pub/
 /build/
-
+**/.pixi/
 **/doc/api/
 frontend/.dart_tool/
 frontend/.flutter-plugins
