@@ -14,7 +14,7 @@
 **/bark-small/
 **/weights/
 ./chatacter/sadtalker/checkpoints/
-./chatacter/sadtalker/gfpgan/weights/
+**/gfpgan/weights/
 VoiceGenerator/chatacter/bark-small/
 .ruff_cache
 **/__pycache__/
