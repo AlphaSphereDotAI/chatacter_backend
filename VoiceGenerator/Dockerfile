@@ -17,8 +17,7 @@ RUN pixi init && \
     pixi run pip install --upgrade pip setuptools wheel && \
     pixi run pip install -v --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
-RUN mkdir -p ./chatacter/bark-small && \
-    pixi run huggingface-cli download suno/bark-small --local-dir ./chatacter/bark-small
+RUN pixi run huggingface-cli download suno/bark-small
 
 COPY . .
 
