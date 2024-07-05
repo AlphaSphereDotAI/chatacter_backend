@@ -1,31 +1,31 @@
 import time
-
-from chatacter.sadtalker.predict import Predictor
-from chatacter.settings import get_settings
 from transformers import logging
+import subprocess
+from chatacter.settings import get_settings
 
 settings = get_settings()
-
 logging.set_verbosity_debug()
 
 
-def generate_video() -> dict:
+def generate_video(character : str) -> str:
     start_time = time.time()
-    predictor = Predictor()
-    predictor.setup()
-    try:
-        predictor.predict(
-            source_image=settings.assets.image + settings.character + ".jpg",
-            driven_audio=settings.assets.audio,
-            enhancer="gfpgan",
-            preprocess="full",
-        )
-    except Exception as e:
-        end_time = time.time()
-        return {"status": e, "time": end_time - start_time}
+    subprocess.run(
+        [
+            "python",
+            "inference.py",
+            "--driven_audio",
+            "./assets/audio/AUDIO.wav",
+            "--source_image",
+            f"./assets/image/{character}.jpg",
+            "--result_dir",
+            "./assets/results",
+            "--still",
+            "--preprocess",
+            "full",
+            "--enhancer",
+            "gfpgan",
+        ]
+    )
     end_time = time.time()
-    return {
-        "video": settings.assets.video,
-        "status": "ok",
-        "time": end_time - start_time,
-    }
+    return str(end_time - start_time)
+    

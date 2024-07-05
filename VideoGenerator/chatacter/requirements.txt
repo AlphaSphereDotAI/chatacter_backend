@@ -22,6 +22,8 @@ gfpgan
 av
 safetensors
 transformers
+cog
+wget
 fastapi
 fastapi-cli
 uvicorn
