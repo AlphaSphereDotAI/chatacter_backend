@@ -4,7 +4,7 @@ scipy
 boto3
 encodec
 funcy
-torch>=2.0.0+cu121
+torch==2.1.0+cu121
 accelerate
 transformers
 tokenizers
