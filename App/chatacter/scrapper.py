@@ -1,11 +1,10 @@
-from requests import get
 from langchain_community.document_loaders import RecursiveUrlLoader
-from vector_database import add_to_db
+from requests import get
 from search import get_search_results
-from unstructured.partition.html import partition_html
 from unstructured.chunking.title import chunk_by_title
-from unstructured.cleaners.core import replace_unicode_quotes
-from unstructured.cleaners.core import bytes_string_to_string
+from unstructured.cleaners.core import bytes_string_to_string, replace_unicode_quotes
+from unstructured.partition.html import partition_html
+from vector_database import add_to_db
 
 
 def crawl(query: str):

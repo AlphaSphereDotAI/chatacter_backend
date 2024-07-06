@@ -1,12 +1,17 @@
-from langchain_community.utilities import SearxSearchWrapper
-import os 
+import os
 
-os.environ["USER_AGENT"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+from langchain_community.utilities import SearxSearchWrapper
+
+os.environ["USER_AGENT"] = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+)
 
 search = SearxSearchWrapper(searx_host="http://127.0.0.1:8080")
 search.headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 }
+
+
 def get_search_results(query: str, num_results: int = 10):
     results = search.results(query, num_results=num_results)
     links = []

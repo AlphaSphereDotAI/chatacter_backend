@@ -1,10 +1,12 @@
 import time
+
 from chatacter.settings import get_settings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 
 settings = get_settings()
 chat = ChatGroq(model_name="llama3-70b-8192", verbose=True)
+
 
 def get_response(query, character):
     start_time = time.time()
