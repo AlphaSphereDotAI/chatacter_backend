@@ -4,5 +4,8 @@ langchain-groq
 pydantic
 uvicorn
 langchain-community
-langchain-qdrant
-unstructured[all-docs]
+langchain-chroma
+unstructured
+beautifulsoup4
+langchain-huggingface
+chromadb-client
