@@ -1,8 +1,8 @@
+import requests
 from chatacter.model import get_response
 from chatacter.settings import get_settings
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse, FileResponse
-import requests
+from fastapi.responses import FileResponse, JSONResponse
 
 app = FastAPI(debug=True)
 settings = get_settings()
@@ -21,9 +21,7 @@ async def get_settings():
 @app.get("/get_text")
 def get_text(query: str, character: str):
     res, time = get_response(query, character)
-    return JSONResponse(
-        content=res,    headers={"time": time}
-    )
+    return JSONResponse(content=res, headers={"time": time})
 
 
 @app.get("/get_audio")
@@ -40,12 +38,21 @@ def get_audio(text: str):
 
 @app.get("/get_video")
 def get_video(character: str):
-    send_audio = requests.post(f"http://localhost:8002/set_audio", files={"file": open("./assets/audio/AUDIO.wav", "rb")})
-    response_video = requests.get(f"http://localhost:8002/get_video?character={character}")
+    send_audio = requests.post(
+        f"http://localhost:8002/set_audio",
+        files={"file": open("./assets/audio/AUDIO.wav", "rb")},
+    )
+    response_video = requests.get(
+        f"http://localhost:8002/get_video?character={character}"
+    )
     with open("./assets/video/VIDEO.mp4", "wb") as f:
         f.write(response_video.content)
-    return FileResponse("./assets/video/VIDEO.mp4", media_type="video/mp4",
-        filename="VIDEO.mp4",)
+    return FileResponse(
+        "./assets/video/VIDEO.mp4",
+        media_type="video/mp4",
+        filename="VIDEO.mp4",
+    )
+
 
 if __name__ == "__main__":
     import uvicorn
