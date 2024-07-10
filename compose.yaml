@@ -1,10 +1,10 @@
-name: chatacter
+name: Chatacter
 services:
     App:
         image: ghcr.io/alphaspheredotai/chatacter_backend_app:main
         ports:
             - 8000:8000
-        container_name: chatacter_app
+        container_name: app
         networks:
             - app_network
         volumes:
@@ -32,7 +32,7 @@ services:
 
     VideoGenerator:
         image: ghcr.io/alphaspheredotai/chatacter_backend_video_generator:main
-        container_name: chatacter_video_generator
+        container_name: video_generator
         volumes:
             - ./VideoGenerator:/app:rw
         restart: always
@@ -55,7 +55,7 @@ services:
 
     VoiceGenerator:
         image: ghcr.io/alphaspheredotai/chatacter_backend_voice_generator:main
-        container_name: chatacter_voice_generator
+        container_name: voice_generator
         volumes:
             - ./VoiceGenerator:/app:rw
         restart: always
@@ -85,7 +85,7 @@ services:
         restart: always
         networks:
             - app_network
-        container_name: chatacter_search_engine
+        container_name: search_engine
         environment:
             SEARXNG_DEBUG: true
             SEARXNG_PORT: 8080
@@ -108,12 +108,12 @@ services:
                   target: /app/chatacter/searxng
 
     VectorDatabase:
-        image: chromadb/chroma:latest
+        image: qdrant/qdrant:latest
         ports:
             - 6333:8000
         networks:
             - app_network
-        container_name: chatacter_vector_database
+        container_name: vector_database
         restart: always
         develop:
             watch:
@@ -121,7 +121,28 @@ services:
                   path: ./VectorDatabase
                   target: /qdrant/storage
 
+    Ollama:
+        image: ghcr.io/alphaspheredotai/chatacter_backend_ollama:main
+        container_name: ollama
+        volumes:
+            - ./Ollama:/root/.ollama:rw
+        restart: always
+        ports:
+          - 11434:11434
+        networks:
+            - app_network
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: all
+                          capabilities: [gpu]
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./Ollama
+                  target: /root/.ollama
 
 networks:
     app_network:
-    
