@@ -1,4 +1,4 @@
-FROM downloads.unstructured.io/unstructured-io/unstructured:latest
+FROM python:3.10-slim
 
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
