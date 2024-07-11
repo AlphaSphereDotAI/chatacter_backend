@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     OLLAMA_DEBUG=1
 
 RUN apt update && \
-    apt-get install --no-install-recommends curl gnupg2 -y && \
+    apt-get install --no-install-recommends curl gnupg2 python3 -y && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
@@ -20,7 +20,7 @@ RUN curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
     apt-get update && \
     apt-get install -y nvidia-container-toolkit
     
-RUN python -c "import subprocess;process = subprocess.Popen('ollama serve', shell=True)" && \
+RUN python3 -c "import subprocess;process = subprocess.Popen('ollama serve', shell=True)" && \
     ollama pull llama3
 
 EXPOSE 11434
