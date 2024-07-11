@@ -20,7 +20,8 @@ RUN curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
     apt-get update && \
     apt-get install -y nvidia-container-toolkit
     
-RUN ollama pull llama3
+RUN python -c "import subprocess;process = subprocess.Popen('ollama serve', shell=True)" && \
+    ollama pull llama3
 
 EXPOSE 11434
 
