@@ -1,7 +1,16 @@
 FROM ollama/ollama:latest
 
+SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive \
     OLLAMA_DEBUG=1
+
+RUN apt update && \
+    apt-get install --no-install-recommends curl -y && \
+    apt-get full-upgrade -y && \
+    apt-get autoremove && \
+    apt-get clean && \
+    apt-get autoclean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
     | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg && \
