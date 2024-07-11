@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     OLLAMA_DEBUG=1
 
 RUN apt update && \
-    apt-get install --no-install-recommends curl -y && \
+    apt-get install --no-install-recommends curl gnupg2 -y && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
