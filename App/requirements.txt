@@ -4,8 +4,7 @@ langchain-groq
 pydantic
 uvicorn
 langchain-community
-langchain-chroma
 unstructured
-beautifulsoup4
-langchain-huggingface
-chromadb-client
+qdrant-client[fastembed-gpu]
+requests
+langchain

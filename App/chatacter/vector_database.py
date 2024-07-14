@@ -1,30 +1,57 @@
-import chromadb
-from langchain_chroma import Chroma
-from unstructured.documents.elements import Element
-# from langchain_huggingface import HuggingFaceEmbeddings
-
-# embedding_function = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-client = chromadb.HttpClient(
-    host="localhost",
-    port=6333,
+import nltk
+from qdrant_client import QdrantClient
+from unstructured.chunking.title import chunk_by_title
+from unstructured.cleaners.core import (
+    clean_extra_whitespace,
+    replace_unicode_quotes,
+    bytes_string_to_string,
+    clean_non_ascii_chars,
 )
-client.reset()  # resets the database
-collection = client.get_or_create_collection("my_collection")
-# vector_db = Chroma(client=client, collection_name="my_collection",embedding_function=embedding_function,)
+from unstructured.partition.auto import partition
 
-def add_to_db(data, ids):
-    collection.upsert(
-        documents=data,
+from chatacter.settings import get_settings
+
+settings = get_settings()
+
+client = QdrantClient(host="localhost", port=6333)
+
+downloader = nltk.downloader.Downloader()
+downloader._update_index()
+downloader.download("popular")
+downloader.download("punkt")
+downloader.download("averaged_perceptron_tagger")
+
+
+def get_chunks(url):
+    elements = partition(url=url)
+    for i in range(len(elements)):
+        elements[i].text = clean_non_ascii_chars(elements[i].text)
+        elements[i].text = replace_unicode_quotes(elements[i].text)
+        elements[i].text = clean_extra_whitespace(elements[i].text)
+        elements[i].text = bytes_string_to_string(elements[i].text)
+    return chunk_by_title(elements)
+
+
+def add_data(chunks):
+    docs = [chunks[i].text for i in range(len(chunks))]
+    metadata = [chunks[i].metadata.to_dict() for i in range(len(chunks))]
+    ids = [ID for ID in range(1, len(chunks) + 1)]
+    client.add(
+        collection_name=settings.vector_database_name,
+        documents=docs,
+        metadata=metadata,
         ids=ids
     )
 
-def search(query, n_results=2):
-    return collection.query(
-        query_texts=[query],
-        n_results=n_results,
-    )["documents"]
+
+def query_db(query):
+    return client.query(collection_name=settings.vector_database_name, query_text=query, )
+
 
 if __name__ == "__main__":
-    add_to_db("This is a document about pineapple", "1")
-    add_to_db("This is a document about oranges", "2")
-    print(search("This is a query document about hawaii")["documents"])
+    url = "https://en.wikipedia.org/wiki/Napoleon"
+    chunks = get_chunks(url)
+    add_data(chunks)
+    r = query_db("Napoleon Bonaparte")
+    print(len(r))
+    print(r)

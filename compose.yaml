@@ -1,4 +1,4 @@
-name: Chatacter
+name: chatacter
 services:
     App:
         image: ghcr.io/alphaspheredotai/chatacter_backend_app:main
@@ -120,29 +120,6 @@ services:
                 - action: sync+restart
                   path: ./VectorDatabase
                   target: /qdrant/storage
-
-    Ollama:
-        image: ghcr.io/alphaspheredotai/chatacter_backend_ollama:main
-        container_name: ollama
-        volumes:
-            - ./Ollama:/root/.ollama:rw
-        restart: always
-        ports:
-          - 11434:11434
-        networks:
-            - app_network
-        deploy:
-            resources:
-                reservations:
-                    devices:
-                        - driver: nvidia
-                          count: all
-                          capabilities: [gpu]
-        develop:
-            watch:
-                - action: sync+restart
-                  path: ./Ollama
-                  target: /root/.ollama
 
 networks:
     app_network:
