@@ -1,15 +1,14 @@
 import nltk
+from chatacter.settings import get_settings
 from qdrant_client import QdrantClient
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import (
-    clean_extra_whitespace,
-    replace_unicode_quotes,
     bytes_string_to_string,
+    clean_extra_whitespace,
     clean_non_ascii_chars,
+    replace_unicode_quotes,
 )
 from unstructured.partition.auto import partition
-
-from chatacter.settings import get_settings
 
 settings = get_settings()
 
@@ -40,12 +39,15 @@ def add_data(chunks):
         collection_name=settings.vector_database_name,
         documents=docs,
         metadata=metadata,
-        ids=ids
+        ids=ids,
     )
 
 
 def query_db(query):
-    return client.query(collection_name=settings.vector_database_name, query_text=query, )
+    return client.query(
+        collection_name=settings.vector_database_name,
+        query_text=query,
+    )
 
 
 if __name__ == "__main__":
