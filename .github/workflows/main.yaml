@@ -132,13 +132,3 @@ jobs:
                   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}
                   push-to-registry: true
-    SonarCloud:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout repository
-            uses: actions/checkout@v4
-          - name: SonarCloud Scan
-            uses: SonarSource/sonarcloud-github-action@master
-            env:
-              GITHUB_TOKEN: ${{ secrets.TOKEN_KEY_GITHUB }}
-              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
