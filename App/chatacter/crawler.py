@@ -1,5 +1,5 @@
 from langchain_community.document_loaders import RecursiveUrlLoader
-from search import get_search_results
+from chatacter.search import get_search_results
 
 
 def crawl(query: str):

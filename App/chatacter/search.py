@@ -3,7 +3,7 @@ import os
 
 os.environ["USER_AGENT"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
 
-search = SearxSearchWrapper(searx_host="http://127.0.0.1:8080")
+search = SearxSearchWrapper(searx_host="http://localhost:8080")
 search.headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 }
