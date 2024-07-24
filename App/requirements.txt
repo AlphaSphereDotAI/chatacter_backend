@@ -1,7 +1,0 @@
-fastapi
-fastapi-cli
-langchain
-langchain-groq
-langchain-community
-unstructured[all-docs]
-qdrant-client[fastembed-gpu]
