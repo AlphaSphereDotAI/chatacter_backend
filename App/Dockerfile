@@ -9,7 +9,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install -v --no-cache-dir -r requirements.txt  --extra-index-url https://download.pytorch.org/whl/cu121
+RUN pip install -v --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
 COPY . .
 
