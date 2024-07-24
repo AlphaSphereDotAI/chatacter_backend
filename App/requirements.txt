@@ -1,10 +1,7 @@
 fastapi
 fastapi-cli
-langchain-groq
-pydantic
-uvicorn
-langchain-community
-unstructured
-qdrant-client[fastembed-gpu]
-requests
 langchain
+langchain-groq
+langchain-community
+unstructured[all-docs]
+qdrant-client[fastembed-gpu]
