@@ -12,7 +12,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY pixi.toml .
-RUN pixi install --all
+RUN pixi install --all --verbose
 
 COPY . .
 
