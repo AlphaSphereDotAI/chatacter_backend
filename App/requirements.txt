@@ -1,6 +1,8 @@
 regex==2024.7.24
 transformers==4.43.2
 langchain-groq==0.1.6
+langchain-community
+fastapi
 fastapi-cli==0.0.4
 unstructured[all-docs]
 qdrant-client[fastembed-gpu]
