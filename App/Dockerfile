@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libgl1-mesa-glx gcc g++ && \
+    apt-get install -y --no-install-recommends libgl1-mesa-glx gcc libglib2.0-0 && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
@@ -17,7 +17,7 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pixi init && \
     pixi add python=3.10 uv && \
-    pixi run uv pip install -v -r requirements.txt
+    pixi run uv pip install -r requirements.txt
 
 COPY . .
 
