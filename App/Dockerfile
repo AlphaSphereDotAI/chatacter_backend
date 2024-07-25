@@ -15,7 +15,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pixi init && \
+RUN pixi clean && \
+    pixi init && \
     pixi add python=3.10 uv && \
     pixi run uv pip install -r requirements.txt
 
