@@ -16,3 +16,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "pip"
+    directories: # Location of package manifests
+      - "/App"
+      - "/VoiceGenerator"
+      - "/VideoGenerator"
+    schedule:
+      interval: "weekly"
