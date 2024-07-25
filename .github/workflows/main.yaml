@@ -33,8 +33,8 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
                   tags: |
-                      type=raw,value=latest,enable={{is_default_branch}}
-                      type=ref,event=branch,enable={{!is_default_branch}}
+                      type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+                      type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             - name: Build and push App Docker image
               id: push
               uses: docker/build-push-action@master
@@ -76,8 +76,8 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
                   tags: |
-                      type=raw,value=latest,enable={{is_default_branch}}
-                      type=ref,event=branch,enable={{!is_default_branch}}
+                      type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+                      type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             - name: Build and push Video Generator Docker image
               id: push
               uses: docker/build-push-action@master
@@ -119,8 +119,8 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   tags: |
-                      type=raw,value=latest,enable={{is_default_branch}}
-                      type=ref,event=branch,enable={{!is_default_branch}}
+                      type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+                      type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             - name: Build and push Voice Generator Docker image
               id: push
               uses: docker/build-push-action@master
