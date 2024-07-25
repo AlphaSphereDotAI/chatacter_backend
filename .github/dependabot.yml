@@ -9,3 +9,11 @@ updates:
     directory: "/App" # Location of package manifests
     schedule:
       interval: "weekly"
+  - package-ecosystem: "docker" 
+    directory: "/VideoGenerator"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker" 
+    directory: "/VoiceGenerator"
+    schedule:
+      interval: "weekly"
