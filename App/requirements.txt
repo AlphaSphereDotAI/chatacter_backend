@@ -1,8 +1,6 @@
 regex
 transformers
 langchain-groq
-langchain-community
-fastapi
 fastapi-cli
 unstructured[all-docs]
 qdrant-client[fastembed-gpu]
