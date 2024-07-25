@@ -12,14 +12,18 @@ updates:
       - "/VideoGenerator"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
   - package-ecosystem: "pip"
     directories: # Location of package manifests
       - "/App"
       - "/VoiceGenerator"
       - "/VideoGenerator"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "weekly"
