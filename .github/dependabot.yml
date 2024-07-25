@@ -6,14 +6,9 @@
 version: 2
 updates:
   - package-ecosystem: "docker" # See documentation for possible values
-    directory: "/App" # Location of package manifests
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "docker" 
-    directory: "/VideoGenerator"
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "docker" 
-    directory: "/VoiceGenerator"
+    directories: # Location of package manifests
+      - "/App"
+      - "/VoiceGenerator"
+      - "/VideoGenerator"
     schedule:
       interval: "weekly"
