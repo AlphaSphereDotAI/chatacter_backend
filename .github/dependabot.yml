@@ -19,10 +19,6 @@ updates:
       - "/VideoGenerator"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "gitsubmodule"
-    directory: "/"
-    schedule:
-      interval: "weekly"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
