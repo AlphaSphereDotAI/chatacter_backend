@@ -1,0 +1,13 @@
+[project]
+name = "app"
+version = "0.1.0"
+description = "Add a short description here"
+requires-python = ">= 3.10"
+dependencies = ["unstructured[all-docs]", "qdrant-client[fastembed-gpu]", "regex", "transformers", "langchain-groq", "langchain", "langchain-community", "fastapi", "fastapi-cli", ]
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-options]
+extra-index-urls = ["https://download.pytorch.org/whl/cu121"]
