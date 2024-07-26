@@ -2,7 +2,7 @@ FROM ghcr.io/prefix-dev/pixi:jammy-cuda-12.3.1
 
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive \
-    UV_NO_CACHE=true \
+    # UV_NO_CACHE=true \
     UV_INDEX_STRATEGY=unsafe-best-match \
     UV_EXTRA_INDEX_URL=https://download.pytorch.org/whl/cu121
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN apt-get update && \
 
 COPY requirements.txt .
 RUN pixi init && \
-    pixi clean && \
+    # pixi clean && \
     pixi add python=3.10 uv && \
     pixi run uv pip install -r requirements.txt
 
