@@ -16,7 +16,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pixi global install uv python=3.10 && \
+RUN pixi global install uv python && \
     uv venv --seed && \
     uv pip install -r requirements.txt
 
