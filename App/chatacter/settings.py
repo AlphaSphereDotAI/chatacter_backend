@@ -4,9 +4,9 @@ from pydantic import BaseModel
 
 
 class AssetsSettings(BaseModel):
-    audio: str = "chatacter/assets/audio/AUDIO.wav"
-    image: str = "chatacter/assets/image/"
-    video: str = "chatacter/assets/video/VIDEO.mp4"
+    audio: str = "./assets/audio/AUDIO.wav"
+    image: str = "./assets/image/"
+    video: str = "./assets/video/VIDEO.mp4"
 
 
 class HostSettings(BaseModel):
@@ -19,6 +19,7 @@ class Settings(BaseModel):
     assets: AssetsSettings = AssetsSettings()
     character: str = str()
     host: HostSettings = HostSettings()
+    vector_database_name: str = "chatacter"
 
 
 @lru_cache

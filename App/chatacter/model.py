@@ -1,85 +1,35 @@
 import time
-
-import requests
 from chatacter.settings import get_settings
-from huggingface_hub import snapshot_download
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
-from scipy.io.wavfile import write
-from transformers import AutoModel, AutoProcessor, logging
+from langchain.chains import LLMChain
+from chatacter.vector_database import get_chunks, add_data, query_db
+from chatacter.crawler import crawl
 
 settings = get_settings()
 chat = ChatGroq(model_name="llama3-70b-8192", verbose=True)
-logging.set_verbosity_debug()
 
 
-def generate_audio(response) -> dict:
+def get_response(query, character):
     start_time = time.time()
-    try:
-        audio_response = requests.get(
-            f"{settings.host.voice_generator}?text={response}"
-        )
-    except Exception as e:
-        end_time = time.time()
-        return {"status": e, "time": end_time - start_time}
-    try:
-        write(
-            settings.assets.audio,
-            model.generation_config.sample_rate,
-            audio.cpu().squeeze(0).numpy(),
-        )
-    except Exception as e:
-        end_time = time.time()
-        return {"status": e, "time": end_time - start_time}
-    end_time = time.time()
-    return {
-        "audio": settings.assets.audio,
-        "rate": model.generation_config.sample_rate,
-        "text": response,
-        "status": audio_response.status_code,
-        "time": end_time - start_time,
-    }
-
-
-def generate_video() -> dict:
-    start_time = time.time()
-    predictor = Predictor()
-    predictor.setup()
-    try:
-        predictor.predict(
-            source_image=settings.assets.image + settings.character + ".jpg",
-            driven_audio=settings.assets.audio,
-            enhancer="gfpgan",
-            preprocess="full",
-        )
-    except Exception as e:
-        end_time = time.time()
-        return {"status": e, "time": end_time - start_time}
-    end_time = time.time()
-    return {
-        "video": settings.assets.video,
-        "status": "ok",
-        "time": end_time - start_time,
-    }
-
-
-def get_response(query) -> dict:
-    start_time = time.time()
+    print("Query:", query, "Character:", character)
+    print("start crawling")
+    links = crawl(query)
+    print("start getting chunks")
+    chunks = []
+    for link in links:
+        chunks.extend(get_chunks(link))
+    print("start adding data to db")
+    add_data(chunks)
+    print("start querying db")
+    results = query_db(query)
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "Act as Napoleon Bonaparte. Answer in one statement."),
+            ("system", "Act as {character}. Answer in one statement. Answer the question using the provided context. Context: {context}"),
             ("human", "{text}"),
         ]
     )
-    chain = prompt | chat
-    try:
-        response = chain.invoke({"text": query})
-    except Exception as e:
-        end_time = time.time()
-        return {"status": e, "time": end_time - start_time}
+    chain = LLMChain(prompt=prompt, llm=chat, verbose=True, )
+    response = chain.invoke({"text": query, "character": character, "context": results[0]["text"]})
     end_time = time.time()
-    return {
-        "response": response.content,
-        "status": "ok",
-        "time": end_time - start_time,
-    }
+    return response.content, str(end_time - start_time)

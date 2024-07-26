@@ -4,12 +4,13 @@ from pydantic import BaseModel
 
 
 class AssetsSettings(BaseModel):
-    audio: str = "./chatacter/assets/audio/AUDIO.wav"
-    image: str = "./chatacter/assets/image/"
-    video: str = "./chatacter/assets/video/VIDEO.mp4"
+    audio: str = "./assets/audio/"
+    image: str = "./assets/image/"
+    video: str = "./assets/video/"
 
 
 class BarkSettings(BaseModel):
+    name: str = "suno/bark-small"
     path: str = "./chatacter/bark-small"
 
 
