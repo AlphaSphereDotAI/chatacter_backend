@@ -15,7 +15,6 @@ from tqdm import tqdm
 
 
 class Preprocesser:
-
     def __init__(self, device="cuda"):
         self.predictor = KeypointExtractor(device)
 

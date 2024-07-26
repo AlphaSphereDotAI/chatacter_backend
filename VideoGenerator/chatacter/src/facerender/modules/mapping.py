@@ -5,7 +5,6 @@ import torch.nn.functional as F
 
 
 class MappingNet(nn.Module):
-
     def __init__(self, coeff_nc, descriptor_nc, layer, num_kp, num_bins):
         super(MappingNet, self).__init__()
 

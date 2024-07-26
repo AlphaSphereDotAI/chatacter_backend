@@ -4,7 +4,6 @@ from torch.nn import functional as F
 
 
 class Conv2d(nn.Module):
-
     def __init__(
         self, cin, cout, kernel_size, stride, padding, residual=False, *args, **kwargs
     ):
@@ -23,7 +22,6 @@ class Conv2d(nn.Module):
 
 
 class AudioEncoder(nn.Module):
-
     def __init__(self, wav2lip_checkpoint, device):
         super(AudioEncoder, self).__init__()
 
