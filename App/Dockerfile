@@ -12,7 +12,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends libgl1-mesa-glx gcc g++ libglib2.0-0 software-properties-common python-is-python3 && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update && \
-    apt install -y python3.10
+    apt install -y python3.10 && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
