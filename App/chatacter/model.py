@@ -1,10 +1,11 @@
 import time
+
+from chatacter.crawler import crawl
 from chatacter.settings import get_settings
+from chatacter.vector_database import add_data, get_chunks, query_db
+from langchain.chains import LLMChain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
-from langchain.chains import LLMChain
-from chatacter.vector_database import get_chunks, add_data, query_db
-from chatacter.crawler import crawl
 
 settings = get_settings()
 chat = ChatGroq(model_name="llama3-70b-8192", verbose=True)
@@ -25,11 +26,20 @@ def get_response(query, character):
     results = query_db(query)
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "Act as {character}. Answer in one statement. Answer the question using the provided context. Context: {context}"),
+            (
+                "system",
+                "Act as {character}. Answer in one statement. Answer the question using the provided context. Context: {context}",
+            ),
             ("human", "{text}"),
         ]
     )
-    chain = LLMChain(prompt=prompt, llm=chat, verbose=True, )
-    response = chain.invoke({"text": query, "character": character, "context": results[0]["text"]})
+    chain = LLMChain(
+        prompt=prompt,
+        llm=chat,
+        verbose=True,
+    )
+    response = chain.invoke(
+        {"text": query, "character": character, "context": results[0]["text"]}
+    )
     end_time = time.time()
     return response.content, str(end_time - start_time)
