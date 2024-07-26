@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PATH="/root/.pixi/bin:${PATH}"
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libgl1-mesa-glx gcc g++ libglib2.0-0 && \
+    apt-get install -y --no-install-recommends libgl1-mesa-glx gcc g++ libglib2.0-0 clang && \
     apt-get full-upgrade -y && \
     apt-get autoremove && \
     apt-get clean && \
