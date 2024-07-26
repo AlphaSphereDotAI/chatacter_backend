@@ -18,6 +18,7 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pixi global install uv && \
     uv python install 3.10 && \
+    uv venv --seed && \
     uv pip install -r requirements.txt
 
 COPY . .
