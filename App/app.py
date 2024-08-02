@@ -1,11 +1,11 @@
 import requests
 from chatacter.model import get_response
-from chatacter.settings import Settings, get_settings
+from chatacter.settings import Settings, load_settings 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
 
 app = FastAPI(debug=True)
-settings: Settings = get_settings()
+settings: Settings = load_settings()
 
 
 @app.get(path="/")

@@ -23,10 +23,10 @@ class Settings(BaseModel):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def load_settings() -> Settings:
     return Settings()
 
 
 if __name__ == "__main__":
-    settings: Settings = get_settings()
+    settings: Settings = load_settings()
     print(settings.model_dump_json(indent=4))
