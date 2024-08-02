@@ -1,10 +1,12 @@
 from typing import Any, AsyncGenerator
+
 from chatacter.model import get_response
 from chatacter.settings import Settings, load_settings
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import FileResponse, JSONResponse
 from requests import Response, get, post
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[Any, None]:
