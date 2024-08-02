@@ -1,4 +1,5 @@
 from typing import List
+
 from chatacter.settings import load_settings
 from pydantic import StrictStr
 from qdrant_client import QdrantClient
@@ -16,6 +17,7 @@ from unstructured.partition.auto import partition
 settings: Settings = load_settings()
 
 client = QdrantClient(host="localhost", port=6333)
+
 
 def get_chunks(url) -> List[Element]:
     elements: List[Element] = partition(url=url)
