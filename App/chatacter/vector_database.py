@@ -1,13 +1,14 @@
 from typing import Any, List
+
 from chatacter.settings import Settings, load_settings
 from pydantic import StrictStr
 from qdrant_client import QdrantClient
 from qdrant_client.fastembed_common import QueryResponse
 from unstructured.chunking.title import chunk_by_title
+from unstructured.cleaners.core import clean_non_ascii_chars  # type: ignore
 from unstructured.cleaners.core import (
     bytes_string_to_string,
     clean_extra_whitespace,
-    clean_non_ascii_chars, # type: ignore
     replace_unicode_quotes,
 )
 from unstructured.documents.elements import Element
@@ -16,6 +17,7 @@ from unstructured.partition.auto import partition
 settings: Settings = load_settings()
 
 client = QdrantClient(host="localhost", port=6333)
+
 
 def get_chunks(url: StrictStr) -> List[Element]:
     elements: List[Element] = partition(url=url)
@@ -29,7 +31,9 @@ def get_chunks(url: StrictStr) -> List[Element]:
 
 def add_data(chunks: List[Element]) -> None:
     docs: List[StrictStr] = [chunks[i].text for i in range(len(chunks))]
-    metadata: List[dict[str, Any]] = [chunks[i].metadata.to_dict() for i in range(len(chunks))]
+    metadata: List[dict[str, Any]] = [
+        chunks[i].metadata.to_dict() for i in range(len(chunks))
+    ]
     ids = list(range(1, len(chunks) + 1))
     client.add(
         collection_name=settings.vector_database_name,
