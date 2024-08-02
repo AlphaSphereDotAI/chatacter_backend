@@ -1,5 +1,5 @@
 from typing import Any, List
-from chatacter.settings import load_settings
+from chatacter.settings import Settings, load_settings
 from pydantic import StrictStr
 from qdrant_client import QdrantClient
 from qdrant_client.fastembed_common import QueryResponse
@@ -7,7 +7,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import (
     bytes_string_to_string,
     clean_extra_whitespace,
-    clean_non_ascii_chars,
+    clean_non_ascii_chars, # type: ignore
     replace_unicode_quotes,
 )
 from unstructured.documents.elements import Element
