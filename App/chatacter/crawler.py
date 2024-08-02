@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import List
 from langchain_core.documents.base import Document
 from pydantic import StrictStr
 from chatacter.search import get_search_results
@@ -14,7 +14,9 @@ def crawl(query: str) -> List[StrictStr]:
         try:
             html_loader = RecursiveUrlLoader(url=link, max_depth=1, timeout=5)
             docs: List[Document] = html_loader.load()
-            links_crawler.extend([doc.metadata["source"] for doc in docs])
+            for doc in docs:
+                source: StrictStr = doc.metadata.get("source") # type: ignore
+                links_crawler.append(source)
         except Exception as e:
             print(f"Error: {e}")
     return list(set(links_crawler + links_search_engine))

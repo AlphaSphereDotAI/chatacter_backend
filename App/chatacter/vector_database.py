@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 from chatacter.settings import load_settings
 from pydantic import StrictStr
 from qdrant_client import QdrantClient
@@ -17,7 +17,7 @@ settings: Settings = load_settings()
 
 client = QdrantClient(host="localhost", port=6333)
 
-def get_chunks(url) -> List[Element]:
+def get_chunks(url: StrictStr) -> List[Element]:
     elements: List[Element] = partition(url=url)
     for i in range(len(elements)):
         elements[i].text = clean_non_ascii_chars(text=elements[i].text)
@@ -27,9 +27,9 @@ def get_chunks(url) -> List[Element]:
     return chunk_by_title(elements=elements)
 
 
-def add_data(chunks):
-    docs = [chunks[i].text for i in range(len(chunks))]
-    metadata = [chunks[i].metadata.to_dict() for i in range(len(chunks))]
+def add_data(chunks: List[Element]) -> None:
+    docs: List[StrictStr] = [chunks[i].text for i in range(len(chunks))]
+    metadata: List[dict[str, Any]] = [chunks[i].metadata.to_dict() for i in range(len(chunks))]
     ids = list(range(1, len(chunks) + 1))
     client.add(
         collection_name=settings.vector_database_name,
