@@ -1,8 +1,9 @@
+import warnings
+
 from chatacter.model import generate_audio
 from chatacter.settings import get_settings
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
-import warnings
 
 warnings.filterwarnings("ignore")
 
