@@ -1,7 +1,6 @@
 from typing import List
-
-import nltk
 from chatacter.settings import load_settings
+from pydantic import StrictStr
 from qdrant_client import QdrantClient
 from qdrant_client.fastembed_common import QueryResponse
 from unstructured.chunking.title import chunk_by_title
@@ -14,16 +13,9 @@ from unstructured.cleaners.core import (
 from unstructured.documents.elements import Element
 from unstructured.partition.auto import partition
 
-from App.chatacter.settings import Settings
-
 settings: Settings = load_settings()
 
 client = QdrantClient(host="localhost", port=6333)
-
-nltk.download(info_or_id="popular")
-nltk.download(info_or_id="punkt")
-nltk.download(info_or_id="averaged_perceptron_tagger")
-
 
 def get_chunks(url) -> List[Element]:
     elements: List[Element] = partition(url=url)
@@ -35,7 +27,7 @@ def get_chunks(url) -> List[Element]:
     return chunk_by_title(elements=elements)
 
 
-def add_data(chunks) -> None:
+def add_data(chunks):
     docs = [chunks[i].text for i in range(len(chunks))]
     metadata = [chunks[i].metadata.to_dict() for i in range(len(chunks))]
     ids = list(range(1, len(chunks) + 1))
@@ -47,7 +39,7 @@ def add_data(chunks) -> None:
     )
 
 
-def query_db(query) -> List[QueryResponse]:
+def query_db(query: StrictStr) -> List[QueryResponse]:
     return client.query(
         collection_name=settings.vector_database_name,
         query_text=query,

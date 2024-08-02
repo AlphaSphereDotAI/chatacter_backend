@@ -1,11 +1,21 @@
-import requests
+from typing import Any, AsyncGenerator
 from chatacter.model import get_response
-from chatacter.settings import Settings, load_settings 
+from chatacter.settings import Settings, load_settings
 from fastapi import FastAPI
+from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import FileResponse, JSONResponse
+from requests import Response, get, post
 
-app = FastAPI(debug=True)
-settings: Settings = load_settings()
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[Any, None]:
+    print("Application started")
+    global settings
+    settings: Settings = load_settings()
+    yield
+    print("Application stopped")
+
+
+app = FastAPI(debug=True, lifespan=lifespan)
 
 
 @app.get(path="/")
@@ -29,7 +39,7 @@ def get_text(query: str, character: str) -> JSONResponse:
 
 @app.get(path="/get_audio")
 def get_audio(text: str) -> FileResponse:
-    response_audio: requests.Response = requests.get(
+    response_audio: Response = get(
         url=f"{settings.host.voice_generator}get_audio?text={text}"
     )
     with open(file=settings.assets.audio, mode="wb") as f:
@@ -43,12 +53,12 @@ def get_audio(text: str) -> FileResponse:
 
 @app.get(path="/get_video")
 def get_video(character: str) -> FileResponse:
-    send_audio: requests.Response = requests.post(
+    send_audio: Response = post(
         url=f"{settings.host.video_generator}set_audio",
         files={"file": open(file=settings.assets.audio, mode="rb")},
     )
     print("Send Audio: ", send_audio.status_code == 200)
-    response_video: requests.Response = requests.get(
+    response_video: Response = get(
         url=f"{settings.host.video_generator}get_video?character={character}"
     )
     with open(file=settings.assets.video, mode="wb") as f:

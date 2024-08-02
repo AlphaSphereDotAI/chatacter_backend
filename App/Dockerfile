@@ -23,7 +23,9 @@ RUN pixi global install uv && \
     uv python install 3.10 && \
     uv python pin 3.10 && \
     uv run uv venv --seed && \
-    uv pip install -r requirements.txt
+    uv pip install -r requirements.txt && \
+    uv run python -m nltk.downloader punkt && \
+    uv run python -m nltk.downloader averaged_perceptron_tagger
 
 COPY . .
 
