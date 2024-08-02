@@ -1,4 +1,5 @@
 from typing import Any, Dict, List
+
 from langchain_community.utilities import SearxSearchWrapper
 from pydantic import StrictInt, StrictStr
 
@@ -8,7 +9,9 @@ search.headers = {
 }
 
 
-def get_search_results(query: StrictStr, num_results: StrictInt = 10) -> List[StrictStr]:
+def get_search_results(
+    query: StrictStr, num_results: StrictInt = 10
+) -> List[StrictStr]:
     results: List[Dict[Any, Any]] = search.results(query=query, num_results=num_results)
     links: List[StrictStr] = []
     for result in results:
