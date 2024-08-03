@@ -13,7 +13,7 @@ from src.face3d.models import networks
 
 from src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
 from src.facerender.modules.mapping import MappingNet
-from src.facerender.modules.generator import OcclusionAwareGenerator, OcclusionAwareSPADEGenerator
+from src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 
 from src.audio2pose_models.audio2pose import Audio2Pose
 from src.audio2exp_models.networks import SimpleWrapperV2 

@@ -11,12 +11,11 @@ warnings.filterwarnings('ignore')
 
 import imageio
 import torch
-import torchvision
 
 
 from src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
 from src.facerender.modules.mapping import MappingNet
-from src.facerender.modules.generator import OcclusionAwareGenerator, OcclusionAwareSPADEGenerator
+from src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from src.facerender.modules.make_animation import make_animation 
 
 from pydub import AudioSegment 

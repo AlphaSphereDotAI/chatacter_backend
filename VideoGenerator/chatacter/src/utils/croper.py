@@ -1,14 +1,7 @@
-import os
 import cv2
-import time
-import glob
-import argparse
-import scipy
 import numpy as np
 from PIL import Image
 import torch
-from tqdm import tqdm
-from itertools import cycle
 
 from src.face3d.extract_kp_videos_safe import KeypointExtractor
 from facexlib.alignment import landmark_98_to_68

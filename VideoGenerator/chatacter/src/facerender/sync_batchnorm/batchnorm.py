@@ -9,8 +9,6 @@
 # Distributed under MIT License.
 
 import collections
-
-import torch
 import torch.nn.functional as F
 
 from torch.nn.modules.batchnorm import _BatchNorm

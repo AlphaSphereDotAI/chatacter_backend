@@ -1,5 +1,5 @@
 import numpy as np
-import cv2, os, sys, torch
+import cv2, os, torch
 from tqdm import tqdm
 from PIL import Image 
 
@@ -10,7 +10,7 @@ from src.face3d.util.preprocess import align_img
 from src.face3d.util.load_mats import load_lm3d
 from src.face3d.models import networks
 
-from scipy.io import loadmat, savemat
+from scipy.io import savemat
 from src.utils.croper import Preprocesser
 
 

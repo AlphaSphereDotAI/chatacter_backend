@@ -1,13 +1,9 @@
 """This script defines the visualizer for Deep3DFaceRecon_pytorch
 """
-
-import numpy as np
 import os
-import sys
 import ntpath
 import time
 from . import util, html
-from subprocess import Popen, PIPE
 from torch.utils.tensorboard import SummaryWriter
 
 def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):

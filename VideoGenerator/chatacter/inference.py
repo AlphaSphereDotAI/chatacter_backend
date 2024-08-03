@@ -1,8 +1,7 @@
-from glob import glob
 import shutil
 import torch
 from time import  strftime
-import os, sys, time
+import os, sys
 from argparse import ArgumentParser
 
 from src.utils.preprocess import CropAndExtract
