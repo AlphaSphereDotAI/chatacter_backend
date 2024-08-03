@@ -5,6 +5,7 @@ langchain
 langchain-community
 langchain-groq
 nltk
+psutil
 pydantic
 qdrant-client[fastembed-gpu]
 regex
