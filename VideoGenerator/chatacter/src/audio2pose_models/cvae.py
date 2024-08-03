@@ -165,7 +165,6 @@ class DECODER(nn.Module):
         class_id = batch["class"]
         ref = batch["ref"]  # bs 6
         audio_in = batch["audio_emb"]  # bs seq_len audio_emb_in_size
-        # print('audio_in: ', audio_in[:, :, :10])
 
         # bs seq_len audio_emb_out_size
         audio_out = self.linear_audio(audio_in)

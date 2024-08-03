@@ -102,8 +102,8 @@ class AnimateFromCoeff:
 
         self.device = device
 
+    @staticmethod
     def load_cpk_facevid2vid_safetensor(
-        self,
         checkpoint_path,
         generator=None,
         kp_detector=None,
@@ -178,8 +178,8 @@ class AnimateFromCoeff:
 
         return checkpoint["epoch"]
 
+    @staticmethod
     def load_cpk_mapping(
-        self,
         checkpoint_path,
         mapping=None,
         discriminator=None,
@@ -307,7 +307,7 @@ class AnimateFromCoeff:
                 crop_info,
                 new_audio_path,
                 full_video_path,
-                extended_crop=True if "ext" in preprocess.lower() else False,
+                extended_crop="ext" in preprocess.lower(),
             )
             print(f"The generated video is named {video_save_dir}/{video_name_full}")
         else:

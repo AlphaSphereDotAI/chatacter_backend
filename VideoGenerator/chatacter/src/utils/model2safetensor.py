@@ -115,8 +115,6 @@ def load_cpk_facevid2vid_safetensor(
                 x_generator[k.replace("he_estimator.", "")] = v
         he_estimator.load_state_dict(x_generator)
 
-    return None
-
 
 free_view_checkpoint = (
     "/apdcephfs/private_shadowcun/SadTalker/checkpoints/facevid2vid_"

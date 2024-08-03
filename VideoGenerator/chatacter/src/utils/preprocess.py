@@ -111,7 +111,7 @@ class CropAndExtract:
         if "crop" in crop_or_resize.lower():  # default crop
             x_full_frames, crop, quad = self.propress.crop(
                 x_full_frames,
-                still=True if "ext" in crop_or_resize.lower() else False,
+                still="ext" in crop_or_resize.lower(),
                 xsize=512,
             )
             clx, cly, crx, cry = crop
@@ -122,7 +122,7 @@ class CropAndExtract:
         elif "full" in crop_or_resize.lower():
             x_full_frames, crop, quad = self.propress.crop(
                 x_full_frames,
-                still=True if "ext" in crop_or_resize.lower() else False,
+                still="ext" in crop_or_resize.lower(),
                 xsize=512,
             )
             clx, cly, crx, cry = crop

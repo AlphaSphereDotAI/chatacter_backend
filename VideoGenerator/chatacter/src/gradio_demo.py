@@ -87,7 +87,6 @@ class SadTalker:
             audio_path = os.path.join(
                 input_dir, "idlemode_" + str(length_of_audio) + ".wav"
             )  # generate audio from this new audio_path
-            from pydub import AudioSegment
 
             one_sec_segment = AudioSegment.silent(
                 duration=1000 * length_of_audio
@@ -153,7 +152,6 @@ class SadTalker:
 
         # audio2ceoff
         if use_ref_video and ref_info == "all":
-            # self.audio_to_coeff.generate(batch, save_dir, pose_style, ref_pose_coeff_path)
             coeff_path = ref_video_coeff_path
         else:
             batch = get_data(
