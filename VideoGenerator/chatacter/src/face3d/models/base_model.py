@@ -244,7 +244,10 @@ class BaseModel(ABC):
         """Fix InstanceNorm checkpoints incompatibility (prior to 0.4)"""
         key = keys[i]
         if i + 1 == len(keys):  # at the end, pointing to a parameter/buffer
-            if module.__class__.__name__.startswith("InstanceNorm") and key in ("running_mean", "running_var"):
+            if module.__class__.__name__.startswith("InstanceNorm") and key in (
+                "running_mean",
+                "running_var",
+            ):
                 if getattr(module, key) is None:
                     state_dict.pop(".".join(keys))
             if module.__class__.__name__.startswith("InstanceNorm") and (
