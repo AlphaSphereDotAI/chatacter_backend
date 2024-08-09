@@ -17,4 +17,4 @@ jobs:
     - name: Install dependencies
       run: pip install --upgrade pip pylint pylint-actions
     - name: Analysing the code with pylint
-      run: pylint $(git ls-files '*.py') --output-format=actions
+      run: pylint . --output-format=actions
