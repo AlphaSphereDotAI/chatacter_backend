@@ -15,6 +15,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
-      run: python -m pip install --upgrade pip pylint
+      run: python -m pip install --upgrade pip pylint pylint-actions
     - name: Analysing the code with pylint
-      run: pylint $(git ls-files '*.py')
+      run: pylint -f actions $(git ls-files '*.py')
