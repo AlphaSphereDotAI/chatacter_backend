@@ -60,7 +60,7 @@ def make_coordinate_grid(spatial_size, type):
     x = (2 * (x / (w - 1)) - 1)
     y = (2 * (y / (h - 1)) - 1)
     z = (2 * (z / (d - 1)) - 1)
-   
+
     yy = y.view(1, -1, 1).repeat(d, 1, w)
     xx = x.view(1, 1, -1).repeat(d, h, 1)
     zz = z.view(-1, 1, 1).repeat(1, h, w)
@@ -334,7 +334,7 @@ class KPHourglass(nn.Module):
 
     def __init__(self, block_expansion, in_features, reshape_features, reshape_depth, num_blocks=3, max_features=256):
         super(KPHourglass, self).__init__()
-        
+
         self.down_blocks = nn.Sequential()
         for i in range(num_blocks):
             self.down_blocks.add_module('down'+ str(i), DownBlock2d(in_features if i == 0 else min(max_features, block_expansion * (2 ** i)),
@@ -361,7 +361,7 @@ class KPHourglass(nn.Module):
         out = self.up_blocks(out)
 
         return out
-        
+
 
 
 class AntiAliasInterpolation2d(nn.Module):
@@ -434,7 +434,7 @@ class SPADE(nn.Module):
         beta = self.mlp_beta(actv)
         out = normalized * (1 + gamma) + beta
         return out
-    
+
 
 class SPADEResnetBlock(nn.Module):
     def __init__(self, fin, fout, norm_G, label_nc, use_se=False, dilation=1):
@@ -495,7 +495,7 @@ class audio2image(nn.Module):
         degree = torch.sum(pred*idx_tensor, 1) * 3 - 99
 
         return degree
-    
+
     def get_rotation_matrix(self, yaw, pitch, roll):
         yaw = yaw / 180 * 3.14
         pitch = pitch / 180 * 3.14
@@ -528,17 +528,17 @@ class audio2image(nn.Module):
         kp = kp_canonical['value']    # (bs, k, 3)
         yaw, pitch, roll = he['yaw'], he['pitch'], he['roll']
         t, exp = he['t'], he['exp']
-    
+
         yaw = self.headpose_pred_to_degree(yaw)
         pitch = self.headpose_pred_to_degree(pitch)
         roll = self.headpose_pred_to_degree(roll)
 
         rot_mat = self.get_rotation_matrix(yaw, pitch, roll)    # (bs, 3, 3)
-    
+
         # keypoint rotation
         kp_rotated = torch.einsum('bmp,bkp->bkm', rot_mat, kp)
 
-    
+
 
         # keypoint translation
         t = t.unsqueeze_(1).repeat(1, kp.shape[1], 1)

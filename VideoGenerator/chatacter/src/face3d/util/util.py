@@ -39,7 +39,7 @@ def genvalconf(train_opt, **kwargs):
         setattr(conf, key, kwargs[key])
 
     return conf
-        
+
 def find_class_in_module(target_cls_name, module):
     target_cls_name = target_cls_name.replace('_', '').lower()
     clslib = importlib.import_module(module)
@@ -181,7 +181,7 @@ def draw_landmarks(img, landmark, color='r', step=2):
     """
     Return:
         img              -- numpy.array, (B, H, W, 3) img with landmark, RGB order, range (0, 255)
-        
+
 
     Parameters:
         img              -- numpy.array, (B, H, W, 3), RGB order, range (0, 255)

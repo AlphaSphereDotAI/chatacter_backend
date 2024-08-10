@@ -81,7 +81,7 @@ def keypoint_transformation(kp_canonical, he, wo_exp=False):
     t, exp = he['t'], he['exp']
     if wo_exp:
         exp =  exp*0  
-    
+
     # keypoint rotation
     kp_rotated = torch.einsum('bmp,bkp->bkm', rot_mat, kp)
 
@@ -109,7 +109,7 @@ def make_animation(source_image, source_semantics, target_semantics,
         kp_canonical = kp_detector(source_image)
         he_source = mapping(source_semantics)
         kp_source = keypoint_transformation(kp_canonical, he_source)
-    
+
         for frame_idx in tqdm(range(target_semantics.shape[1]), 'Face Renderer:'):
             # still check the dimension
             # print(target_semantics.shape, source_semantics.shape)
@@ -121,9 +121,9 @@ def make_animation(source_image, source_semantics, target_semantics,
                 he_driving['pitch_in'] = pitch_c_seq[:, frame_idx] 
             if roll_c_seq is not None:
                 he_driving['roll_in'] = roll_c_seq[:, frame_idx] 
-            
+
             kp_driving = keypoint_transformation(kp_canonical, he_driving)
-                
+
             kp_norm = kp_driving
             out = generator(source_image, kp_source=kp_source, kp_driving=kp_norm)
             '''
@@ -154,7 +154,7 @@ class AnimateModel(torch.nn.Module):
         self.mapping.eval()
 
     def forward(self, x):
-        
+
         source_image = x['source_image']
         source_semantics = x['source_semantics']
         target_semantics = x['target_semantics']
@@ -166,5 +166,5 @@ class AnimateModel(torch.nn.Module):
                                         self.generator, self.kp_extractor,
                                         self.mapping, use_exp = True,
                                         yaw_c_seq=yaw_c_seq, pitch_c_seq=pitch_c_seq, roll_c_seq=roll_c_seq)
-        
+
         return predictions_video

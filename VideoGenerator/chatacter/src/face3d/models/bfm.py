@@ -34,10 +34,10 @@ class ParametricFaceModel:
                 center=112.,
                 is_train=True,
                 default_name='BFM_model_front.mat'):
-        
+
         if not os.path.isfile(os.path.join(bfm_folder, default_name)):
             transferBFM09(bfm_folder)
-            
+
         model = loadmat(os.path.join(bfm_folder, default_name))
         # mean face shape. [3*N,1]
         self.mean_shape = model['meanshape'].astype(np.float32)
@@ -63,7 +63,7 @@ class ParametricFaceModel:
             self.front_face_buf = model['tri_mask2'].astype(np.int64) - 1
             # vertex indices for pre-defined skin region to compute reflectance loss
             self.skin_mask = np.squeeze(model['skinmask'])
-        
+
         if recenter:
             mean_shape = self.mean_shape.reshape([-1, 3])
             mean_shape = mean_shape - np.mean(mean_shape, axis=0, keepdims=True)
@@ -74,7 +74,7 @@ class ParametricFaceModel:
         self.camera_distance = camera_distance
         self.SH = SH()
         self.init_lit = init_lit.reshape([1, 1, -1]).astype(np.float32)
-        
+
 
     def to(self, device):
         self.device = device
@@ -82,7 +82,7 @@ class ParametricFaceModel:
             if type(value).__module__ == np.__name__:
                 setattr(self, key, torch.tensor(value).to(device))
 
-    
+
     def compute_shape(self, id_coeff, exp_coeff):
         """
         Return:
@@ -97,7 +97,7 @@ class ParametricFaceModel:
         exp_part = torch.einsum('ij,aj->ai', self.exp_base, exp_coeff)
         face_shape = id_part + exp_part + self.mean_shape.reshape([1, -1])
         return face_shape.reshape([batch_size, -1, 3])
-    
+
 
     def compute_texture(self, tex_coeff, normalize=True):
         """
@@ -131,7 +131,7 @@ class ParametricFaceModel:
         face_norm = torch.cross(e1, e2, dim=-1)
         face_norm = F.normalize(face_norm, dim=-1, p=2)
         face_norm = torch.cat([face_norm, torch.zeros(face_norm.shape[0], 1, 3).to(self.device)], dim=1)
-        
+
         vertex_norm = torch.sum(face_norm[:, self.point_buf], dim=2)
         vertex_norm = F.normalize(vertex_norm, dim=-1, p=2)
         return vertex_norm
@@ -170,7 +170,7 @@ class ParametricFaceModel:
         face_color = torch.cat([r, g, b], dim=-1) * face_texture
         return face_color
 
-    
+
     def compute_rotation(self, angles):
         """
         Return:
@@ -184,13 +184,13 @@ class ParametricFaceModel:
         ones = torch.ones([batch_size, 1]).to(self.device)
         zeros = torch.zeros([batch_size, 1]).to(self.device)
         x, y, z = angles[:, :1], angles[:, 1:2], angles[:, 2:],
-        
+
         rot_x = torch.cat([
             ones, zeros, zeros,
             zeros, torch.cos(x), -torch.sin(x), 
             zeros, torch.sin(x), torch.cos(x)
         ], dim=1).reshape([batch_size, 3, 3])
-        
+
         rot_y = torch.cat([
             torch.cos(y), zeros, torch.sin(y),
             zeros, ones, zeros,
@@ -287,7 +287,7 @@ class ParametricFaceModel:
 
         face_shape_transformed = self.transform(face_shape, rotation, coef_dict['trans'])
         face_vertex = self.to_camera(face_shape_transformed)
-        
+
         face_proj = self.to_image(face_vertex)
         landmark = self.get_landmarks(face_proj)
 
@@ -312,7 +312,7 @@ class ParametricFaceModel:
 
 
         face_vertex = self.to_camera(face_shape)
-        
+
         face_proj = self.to_image(face_vertex)
         landmark = self.get_landmarks(face_proj)
 

@@ -36,7 +36,7 @@ def paste_pic(video_path, pic_path, crop_info, new_audio_path, full_video_path, 
             video_stream.release()
             break
         crop_frames.append(frame)
-    
+
     if len(crop_info) != 3:
         print("you didn't crop the image")
         return

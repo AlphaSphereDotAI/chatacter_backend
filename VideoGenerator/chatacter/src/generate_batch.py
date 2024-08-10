@@ -56,7 +56,7 @@ def get_data(first_coeff_path, audio_path, device, ref_eyeblink_coeff_path, stil
     pic_name = os.path.splitext(os.path.split(first_coeff_path)[-1])[0]
     audio_name = os.path.splitext(os.path.split(audio_path)[-1])[0]
 
-    
+
     if idlemode:
         num_frames = int(length_of_audio * 25)
         indiv_mels = np.zeros((num_frames, 80, 16))
@@ -98,7 +98,7 @@ def get_data(first_coeff_path, audio_path, device, ref_eyeblink_coeff_path, stil
             print(refeyeblink_coeff.shape[0])
 
         ref_coeff[:, :64] = refeyeblink_coeff[:num_frames, :64] 
-    
+
     indiv_mels = torch.FloatTensor(indiv_mels).unsqueeze(1).unsqueeze(0) # bs T 1 80 16
 
     if use_blink:
