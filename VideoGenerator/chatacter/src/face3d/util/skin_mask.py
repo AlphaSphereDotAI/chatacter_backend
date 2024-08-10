@@ -21,7 +21,8 @@ class GMM:
             self.factor[i] = (2*math.pi)**(self.dim/2) * self.cov_det[i]**0.5
         
     def likelihood(self, data):
-        assert(data.shape[1] == self.dim)
+        if (data.shape[1] != self.dim):
+            raise AssertionError
         N = data.shape[0]
         lh = np.zeros(N)
 

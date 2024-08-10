@@ -57,8 +57,10 @@ def calculate_roc(thresholds,
                   actual_issame,
                   nrof_folds=10,
                   pca=0):
-    assert (embeddings1.shape[0] == embeddings2.shape[0])
-    assert (embeddings1.shape[1] == embeddings2.shape[1])
+    if (embeddings1.shape[0] != embeddings2.shape[0]):
+        raise AssertionError
+    if (embeddings1.shape[1] != embeddings2.shape[1]):
+        raise AssertionError
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
     nrof_thresholds = len(thresholds)
     k_fold = LFold(n_splits=nrof_folds, shuffle=False)
@@ -127,8 +129,10 @@ def calculate_val(thresholds,
                   actual_issame,
                   far_target,
                   nrof_folds=10):
-    assert (embeddings1.shape[0] == embeddings2.shape[0])
-    assert (embeddings1.shape[1] == embeddings2.shape[1])
+    if (embeddings1.shape[0] != embeddings2.shape[0]):
+        raise AssertionError
+    if (embeddings1.shape[1] != embeddings2.shape[1]):
+        raise AssertionError
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
     nrof_thresholds = len(thresholds)
     k_fold = LFold(n_splits=nrof_folds, shuffle=False)

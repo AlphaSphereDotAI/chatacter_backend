@@ -4,7 +4,8 @@ from torch import nn
 
 
 def class2onehot(idx, class_num):
-    assert torch.max(idx).item() < class_num
+    if torch.max(idx).item() >= class_num:
+        raise AssertionError
     onehot = torch.zeros(idx.size(0), class_num).to(idx.device)
     onehot.scatter_(1, idx, 1)
     return onehot

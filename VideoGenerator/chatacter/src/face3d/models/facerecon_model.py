@@ -137,7 +137,8 @@ class FaceReconModel(BaseModel):
     def compute_losses(self):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
 
-        assert self.net_recog.training == False
+        if self.net_recog.training != False:
+            raise AssertionError
         trans_m = self.trans_m
         if not self.opt.use_predef_M:
             trans_m = estimate_norm_torch(self.pred_lm, self.input_img.shape[-2])

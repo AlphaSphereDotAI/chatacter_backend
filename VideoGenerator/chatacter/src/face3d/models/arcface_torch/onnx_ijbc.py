@@ -170,7 +170,8 @@ def main(args):
     use_norm_score = True  # if Ture, TestMode(N1)
     use_detector_score = True  # if Ture, TestMode(D1)
     use_flip_test = True  # if Ture, TestMode(F1)
-    assert args.target == 'IJBC' or args.target == 'IJBB'
+    if not (args.target == 'IJBC' or args.target == 'IJBB'):
+        raise AssertionError
 
     start = timeit.default_timer()
     templates, medias = read_template_media_list(

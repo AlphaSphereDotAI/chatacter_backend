@@ -21,7 +21,8 @@ def convert_onnx(net, path_module, output, opset=11, simplify=False):
     if simplify:
         from onnxsim import simplify
         model, check = simplify(model)
-        assert check, "Simplified ONNX model could not be validated"
+        if not check:
+            raise AssertionError("Simplified ONNX model could not be validated")
     onnx.save(model, output)
 
     
@@ -39,7 +40,8 @@ if __name__ == '__main__':
     input_file = args.input
     if os.path.isdir(input_file):
         input_file = os.path.join(input_file, "backbone.pth")
-    assert os.path.exists(input_file)
+    if not os.path.exists(input_file):
+        raise AssertionError
     model_name = os.path.basename(os.path.dirname(input_file)).lower()
     params = model_name.split("_")
     if len(params) >= 3 and params[1] in ('arcface', 'cosface'):
@@ -54,6 +56,7 @@ if __name__ == '__main__':
         output_path = os.path.join(os.path.dirname(__file__), 'onnx')
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    assert os.path.isdir(output_path)
+    if not os.path.isdir(output_path):
+        raise AssertionError
     output_file = os.path.join(output_path, "%s.onnx" % model_name)
     convert_onnx(backbone_onnx, input_file, output_file, simplify=args.simplify)

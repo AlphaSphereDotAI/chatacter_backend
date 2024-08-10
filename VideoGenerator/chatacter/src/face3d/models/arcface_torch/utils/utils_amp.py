@@ -17,7 +17,8 @@ class _MultiDeviceReplicator(object):
     """
 
     def __init__(self, master_tensor: torch.Tensor) -> None:
-        assert master_tensor.is_cuda
+        if not master_tensor.is_cuda:
+            raise AssertionError
         self.master = master_tensor
         self._per_device_tensors: Dict[torch.device, torch.Tensor] = {}
 
@@ -58,7 +59,8 @@ class MaxClipGradScaler(GradScaler):
         self.scale_clip()
         # Short-circuit for the common case.
         if isinstance(outputs, torch.Tensor):
-            assert outputs.is_cuda
+            if not outputs.is_cuda:
+                raise AssertionError
             if self._scale is None:
                 self._lazy_init_scale_growth_tracker(outputs.device)
             assert self._scale is not None
@@ -69,7 +71,8 @@ class MaxClipGradScaler(GradScaler):
 
         def apply_scale(val):
             if isinstance(val, torch.Tensor):
-                assert val.is_cuda
+                if not val.is_cuda:
+                    raise AssertionError
                 if len(stash) == 0:
                     if self._scale is None:
                         self._lazy_init_scale_growth_tracker(val.device)

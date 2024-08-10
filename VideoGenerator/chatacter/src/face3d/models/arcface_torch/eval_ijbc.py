@@ -74,8 +74,10 @@ class Embedding(object):
 
     def get(self, rimg, landmark):
 
-        assert landmark.shape[0] == 68 or landmark.shape[0] == 5
-        assert landmark.shape[1] == 2
+        if not (landmark.shape[0] == 68 or landmark.shape[0] == 5):
+            raise AssertionError
+        if landmark.shape[1] != 2:
+            raise AssertionError
         if landmark.shape[0] == 68:
             landmark5 = np.zeros((5, 2), dtype=np.float32)
             landmark5[0] = (landmark[36] + landmark[39]) / 2
@@ -313,7 +315,8 @@ def read_score(path):
 
 # In[ ]:
 
-assert target == 'IJBC' or target == 'IJBB'
+if not (target == 'IJBC' or target == 'IJBB'):
+    raise AssertionError
 
 # =============================================================
 # load image and template relationships for template feature embedding

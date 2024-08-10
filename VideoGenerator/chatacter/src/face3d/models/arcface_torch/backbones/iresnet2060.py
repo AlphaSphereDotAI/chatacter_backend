@@ -1,7 +1,8 @@
 import torch
 from torch import nn
 
-assert torch.__version__ >= "1.8.1"
+if torch.__version__ < "1.8.1":
+    raise AssertionError
 from torch.utils.checkpoint import checkpoint_sequential
 
 __all__ = ['iresnet2060']
