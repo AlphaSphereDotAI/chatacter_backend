@@ -41,7 +41,6 @@ class MappingNet(nn.Module):
             out = model(out) + out[:, :, 3:-3]
         out = self.pooling(out)
         out = out.view(out.shape[0], -1)
-        # print('out:', out.shape)
 
         yaw = self.fc_yaw(out)
         pitch = self.fc_pitch(out)

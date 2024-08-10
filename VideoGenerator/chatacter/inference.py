@@ -14,7 +14,6 @@ from src.utils.preprocess import CropAndExtract
 
 
 def main(args):
-    # torch.backends.cudnn.enabled = False
 
     pic_path = args.source_image
     audio_path = args.driven_audio

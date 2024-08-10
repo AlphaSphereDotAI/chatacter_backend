@@ -69,7 +69,6 @@ class ArcFaceORT:
         if len(input_shape) != 4:
             return "length of input_shape should be 4"
         if not isinstance(input_shape[0], str):
-            # return "input_shape[0] should be str to support batch-inference"
             print("reset input-shape[0] to None")
             model = onnx.load(self.model_file)
             model.graph.input[0].type.tensor_type.shape.dim[0].dim_param = "None"
@@ -88,19 +87,16 @@ class ArcFaceORT:
             print("new-input-shape:", input_shape)
 
         self.image_size = tuple(input_shape[2:4][::-1])
-        # print('image_size:', self.image_size)
         input_name = input_cfg.name
         outputs = session.get_outputs()
         output_names = []
         for o in outputs:
             output_names.append(o.name)
-            # print(o.name, o.shape)
         if len(output_names) != 1:
             return "number of output nodes should be 1"
         self.session = session
         self.input_name = input_name
         self.output_names = output_names
-        # print(self.output_names)
         model = onnx.load(self.model_file)
         graph = model.graph
         if len(graph.node) < 8:

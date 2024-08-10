@@ -22,7 +22,6 @@ def calculate_points(heatmaps):
     heatline = heatline.reshape(B * N, HW)
     x_up = heatline[BN_range, inr + 1]
     x_down = heatline[BN_range, inr - 1]
-    # y_up = heatline[BN_range, inr + W]
 
     if any((inr + W) >= 4096):
         y_up = heatline[BN_range, 4095]
@@ -138,10 +137,8 @@ class BasicBlock(nn.Module):
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
-        # self.bn1 = nn.BatchNorm2d(planes)
         self.relu = nn.ReLU(inplace=True)
         self.conv2 = conv3x3(planes, planes)
-        # self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
         self.stride = stride
 
@@ -324,7 +321,6 @@ class FAN(nn.Module):
     def forward(self, x):
         x, _ = self.conv1(x)
         x = F.relu(self.bn1(x), True)
-        # x = F.relu(self.bn1(self.conv1(x)), True)
         x = F.avg_pool2d(self.conv2(x), 2, stride=2)
         x = self.conv3(x)
         x = self.conv4(x)
