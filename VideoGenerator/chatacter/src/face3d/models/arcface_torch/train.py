@@ -82,8 +82,7 @@ def main(args):
         cfg.decay_step = [x * num_image // total_batch_size for x in cfg.decay_epoch]
         if current_step < cfg.warmup_step:
             return current_step / cfg.warmup_step
-        else:
-            return 0.1 ** len([m for m in cfg.decay_step if m <= current_step])
+        return 0.1 ** len([m for m in cfg.decay_step if m <= current_step])
 
     scheduler_backbone = torch.optim.lr_scheduler.LambdaLR(
         optimizer=opt_backbone, lr_lambda=lr_step_func)
