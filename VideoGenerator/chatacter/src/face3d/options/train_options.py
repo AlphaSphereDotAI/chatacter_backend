@@ -32,7 +32,7 @@ class TrainOptions(BaseOptions):
         # visualization parameters
         parser.add_argument('--display_freq', type=int, default=1000, help='frequency of showing training results on screen')
         parser.add_argument('--print_freq', type=int, default=100, help='frequency of showing training results on console')
-        
+
         # network saving and loading parameters
         parser.add_argument('--save_latest_freq', type=int, default=5000, help='frequency of saving the latest results')
         parser.add_argument('--save_epoch_freq', type=int, default=1, help='frequency of saving checkpoints at the end of epochs')

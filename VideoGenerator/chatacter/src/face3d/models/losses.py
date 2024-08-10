@@ -29,7 +29,7 @@ class PerceptualLoss(nn.Module):
 
         # freeze bn
         self.recog_net.eval()
-        
+
         id_featureA = F.normalize(self.recog_net(imageA), dim=-1, p=2)
         id_featureB = F.normalize(self.recog_net(imageB), dim=-1, p=2)  
         cosine_d = torch.sum(id_featureA * id_featureB, dim=-1)

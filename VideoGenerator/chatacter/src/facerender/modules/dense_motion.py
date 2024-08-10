@@ -34,7 +34,7 @@ class DenseMotionNetwork(nn.Module):
         identity_grid = make_coordinate_grid((d, h, w), type=kp_source['value'].type())
         identity_grid = identity_grid.view(1, 1, d, h, w, 3)
         coordinate_grid = identity_grid - kp_driving['value'].view(bs, self.num_kp, 1, 1, 1, 3)
-        
+
         if 'jacobian' in kp_driving and kp_driving['jacobian'] is not None:
             jacobian = torch.matmul(kp_source['jacobian'], torch.inverse(kp_driving['jacobian']))
             jacobian = jacobian.unsqueeze(-3).unsqueeze(-3).unsqueeze(-3)
@@ -48,7 +48,7 @@ class DenseMotionNetwork(nn.Module):
         #adding background feature
         identity_grid = identity_grid.repeat(bs, 1, 1, 1, 1, 1)
         sparse_motions = torch.cat([identity_grid, driving_to_source], dim=1)                #bs num_kp+1 d h w 3
-        
+
 
         return sparse_motions
 
@@ -97,7 +97,7 @@ class DenseMotionNetwork(nn.Module):
         mask = F.softmax(mask, dim=1)
         out_dict['mask'] = mask
         mask = mask.unsqueeze(2)                                   # (bs, num_kp+1, 1, d, h, w)
-        
+
         zeros_mask = torch.zeros_like(mask)   
         mask = torch.where(mask < 1e-3, zeros_mask, mask) 
 
