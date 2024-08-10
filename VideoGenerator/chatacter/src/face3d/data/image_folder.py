@@ -35,9 +35,7 @@ def is_image_file(filename):
 def make_dataset(dir, max_dataset_size=float("inf")):
     images = []
     if not (os.path.isdir(dir) or os.path.islink(dir)):
-        raise AssertionError(
-            "%s is not a valid directory" % dir
-        )
+        raise AssertionError("%s is not a valid directory" % dir)
 
     for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
         for fname in fnames:
