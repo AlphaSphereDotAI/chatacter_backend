@@ -312,5 +312,3 @@ def dumpR(data_set, backbone, batch_size, name="", data_extra=None, label_shape=
     outname = os.path.join("temp.bin")
     with open(outname, "wb") as f:
         pickle.dump((embeddings, issame_list), f, protocol=pickle.HIGHEST_PROTOCOL)
-
-
