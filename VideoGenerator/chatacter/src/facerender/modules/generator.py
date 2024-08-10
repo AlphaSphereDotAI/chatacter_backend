@@ -74,7 +74,6 @@ class OcclusionAwareGenerator(nn.Module):
             out = self.down_blocks[i](out)
         out = self.second(out)
         bs, c, h, w = out.shape
-        # print(out.shape)
         feature_3d = out.view(bs, self.reshape_channel, self.reshape_depth, h ,w) 
         feature_3d = self.resblocks_3d(feature_3d)
 
@@ -103,7 +102,6 @@ class OcclusionAwareGenerator(nn.Module):
                     occlusion_map = F.interpolate(occlusion_map, size=out.shape[2:], mode='bilinear')
                 out = out * occlusion_map
 
-            # output_dict["deformed"] = self.deform_input(source_image, deformation)  # 3d deformation cannot deform 2d image
 
         # Decoding part
         out = self.resblocks_2d(out)
@@ -152,7 +150,6 @@ class SPADEDecoder(nn.Module):
         x = self.up_1(x, seg)         # 64, 256, 256
 
         x = self.conv_img(F.leaky_relu(x, 2e-1))
-        # x = torch.tanh(x)
         x = F.sigmoid(x)
         
         return x
@@ -214,7 +211,6 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             out = self.down_blocks[i](out)
         out = self.second(out)
         bs, c, h, w = out.shape
-        # print(out.shape)
         feature_3d = out.view(bs, self.reshape_channel, self.reshape_depth, h ,w) 
         feature_3d = self.resblocks_3d(feature_3d)
 
@@ -225,7 +221,6 @@ class OcclusionAwareSPADEGenerator(nn.Module):
                                                      kp_source=kp_source)
             output_dict['mask'] = dense_motion['mask']
 
-            # import pdb; pdb.set_trace()
 
             if 'occlusion_map' in dense_motion:
                 occlusion_map = dense_motion['occlusion_map']
@@ -240,7 +235,6 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             out = self.third(out)
             out = self.fourth(out)
 
-            # occlusion_map = torch.where(occlusion_map < 0.95, 0, occlusion_map)
             
             if occlusion_map is not None:
                 if out.shape[2] != occlusion_map.shape[2] or out.shape[3] != occlusion_map.shape[3]:

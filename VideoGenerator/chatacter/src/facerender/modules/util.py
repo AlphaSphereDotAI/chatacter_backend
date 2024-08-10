@@ -184,7 +184,6 @@ class UpBlock3d(nn.Module):
         self.norm = BatchNorm3d(out_features, affine=True)
 
     def forward(self, x):
-        # out = F.interpolate(x, scale_factor=(1, 2, 2), mode='trilinear')
         out = F.interpolate(x, scale_factor=(1, 2, 2))
         out = self.conv(out)
         out = self.norm(out)
@@ -296,7 +295,6 @@ class Decoder(nn.Module):
             up_blocks.append(UpBlock3d(in_filters, out_filters, kernel_size=3, padding=1))
 
         self.up_blocks = nn.ModuleList(up_blocks)
-        # self.out_filters = block_expansion
         self.out_filters = block_expansion + in_features
 
         self.conv = nn.Conv3d(in_channels=self.out_filters, out_channels=self.out_filters, kernel_size=3, padding=1)
@@ -304,12 +302,10 @@ class Decoder(nn.Module):
 
     def forward(self, x):
         out = x.pop()
-        # for up_block in self.up_blocks[:-1]:
         for up_block in self.up_blocks:
             out = up_block(out)
             skip = x.pop()
             out = torch.cat([out, skip], dim=1)
-        # out = self.up_blocks[-1](out)
         out = self.conv(out)
         out = self.norm(out)
         out = F.relu(out)

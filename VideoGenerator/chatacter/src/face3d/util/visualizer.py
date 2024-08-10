@@ -125,15 +125,6 @@ class Visualizer:
             webpage.save()
 
     def plot_current_losses(self, total_iters, losses):
-        # G_loss_collection = {}
-        # D_loss_collection = {}
-        # for name, value in losses.items():
-        #     if 'G' in name or 'NCE' in name or 'idt' in name:
-        #         G_loss_collection[name] = value
-        #     else:
-        #         D_loss_collection[name] = value
-        # self.writer.add_scalars('G_collec', G_loss_collection, total_iters)
-        # self.writer.add_scalars('D_collec', D_loss_collection, total_iters)
         for name, value in losses.items():
             self.writer.add_scalar(name, value, total_iters)
 

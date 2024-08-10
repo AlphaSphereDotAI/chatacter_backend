@@ -45,8 +45,6 @@ def paste_pic(video_path, pic_path, crop_info, new_audio_path, full_video_path, 
         clx, cly, crx, cry = crop_info[1]
         lx, ly, rx, ry = crop_info[2]
         lx, ly, rx, ry = int(lx), int(ly), int(rx), int(ry)
-        # oy1, oy2, ox1, ox2 = cly+ly, cly+ry, clx+lx, clx+rx
-        # oy1, oy2, ox1, ox2 = cly+ly, cly+ry, clx+lx, clx+rx
 
         if extended_crop:
             oy1, oy2, ox1, ox2 = cly, cry, clx, crx

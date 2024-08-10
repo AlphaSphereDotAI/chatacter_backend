@@ -3,14 +3,12 @@ import time
 import torch
 from chatacter.settings import get_settings
 
-# from huggingface_hub import snapshot_download
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
 
 settings = get_settings()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-# snapshot_download(repo_id="suno/bark-small", local_dir=settings.bark.path)
 processor = AutoProcessor.from_pretrained(settings.bark.name)
 model = AutoModel.from_pretrained(settings.bark.name, torch_dtype=torch.float16).to(
     device
