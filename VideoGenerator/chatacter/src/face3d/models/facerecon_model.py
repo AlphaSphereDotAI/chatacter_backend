@@ -18,7 +18,6 @@ from src.face3d.util import util
 from src.face3d.util.nvdiffrast import MeshRenderer
 
 
-
 class FaceReconModel(BaseModel):
 
     @staticmethod

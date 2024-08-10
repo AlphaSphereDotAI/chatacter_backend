@@ -14,7 +14,6 @@ from src.utils.preprocess import CropAndExtract
 
 
 def main(args):
-
     pic_path = args.source_image
     audio_path = args.driven_audio
     save_dir = os.path.join(args.result_dir, strftime("%Y_%m_%d_%H.%M.%S"))

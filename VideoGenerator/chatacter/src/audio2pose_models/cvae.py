@@ -179,7 +179,6 @@ class DECODER(nn.Module):
         x_out = self.MLP(x_in)  # bs layer_sizes[-1]
         x_out = x_out.reshape((bs, self.seq_len, -1))
 
-
         pose_emb = self.resunet(x_out.unsqueeze(1))  # bs 1 seq_len 6
 
         pose_motion_pred = self.pose_linear(pose_emb.squeeze(1))  # bs seq_len 6

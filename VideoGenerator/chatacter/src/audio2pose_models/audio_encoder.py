@@ -46,7 +46,6 @@ class AudioEncoder(nn.Module):
         # wav2lip_state_dict = torch.load(wav2lip_checkpoint, map_location=torch.device(device))['state_dict']
         # state_dict = self.audio_encoder.state_dict()
 
-
     def forward(self, audio_sequences):
         B = audio_sequences.size(0)
 

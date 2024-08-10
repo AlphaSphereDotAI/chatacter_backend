@@ -106,7 +106,6 @@ class BaseModel(ABC):
             load_suffix = opt.epoch
             self.load_networks(load_suffix)
 
-
     def parallelize(self, convert_sync_batchnorm=True):
         if not self.opt.use_ddp:
             for name in self.parallel_names:

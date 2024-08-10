@@ -2,7 +2,6 @@ import time
 
 import torch
 from chatacter.settings import get_settings
-
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
 
