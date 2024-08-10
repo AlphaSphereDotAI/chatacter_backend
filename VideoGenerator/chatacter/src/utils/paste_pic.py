@@ -40,16 +40,15 @@ def paste_pic(video_path, pic_path, crop_info, new_audio_path, full_video_path, 
     if len(crop_info) != 3:
         print("you didn't crop the image")
         return
-    else:
-        r_w, r_h = crop_info[0]
-        clx, cly, crx, cry = crop_info[1]
-        lx, ly, rx, ry = crop_info[2]
-        lx, ly, rx, ry = int(lx), int(ly), int(rx), int(ry)
+    r_w, r_h = crop_info[0]
+    clx, cly, crx, cry = crop_info[1]
+    lx, ly, rx, ry = crop_info[2]
+    lx, ly, rx, ry = int(lx), int(ly), int(rx), int(ry)
 
-        if extended_crop:
-            oy1, oy2, ox1, ox2 = cly, cry, clx, crx
-        else:
-            oy1, oy2, ox1, ox2 = cly+ly, cly+ry, clx+lx, clx+rx
+    if extended_crop:
+        oy1, oy2, ox1, ox2 = cly, cry, clx, crx
+    else:
+        oy1, oy2, ox1, ox2 = cly+ly, cly+ry, clx+lx, clx+rx
 
     tmp_path = str(uuid.uuid4())+'.mp4'
     out_tmp = cv2.VideoWriter(tmp_path, cv2.VideoWriter_fourcc(*'MP4V'), fps, (frame_w, frame_h))
