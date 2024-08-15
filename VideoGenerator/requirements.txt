@@ -35,3 +35,29 @@ urllib3>=2.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
 werkzeug>=3.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
 wheel>=0.38.0 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
+h11
+click
+typing-extensions
+regex
+filelock
+packaging
+huggingface-hub
+importlib-metadata
+tokenizers
+requests
+llvmlite
+audioread
+scikit-learn
+decorator
+soundfile
+pooch
+pillow
+tb-nightly
+opencv-python
+basicsr
+lmdb
+yapf
+pydantic
+starlette
+anyio
+filterpy
