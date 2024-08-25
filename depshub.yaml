@@ -1,19 +1,21 @@
+version: 1
+licenses: ['MIT', 'Apache-1.1', 'Apache-2.0', 'Unlicense', 'BSD-2-Clause']
 updates:
-	schedule: 'auto' # <- NEW
-	types: ['security', 'major', 'minor', 'patch']
-	stability_delay: # <- NEW
-		security: 0
-		major: 14
-		minor: 7
-		patch: 4
-	update_frequency: 30
-	batching: # <- NEW
-		security: 1
-		major: 1
-		minor: 3
-		patch: 10
-		group_by_scope: true
-	retry_on_close: false
-	pr:
-		weekly_limit: 2
-		concurrent_limit: 3
+  schedule: ['auto'] # ['0 0 * * 6'] | ['off']
+  types: ['security', 'major', 'minor', 'patch'] # the order is important
+  stability_delay:
+    security: 0
+    major: 14
+    minor: 7
+    patch: 4
+  update_frequency: 30
+  batching:
+    security: 1
+    major: 1
+    minor: 3
+    patch: 10
+    group_by_scope: true
+  retry_on_close: false
+  pr:
+    weekly_limit: 2
+    concurrent_limit: 3
