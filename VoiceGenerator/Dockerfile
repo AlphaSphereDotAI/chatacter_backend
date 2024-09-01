@@ -15,7 +15,7 @@ RUN pixi init && \
     pixi add python==3.10 pip && \
     pixi project channel add pytorch nvidia conda-forge && \
     pixi run pip install --upgrade pip setuptools wheel && \
-    pixi run pip install -v --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+    pixi run pip install -v --no-cache-dir -r requirements.txt
 
 RUN pixi run huggingface-cli download suno/bark-small
 
