@@ -9,8 +9,8 @@ librosa==0.10.2.post1
 numba
 resampy==0.4.3
 pydub==0.25.1 
+kornia==0.7.3
 scipy==1.14.1
-kornia==0.6.8
 tqdm
 yacs==0.1.8
 pyyaml  
