@@ -19,8 +19,8 @@ class Audio2Pose(nn.Module):
 
         self.netG = CVAE(cfg)
         self.netD_motion = PoseSequenceDiscriminator(cfg)
-        
-        
+
+
     def forward(self, x):
 
         batch = {}
@@ -52,7 +52,7 @@ class Audio2Pose(nn.Module):
         batch['ref'] = x['ref'][:,0,-6:]  
         batch['class'] = x['class']  
         bs = ref.shape[0]
-        
+
         indiv_mels= x['indiv_mels']               # bs T 1 80 16
         indiv_mels_use = indiv_mels[:, 1:]        # we regard the ref as the first frame
         num_frames = x['num_frames']
@@ -72,7 +72,7 @@ class Audio2Pose(nn.Module):
             batch['audio_emb'] = audio_emb
             batch = self.netG.test(batch)
             pose_motion_pred_list.append(batch['pose_motion_pred'])  #list of bs seq_len 6
-        
+
         if re != 0:
             z = torch.randn(bs, self.latent_dim).to(ref.device)
             batch['z'] = z
@@ -84,7 +84,7 @@ class Audio2Pose(nn.Module):
             batch['audio_emb'] = audio_emb
             batch = self.netG.test(batch)
             pose_motion_pred_list.append(batch['pose_motion_pred'][:,-1*re:,:])   
-        
+
         pose_motion_pred = torch.cat(pose_motion_pred_list, dim = 1)
         batch['pose_motion_pred'] = pose_motion_pred
 

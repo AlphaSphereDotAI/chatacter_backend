@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import torch
 
-if torch.__version__ < '1.9':
+if torch.__version__ < "1.9":
     Iterable = torch._six.container_abcs.Iterable
 else:
     import collections
@@ -17,7 +17,8 @@ class _MultiDeviceReplicator(object):
     """
 
     def __init__(self, master_tensor: torch.Tensor) -> None:
-        assert master_tensor.is_cuda
+        if not master_tensor.is_cuda:
+            raise AssertionError
         self.master = master_tensor
         self._per_device_tensors: Dict[torch.device, torch.Tensor] = {}
 
@@ -30,8 +31,11 @@ class _MultiDeviceReplicator(object):
 
 
 class MaxClipGradScaler(GradScaler):
+
     def __init__(self, init_scale, max_scale: float, growth_interval=100):
-        GradScaler.__init__(self, init_scale=init_scale, growth_interval=growth_interval)
+        GradScaler.__init__(
+            self, init_scale=init_scale, growth_interval=growth_interval
+        )
         self.max_scale = max_scale
 
     def scale_clip(self):
@@ -58,30 +62,32 @@ class MaxClipGradScaler(GradScaler):
         self.scale_clip()
         # Short-circuit for the common case.
         if isinstance(outputs, torch.Tensor):
-            assert outputs.is_cuda
+            if not outputs.is_cuda:
+                raise AssertionError
             if self._scale is None:
                 self._lazy_init_scale_growth_tracker(outputs.device)
             assert self._scale is not None
             return outputs * self._scale.to(device=outputs.device, non_blocking=True)
 
         # Invoke the more complex machinery only if we're treating multiple outputs.
-        stash: List[_MultiDeviceReplicator] = []  # holds a reference that can be overwritten by apply_scale
+        # holds a reference that can be overwritten by apply_scale
+        stash: List[_MultiDeviceReplicator] = []
 
         def apply_scale(val):
             if isinstance(val, torch.Tensor):
-                assert val.is_cuda
+                if not val.is_cuda:
+                    raise AssertionError
                 if len(stash) == 0:
                     if self._scale is None:
                         self._lazy_init_scale_growth_tracker(val.device)
                     assert self._scale is not None
                     stash.append(_MultiDeviceReplicator(self._scale))
                 return val * stash[0].get(val.device)
-            elif isinstance(val, Iterable):
+            if isinstance(val, Iterable):
                 iterable = map(apply_scale, val)
                 if isinstance(val, list) or isinstance(val, tuple):
                     return type(val)(iterable)
-                else:
-                    return iterable
+                return iterable
             else:
                 raise ValueError("outputs must be a Tensor or an iterable of Tensors")
 

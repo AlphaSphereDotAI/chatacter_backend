@@ -28,4 +28,4 @@ def generate_video(character : str) -> str:
     )
     end_time = time.time()
     return str(end_time - start_time)
-    
+

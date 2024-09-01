@@ -17,7 +17,7 @@ class InferenceOptions(BaseOptions):
         parser.add_argument('--output_dir', type=str, default='mp4', help='the output dir to save the extracted coefficients')
         parser.add_argument('--save_split_files', action='store_true', help='save split files or not')
         parser.add_argument('--inference_batch_size', type=int, default=8)
-        
+
         # Dropout and Batchnorm has different behavior during training and test.
         self.isTrain = False
         return parser
