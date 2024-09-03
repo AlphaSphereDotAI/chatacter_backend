@@ -12,5 +12,5 @@ dependencies = [
     "psutil>=6.0.0",
     "qdrant-client[fastembed-gpu]>=1.11.1",
     "transformers>=4.44.2",
-    "unstructured[all-docs]",
+    "unstructured[all-docs]>=0.15.9",
 ]
