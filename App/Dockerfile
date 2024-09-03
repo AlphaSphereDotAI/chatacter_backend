@@ -21,7 +21,6 @@ COPY pyproject.toml .
 
 RUN pixi global install uv && \
     uv python install 3.11 && \
-    uv python pin 3.11 && \
     uv sync && \
     uv lock --upgrade && \
     uv run python -m nltk.downloader punkt && \
