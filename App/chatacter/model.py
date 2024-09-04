@@ -1,6 +1,5 @@
 import time
 from typing import List
-
 from pydantic import StrictStr
 from unstructured.documents.elements import Element
 from chatacter.crawler import crawl
@@ -11,7 +10,6 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from qdrant_client.fastembed_common import QueryResponse
 
-settings: Settings = load_settings()
 chat = ChatGroq(
 	model="llama3-70b-8192",
 	verbose=True,

@@ -1,11 +1,9 @@
 from typing import Any, List
-
-from chatacter.settings import Settings, load_settings
 from pydantic import StrictStr
 from qdrant_client import QdrantClient
 from qdrant_client.fastembed_common import QueryResponse
 from unstructured.chunking.title import chunk_by_title
-from unstructured.cleaners.core import clean_non_ascii_chars
+from unstructured.cleaners.core import clean_non_ascii_chars  # type: ignore
 from unstructured.cleaners.core import (
 	bytes_string_to_string,
 	clean_extra_whitespace,
@@ -13,8 +11,6 @@ from unstructured.cleaners.core import (
 )
 from unstructured.documents.elements import Element
 from unstructured.partition.auto import partition
-
-settings: Settings = load_settings()
 
 client = QdrantClient(host="localhost", port=6333)
 
