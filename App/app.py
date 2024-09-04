@@ -1,3 +1,5 @@
+import json
+from typing import Any
 from chatacter.model import get_response
 from chatacter.settings import Settings, load_settings
 from fastapi import FastAPI
@@ -15,8 +17,8 @@ async def is_alive() -> dict[str, str]:
 
 
 @app.get(path="/get_settings")
-async def get_settings() -> dict[str, str]:
-    return settings.model_dump()
+def get_settings() -> Any:
+	return json.loads(s=settings.model_dump_json(indent=4))
 
 
 @app.get(path="/get_text")

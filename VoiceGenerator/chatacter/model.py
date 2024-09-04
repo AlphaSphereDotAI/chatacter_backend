@@ -1,43 +1,47 @@
 import time
-
+from typing import Any, Literal
+from pydantic import StrictStr
 import torch
-from chatacter.settings import get_settings
-
+from chatacter.settings import Settings, get_settings
 from scipy.io.wavfile import write
 from transformers import AutoModel, AutoProcessor, logging
 
-settings = get_settings()
+settings: Settings = get_settings()
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-processor = AutoProcessor.from_pretrained(settings.bark.name)
-model = AutoModel.from_pretrained(settings.bark.name, torch_dtype=torch.float16).to(
-    device
+device: Literal["cuda"] | Literal["cpu"] = (
+	"cuda" if torch.cuda.is_available() else "cpu"
 )
-model = model.to_bettertransformer()
+processor: Any = AutoProcessor.from_pretrained(
+	pretrained_model_name_or_path=settings.bark.name
+)
+model: Any = AutoModel.from_pretrained(
+	pretrained_model_name_or_path=settings.bark.name, torch_dtype=torch.float16
+).to(device)
+model: Any = model.to_bettertransformer()
 model.enable_cpu_offload()
 logging.set_verbosity_debug()
 
 
-def generate_audio(response):
-    print("Device available: ", model.device)
-    start_time = time.time()
-    inputs = processor(
-        text=[response], return_tensors="pt", voice_preset="v2/en_speaker_6"
-    )
-    inputs = inputs.to(device)
-    audio = model.generate(**inputs)
-    audio = audio.cpu().squeeze(0).numpy()
-    sample_rate = model.generation_config.sample_rate
-    write(
-        f"{settings.assets.audio}AUDIO.wav",
-        sample_rate,
-        audio,
-    )
-    end_time = time.time()
-    return {
-        "audio_dir": settings.assets.audio,
-        "rate": model.generation_config.sample_rate,
-        "text": response,
-        "status": "ok",
-        "time": end_time - start_time,
-    }
+def generate_audio(response: StrictStr) -> dict[str, str | Any | float]:
+	print("Device available: ", model.device)
+	start_time: float = time.time()
+	inputs: Any = processor(
+		text=[response], return_tensors="pt", voice_preset="v2/en_speaker_6"
+	)
+	inputs: Any = inputs.to(device)
+	audio: Any = model.generate(**inputs)
+	audio: Any = audio.cpu().squeeze(0).numpy()
+	sample_rate: Any = model.generation_config.sample_rate
+	write(
+		filename=f"{settings.assets.audio}AUDIO.wav",
+		rate=sample_rate,
+		data=audio.astype("float32"),
+	)
+	end_time: float = time.time()
+	return {
+		"audio_dir": settings.assets.audio,
+		"rate": model.generation_config.sample_rate,
+		"text": response,
+		"status": "ok",
+		"time": end_time - start_time,
+	}
