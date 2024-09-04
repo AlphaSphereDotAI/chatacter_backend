@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 from pydantic import BaseModel
 
 
@@ -19,12 +17,10 @@ class Settings(BaseModel):
     assets: AssetsSettings = AssetsSettings()
     bark: BarkSettings = BarkSettings()
 
-
-@lru_cache
-def get_settings():
+def get_settings() -> Settings:
     return Settings()
 
 
 if __name__ == "__main__":
-    settings = get_settings()
+    settings: Settings = get_settings()
     print(settings.model_dump_json(indent=4))
