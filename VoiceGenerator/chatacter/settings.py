@@ -17,6 +17,7 @@ class Settings(BaseModel):
     assets: AssetsSettings = AssetsSettings()
     bark: BarkSettings = BarkSettings()
 
+
 def get_settings() -> Settings:
     return Settings()
 
