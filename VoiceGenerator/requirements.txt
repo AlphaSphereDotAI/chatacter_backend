@@ -53,7 +53,7 @@ pfzy==0.3.4
 prompt-toolkit==3.0.47
 protobuf==5.27.3
 psutil==6.0.0
-pyarrow==14.0.1
+pyarrow==14.0.2
 pydantic==2.8.2
 pydantic-core==2.20.1
 pygments==2.18.0
