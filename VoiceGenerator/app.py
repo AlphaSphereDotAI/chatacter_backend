@@ -1,6 +1,7 @@
 import json
-from typing import Any
 import warnings
+from typing import Any
+
 from chatacter.model import generate_audio
 from chatacter.settings import Settings, get_settings
 from fastapi import FastAPI
@@ -14,7 +15,6 @@ app = FastAPI(
     title="Character Voice Generator",
     description="Character Voice Generator API",
 )
-
 
 
 @app.get(path="/")
@@ -52,4 +52,9 @@ def get_audio(text: str) -> FileResponse:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app="app:app", host="localhost", port=8001, reload=True,)
+    uvicorn.run(
+        app="app:app",
+        host="localhost",
+        port=8001,
+        reload=True,
+    )
