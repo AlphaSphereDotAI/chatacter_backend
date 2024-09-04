@@ -19,8 +19,8 @@ COPY pyproject.toml .
 
 RUN pixi global install uv && \
     uv python install 3.11 && \
-    uv sync && \
     uv lock --upgrade && \
+    uv sync && \
     uv run python -m nltk.downloader punkt && \
     uv run python -m nltk.downloader averaged_perceptron_tagger
 
