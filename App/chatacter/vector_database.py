@@ -1,4 +1,5 @@
 from typing import Any, List
+
 from pydantic import StrictStr
 from qdrant_client import QdrantClient
 from qdrant_client.fastembed_common import QueryResponse
@@ -7,7 +8,6 @@ from unstructured.cleaners.core import clean_non_ascii_chars  # type: ignore
 from unstructured.cleaners.core import (
     bytes_string_to_string,
     clean_extra_whitespace,
-    clean_non_ascii_chars,
     replace_unicode_quotes,
 )
 from unstructured.documents.elements import Element

@@ -1,7 +1,6 @@
 import time
 from typing import List
-from pydantic import StrictStr
-from unstructured.documents.elements import Element
+
 from chatacter.crawler import crawl
 from chatacter.settings import Settings, load_settings
 from chatacter.vector_database import add_data, get_chunks, query_db
