@@ -1,3 +1,0 @@
-version: 1
-schedule:
-  interval: '0 0 * * *'
