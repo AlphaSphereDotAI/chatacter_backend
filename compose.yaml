@@ -1,7 +1,7 @@
 name: chatacter
 services:
   App:
-    image: ghcr.io/alphaspheredotai/chatacter_backend_app
+    image: ghcr.io/alphaspheredotai/chatacter_backend_app:latest
     ports:
       - 8000:8000
     container_name: app
@@ -30,7 +30,7 @@ services:
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY}
   VideoGenerator:
-    image: ghcr.io/alphaspheredotai/chatacter_backend_video_generator
+    image: ghcr.io/alphaspheredotai/chatacter_backend_video_generator:latest
     container_name: video_generator
     volumes:
       - ./VideoGenerator:/app:rw
@@ -52,7 +52,7 @@ services:
           path: ./VideoGenerator
           target: /app
   VoiceGenerator:
-    image: ghcr.io/alphaspheredotai/chatacter_backend_voice_generator
+    image: ghcr.io/alphaspheredotai/chatacter_backend_voice_generator:latest
     container_name: voice_generator
     volumes:
       - ./VoiceGenerator:/app:rw

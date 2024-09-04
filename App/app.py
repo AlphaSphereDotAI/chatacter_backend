@@ -1,21 +1,15 @@
-from typing import Any, AsyncGenerator
+import json
+from typing import Any
+
 from chatacter.model import get_response
 from chatacter.settings import Settings, load_settings
 from fastapi import FastAPI
-from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import FileResponse, JSONResponse
 from requests import Response, get, post
 
-@asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[Any, None]:
-    print("Application started")
-    global settings
-    settings: Settings = load_settings()
-    yield
-    print("Application stopped")
-
-
-app = FastAPI(debug=True, lifespan=lifespan)
+global settings
+settings: Settings = load_settings()
+app = FastAPI(debug=True)
 
 
 @app.get(path="/")
@@ -24,8 +18,8 @@ async def is_alive() -> dict[str, str]:
 
 
 @app.get(path="/get_settings")
-async def get_settings() -> dict[str, str]:
-    return settings.model_dump()
+def get_settings() -> Any:
+    return json.loads(s=settings.model_dump_json(indent=4))
 
 
 @app.get(path="/get_text")

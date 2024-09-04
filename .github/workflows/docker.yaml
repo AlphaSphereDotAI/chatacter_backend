@@ -19,17 +19,19 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@master
+              uses: docker/setup-buildx-action@v3.6.1
             - name: Log in to the Container registry
-              uses: docker/login-action@master
+              uses: docker/login-action@v3.3.0
               with:
                   registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.TOKEN_KEY_GITHUB }}
             - name: Extract metadata (tags, labels) for Docker for App
               id: meta
-              uses: docker/metadata-action@master
+              uses: docker/metadata-action@v5.5.1
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
                   tags: |
@@ -37,7 +39,7 @@ jobs:
                       type=raw,value=dev-{{date 'YYYYMMDD'}},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             - name: Build and push App Docker image
               id: push
-              uses: docker/build-push-action@master
+              uses: docker/build-push-action@v6.7.0
               with:
                   context: ./App
                   push: true
@@ -46,8 +48,9 @@ jobs:
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  provenance: false
             - name: Generate artifact attestation for App
-              uses: actions/attest-build-provenance@v1
+              uses: actions/attest-build-provenance@v1.4.2
               with:
                   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
                   subject-digest: ${{ steps.push.outputs.digest }}
@@ -62,17 +65,19 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@master
+              uses: docker/setup-buildx-action@v3.6.1
             - name: Log in to the Container registry
-              uses: docker/login-action@master
+              uses: docker/login-action@v3.3.0
               with:
                   registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.TOKEN_KEY_GITHUB }}
             - name: Extract metadata (tags, labels) for Docker
               id: meta
-              uses: docker/metadata-action@master
+              uses: docker/metadata-action@v5.5.1
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
                   tags: |
@@ -80,7 +85,7 @@ jobs:
                       type=raw,value=dev-{{date 'YYYYMMDD'}},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             - name: Build and push Video Generator Docker image
               id: push
-              uses: docker/build-push-action@master
+              uses: docker/build-push-action@v6.7.0
               with:
                   context: ./VideoGenerator
                   push: true
@@ -89,8 +94,9 @@ jobs:
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  provenance: false
             - name: Generate artifact attestation for Video Generator
-              uses: actions/attest-build-provenance@main
+              uses: actions/attest-build-provenance@v1.4.2
               with:
                   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}
@@ -105,17 +111,19 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@master
+              uses: docker/setup-buildx-action@v3.6.1
             - name: Log in to the Container registry
-              uses: docker/login-action@master
+              uses: docker/login-action@v3.3.0
               with:
                   registry: ${{ env.REGISTRY }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.TOKEN_KEY_GITHUB }}
             - name: Extract metadata (tags, labels) for Docker
               id: meta
-              uses: docker/metadata-action@master
+              uses: docker/metadata-action@v5.5.1
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   tags: |
@@ -123,7 +131,7 @@ jobs:
                       type=raw,value=dev-{{date 'YYYYMMDD'}},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
             - name: Build and push Voice Generator Docker image
               id: push
-              uses: docker/build-push-action@master
+              uses: docker/build-push-action@v6.7.0
               with:
                   context: ./VoiceGenerator
                   push: true
@@ -132,8 +140,9 @@ jobs:
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  provenance: false
             - name: Generate artifact attestation for Voice Generator
-              uses: actions/attest-build-provenance@main
+              uses: actions/attest-build-provenance@v1.4.2
               with:
                   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}

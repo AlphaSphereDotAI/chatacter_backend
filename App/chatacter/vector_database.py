@@ -1,6 +1,5 @@
 from typing import Any, List
 
-from chatacter.settings import Settings, load_settings
 from pydantic import StrictStr
 from qdrant_client import QdrantClient
 from qdrant_client.fastembed_common import QueryResponse
@@ -13,8 +12,6 @@ from unstructured.cleaners.core import (
 )
 from unstructured.documents.elements import Element
 from unstructured.partition.auto import partition
-
-settings: Settings = load_settings()
 
 client = QdrantClient(host="localhost", port=6333)
 

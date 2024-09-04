@@ -1,8 +1,12 @@
 FROM ghcr.io/prefix-dev/pixi:jammy-cuda-12.3.1
 
 SHELL ["/bin/bash", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive
+
 WORKDIR /app
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    UV_NO_CACHE=true \
+    PATH="/root/.pixi/bin:${PATH}"
 
 RUN apt-get update && \
     apt-get full-upgrade -y && \
@@ -10,17 +14,16 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pixi init && \
-    pixi add python==3.10 pip && \
-    pixi project channel add pytorch nvidia conda-forge && \
-    pixi run pip install --upgrade pip setuptools wheel && \
-    pixi run pip install -v --no-cache-dir -r requirements.txt
+COPY pyproject.toml .
 
-RUN pixi run huggingface-cli download suno/bark-small
+RUN pixi global install uv && \
+    uv python install 3.11 && \
+    uv lock --upgrade && \
+    uv sync && \
+    uv run huggingface-cli download suno/bark-small
 
 COPY . .
 
 EXPOSE 8001
 
-CMD ["pixi", "run", "fastapi", "dev", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uv", "run", "fastapi", "dev", "--host", "0.0.0.0", "--port", "8001"]
