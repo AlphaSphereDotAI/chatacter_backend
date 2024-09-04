@@ -48,6 +48,7 @@ jobs:
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  provenance: false
             - name: Generate artifact attestation for App
               uses: actions/attest-build-provenance@v1.4.2
               with:
@@ -93,6 +94,7 @@ jobs:
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  provenance: false
             - name: Generate artifact attestation for Video Generator
               uses: actions/attest-build-provenance@v1.4.2
               with:
@@ -138,6 +140,7 @@ jobs:
                   github-token: ${{ secrets.TOKEN_KEY_GITHUB }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  provenance: false
             - name: Generate artifact attestation for Voice Generator
               uses: actions/attest-build-provenance@v1.4.2
               with:
