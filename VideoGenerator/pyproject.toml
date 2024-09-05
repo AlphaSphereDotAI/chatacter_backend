@@ -25,5 +25,5 @@ dependencies = [
     "yacs>=0.1.8",
 ]
 
-[tool.uv]
-extra-index-url = ["https://download.pytorch.org/whl/cu113"]
+# [tool.uv]
+# extra-index-url = ["https://download.pytorch.org/whl/cu113"]

@@ -30,6 +30,7 @@ COPY pyproject.toml .
 
 RUN pixi global install uv && \
     uv python install 3.9 && \
+    uv lock --upgrade && \
     uv sync
 
 COPY . .
