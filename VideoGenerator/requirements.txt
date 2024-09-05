@@ -1,3 +1,0 @@
-resampy==0.4.3
-torchaudio==0.12.1+cu113
-zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
