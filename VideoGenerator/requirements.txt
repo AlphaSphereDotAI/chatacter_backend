@@ -1,2 +1,0 @@
-resampy==0.4.3
-torchaudio==0.12.1+cu113
