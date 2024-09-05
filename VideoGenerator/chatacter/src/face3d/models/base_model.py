@@ -1,10 +1,11 @@
-"""This script defines the base network model for Deep3DFaceRecon_pytorch
-"""
+"""This script defines the base network model for Deep3DFaceRecon_pytorch"""
 
 import os
-import torch
-from collections import OrderedDict
 from abc import ABC, abstractmethod
+from collections import OrderedDict
+
+import torch
+
 from . import networks
 
 
@@ -35,7 +36,8 @@ class BaseModel(ABC):
         self.opt = opt
         self.isTrain = False
         self.device = torch.device("cpu")
-        self.save_dir = " " # os.path.join(opt.checkpoints_dir, opt.name)  # save all the checkpoints to save_dir
+        # os.path.join(opt.checkpoints_dir, opt.name)  # save all the checkpoints to save_dir
+        self.save_dir = " "
         self.loss_names = []
         self.model_names = []
         self.visual_names = []
@@ -49,10 +51,13 @@ class BaseModel(ABC):
         saved_dict = dict()
 
         def hook_gen(name):
+
             def grad_hook(grad):
                 saved_vals = add_func(grad)
                 saved_dict[name] = saved_vals
+
             return grad_hook
+
         return hook_gen, saved_dict
 
     @staticmethod
@@ -94,12 +99,13 @@ class BaseModel(ABC):
             opt (Option class) -- stores all the experiment flags; needs to be a subclass of BaseOptions
         """
         if self.isTrain:
-            self.schedulers = [networks.get_scheduler(optimizer, opt) for optimizer in self.optimizers]
+            self.schedulers = [
+                networks.get_scheduler(optimizer, opt) for optimizer in self.optimizers
+            ]
 
         if not self.isTrain or opt.continue_train:
             load_suffix = opt.epoch
             self.load_networks(load_suffix)
-
 
         # self.print_networks(opt.verbose)
 
@@ -115,9 +121,16 @@ class BaseModel(ABC):
                     module = getattr(self, name)
                     if convert_sync_batchnorm:
                         module = torch.nn.SyncBatchNorm.convert_sync_batchnorm(module)
-                    setattr(self, name, torch.nn.parallel.DistributedDataParallel(module.to(self.device),
-                        device_ids=[self.device.index],
-                        find_unused_parameters=True, broadcast_buffers=True))
+                    setattr(
+                        self,
+                        name,
+                        torch.nn.parallel.DistributedDataParallel(
+                            module.to(self.device),
+                            device_ids=[self.device.index],
+                            find_unused_parameters=True,
+                            broadcast_buffers=True,
+                        ),
+                    )
 
             # DistributedDataParallel is not needed when a module doesn't have any parameter that requires a gradient.
             for name in self.parallel_names:
@@ -166,8 +179,8 @@ class BaseModel(ABC):
         pass
 
     def get_image_paths(self, name="A"):
-        """ Return image paths that are used to load current data"""
-        return self.image_paths if name =="A" else self.image_paths_B
+        """Return image paths that are used to load current data"""
+        return self.image_paths if name == "A" else self.image_paths_B
 
     def update_learning_rate(self):
         """Update learning rates for all the networks; called at the end of every epoch"""
@@ -193,7 +206,9 @@ class BaseModel(ABC):
         errors_ret = OrderedDict()
         for name in self.loss_names:
             if isinstance(name, str):
-                errors_ret[name] = float(getattr(self, "loss_" + name))  # float(...) works for both scalar tensor and float number
+                errors_ret[name] = float(
+                    getattr(self, "loss_" + name)
+                )  # float(...) works for both scalar tensor and float number
         return errors_ret
 
     def save_networks(self, epoch):
@@ -212,17 +227,17 @@ class BaseModel(ABC):
         for name in self.model_names:
             if isinstance(name, str):
                 net = getattr(self, name)
-                if isinstance(net, torch.nn.DataParallel) or isinstance(net,
-                        torch.nn.parallel.DistributedDataParallel):
+                if isinstance(net, torch.nn.DataParallel) or isinstance(
+                    net, torch.nn.parallel.DistributedDataParallel
+                ):
                     net = net.module
                 save_dict[name] = net.state_dict()
 
-
         for i, optim in enumerate(self.optimizers):
-            save_dict["opt_%02d"%i] = optim.state_dict()
+            save_dict["opt_%02d" % i] = optim.state_dict()
 
         for i, sched in enumerate(self.schedulers):
-            save_dict["sched_%02d"%i] = sched.state_dict()
+            save_dict["sched_%02d" % i] = sched.state_dict()
 
         torch.save(save_dict, save_path)
 
@@ -230,15 +245,19 @@ class BaseModel(ABC):
         """Fix InstanceNorm checkpoints incompatibility (prior to 0.4)"""
         key = keys[i]
         if i + 1 == len(keys):  # at the end, pointing to a parameter/buffer
-            if module.__class__.__name__.startswith("InstanceNorm") and \
-                    (key == "running_mean" or key == "running_var"):
+            if module.__class__.__name__.startswith("InstanceNorm") and (
+                key == "running_mean" or key == "running_var"
+            ):
                 if getattr(module, key) is None:
                     state_dict.pop(".".join(keys))
-            if module.__class__.__name__.startswith("InstanceNorm") and \
-               (key == "num_batches_tracked"):
+            if module.__class__.__name__.startswith("InstanceNorm") and (
+                key == "num_batches_tracked"
+            ):
                 state_dict.pop(".".join(keys))
         else:
-            self.__patch_instance_norm_state_dict(state_dict, getattr(module, key), keys, i + 1)
+            self.__patch_instance_norm_state_dict(
+                state_dict, getattr(module, key), keys, i + 1
+            )
 
     def load_networks(self, epoch):
         """Load all the networks from the disk.
@@ -266,19 +285,18 @@ class BaseModel(ABC):
             if self.opt.continue_train:
                 print("loading the optim from %s" % load_path)
                 for i, optim in enumerate(self.optimizers):
-                    optim.load_state_dict(state_dict["opt_%02d"%i])
+                    optim.load_state_dict(state_dict["opt_%02d" % i])
 
                 try:
                     print("loading the sched from %s" % load_path)
                     for i, sched in enumerate(self.schedulers):
-                        sched.load_state_dict(state_dict["sched_%02d"%i])
+                        sched.load_state_dict(state_dict["sched_%02d" % i])
                 except:
-                    print("Failed to load schedulers, set schedulers according to epoch count manually")
+                    print(
+                        "Failed to load schedulers, set schedulers according to epoch count manually"
+                    )
                     for i, sched in enumerate(self.schedulers):
                         sched.last_epoch = self.opt.epoch_count - 1
-
-
-
 
     def print_networks(self, verbose):
         """Print the total number of parameters in the network and (if verbose) network architecture
@@ -295,7 +313,10 @@ class BaseModel(ABC):
                     num_params += param.numel()
                 if verbose:
                     print(net)
-                print("[Network %s] Total number of parameters : %.3f M" % (name, num_params / 1e6))
+                print(
+                    "[Network %s] Total number of parameters : %.3f M"
+                    % (name, num_params / 1e6)
+                )
         print("-----------------------------------------------")
 
     def set_requires_grad(self, nets, requires_grad=False):

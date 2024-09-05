@@ -11,6 +11,7 @@ from torchvision import transforms
 
 
 class BackgroundGenerator(threading.Thread):
+
     def __init__(self, generator, local_rank, max_prefetch=6):
         super(BackgroundGenerator, self).__init__()
         self.queue = Queue.Queue(max_prefetch)
@@ -57,7 +58,9 @@ class DataLoaderX(DataLoader):
             return None
         with torch.cuda.stream(self.stream):
             for k in range(len(self.batch)):
-                self.batch[k] = self.batch[k].to(device=self.local_rank, non_blocking=True)
+                self.batch[k] = self.batch[k].to(
+                    device=self.local_rank, non_blocking=True
+                )
 
     def __next__(self):
         torch.cuda.current_stream().wait_stream(self.stream)
@@ -69,14 +72,17 @@ class DataLoaderX(DataLoader):
 
 
 class MXFaceDataset(Dataset):
+
     def __init__(self, root_dir, local_rank):
         super(MXFaceDataset, self).__init__()
         self.transform = transforms.Compose(
-            [transforms.ToPILImage(),
-             transforms.RandomHorizontalFlip(),
-             transforms.ToTensor(),
-             transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
-             ])
+            [
+                transforms.ToPILImage(),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+            ]
+        )
         self.root_dir = root_dir
         self.local_rank = local_rank
         path_imgrec = os.path.join(root_dir, "train.rec")
@@ -108,6 +114,7 @@ class MXFaceDataset(Dataset):
 
 
 class SyntheticDataset(Dataset):
+
     def __init__(self, local_rank):
         super(SyntheticDataset, self).__init__()
         img = np.random.randint(0, 255, size=(112, 112, 3), dtype=np.int32)

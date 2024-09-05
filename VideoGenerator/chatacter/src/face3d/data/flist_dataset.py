@@ -1,14 +1,20 @@
-"""This script defines the custom dataset for Deep3DFaceRecon_pytorch
-"""
+"""This script defines the custom dataset for Deep3DFaceRecon_pytorch"""
 
-import os.path
-from data.base_dataset import BaseDataset, get_transform, get_affine_mat, apply_img_affine, apply_lm_affine
-from PIL import Image
-import numpy as np
 import json
+import os.path
+
+import numpy as np
 import torch
-from util.preprocess import align_img, estimate_norm
+from data.base_dataset import (
+    BaseDataset,
+    apply_img_affine,
+    apply_lm_affine,
+    get_affine_mat,
+    get_transform,
+)
+from PIL import Image
 from util.load_mats import load_lm3d
+from util.preprocess import align_img, estimate_norm
 
 
 def default_flist_reader(flist):
@@ -23,10 +29,12 @@ def default_flist_reader(flist):
 
     return imlist
 
+
 def jason_flist_reader(flist):
     with open(flist, "r") as fp:
         info = json.load(fp)
     return info
+
 
 def parse_label(label):
     return torch.tensor(np.array(label).astype(np.float32))
@@ -58,7 +66,6 @@ class FlistDataset(BaseDataset):
         if "_" in opt.flist:
             self.name += "_" + opt.flist.split(os.sep)[-1].split("_")[0]
 
-
     def __getitem__(self, index):
         """Return a data point and its metadata information.
 
@@ -72,9 +79,13 @@ class FlistDataset(BaseDataset):
             im_paths (str)     -- image paths
             aug_flag (bool)    -- a flag used to tell whether its raw or augmented
         """
-        msk_path = self.msk_paths[index % self.size]  # make sure index is within then range
+        msk_path = self.msk_paths[
+            index % self.size
+        ]  # make sure index is within then range
         img_path = msk_path.replace("mask/", "")
-        lm_path = ".".join(msk_path.replace("mask", "landmarks").split(".")[:-1]) + ".txt"
+        lm_path = (
+            ".".join(msk_path.replace("mask", "landmarks").split(".")[:-1]) + ".txt"
+        )
 
         raw_img = Image.open(img_path).convert("RGB")
         raw_msk = Image.open(msk_path).convert("RGB")
@@ -94,14 +105,15 @@ class FlistDataset(BaseDataset):
         lm_tensor = parse_label(lm)
         M_tensor = parse_label(M)
 
-
-        return {"imgs": img_tensor,
-                "lms": lm_tensor,
-                "msks": msk_tensor,
-                "M": M_tensor,
-                "im_paths": img_path,
-                "aug_flag": aug_flag,
-                "dataset": self.name}
+        return {
+            "imgs": img_tensor,
+            "lms": lm_tensor,
+            "msks": msk_tensor,
+            "M": M_tensor,
+            "im_paths": img_path,
+            "aug_flag": aug_flag,
+            "dataset": self.name,
+        }
 
     def _augmentation(self, img, lm, opt, msk=None):
         affine, affine_inv, flip = get_affine_mat(opt, img.size)
@@ -111,10 +123,6 @@ class FlistDataset(BaseDataset):
             msk = apply_img_affine(msk, affine_inv, method=Image.BILINEAR)
         return img, lm, msk
 
-
-
-
     def __len__(self):
-        """Return the total number of images in the dataset.
-        """
+        """Return the total number of images in the dataset."""
         return self.size

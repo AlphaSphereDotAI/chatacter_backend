@@ -1,21 +1,25 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from kornia.geometry import warp_affine
 import torch.nn.functional as F
+from kornia.geometry import warp_affine
+
 
 def resize_n_crop(image, M, dsize=112):
     # image: (b, c, h, w)
     # M   :  (b, 2, 3)
     return warp_affine(image, M, dsize=(dsize, dsize), align_corners=True)
 
-### perceptual level loss
+
+# perceptual level loss
 class PerceptualLoss(nn.Module):
+
     def __init__(self, recog_net, input_size=112):
         super(PerceptualLoss, self).__init__()
         self.recog_net = recog_net
         self.preprocess = lambda x: 2 * x - 1
-        self.input_size=input_size
+        self.input_size = input_size
+
     def forward(imageA, imageB, M):
         """
         1 - cosine distance
@@ -36,22 +40,29 @@ class PerceptualLoss(nn.Module):
         # assert torch.sum((cosine_d > 1).float()) == 0
         return torch.sum(1 - cosine_d) / cosine_d.shape[0]
 
+
 def perceptual_loss(id_featureA, id_featureB):
     cosine_d = torch.sum(id_featureA * id_featureB, dim=-1)
-        # assert torch.sum((cosine_d > 1).float()) == 0
+    # assert torch.sum((cosine_d > 1).float()) == 0
     return torch.sum(1 - cosine_d) / cosine_d.shape[0]
 
-### image level loss
+
+# image level loss
 def photo_loss(imageA, imageB, mask, eps=1e-6):
     """
     l2 norm (with sqrt, to ensure backward stabililty, use eps, otherwise Nan may occur)
     Parameters:
-        imageA       --torch.tensor (B, 3, H, W), range (0, 1), RGB order 
+        imageA       --torch.tensor (B, 3, H, W), range (0, 1), RGB order
         imageB       --same as imageA
     """
-    loss = torch.sqrt(eps + torch.sum((imageA - imageB) ** 2, dim=1, keepdims=True)) * mask
-    loss = torch.sum(loss) / torch.max(torch.sum(mask), torch.tensor(1.0).to(mask.device))
+    loss = (
+        torch.sqrt(eps + torch.sum((imageA - imageB) ** 2, dim=1, keepdims=True)) * mask
+    )
+    loss = torch.sum(loss) / torch.max(
+        torch.sum(mask), torch.tensor(1.0).to(mask.device)
+    )
     return loss
+
 
 def landmark_loss(predict_lm, gt_lm, weight=None):
     """
@@ -67,12 +78,12 @@ def landmark_loss(predict_lm, gt_lm, weight=None):
         weight[-8:] = 20
         weight = np.expand_dims(weight, 0)
         weight = torch.tensor(weight).to(predict_lm.device)
-    loss = torch.sum((predict_lm - gt_lm)**2, dim=-1) * weight
+    loss = torch.sum((predict_lm - gt_lm) ** 2, dim=-1) * weight
     loss = torch.sum(loss) / (predict_lm.shape[0] * predict_lm.shape[1])
     return loss
 
 
-### regulization
+# regulization
 def reg_loss(coeffs_dict, opt=None):
     """
     l2 norm without the sqrt, from yu's implementation (mse)
@@ -86,9 +97,11 @@ def reg_loss(coeffs_dict, opt=None):
         w_id, w_exp, w_tex = opt.w_id, opt.w_exp, opt.w_tex
     else:
         w_id, w_exp, w_tex = 1, 1, 1, 1
-    creg_loss = w_id * torch.sum(coeffs_dict["id"] ** 2) +  \
-           w_exp * torch.sum(coeffs_dict["exp"] ** 2) + \
-           w_tex * torch.sum(coeffs_dict["tex"] ** 2)
+    creg_loss = (
+        w_id * torch.sum(coeffs_dict["id"] ** 2)
+        + w_exp * torch.sum(coeffs_dict["exp"] ** 2)
+        + w_tex * torch.sum(coeffs_dict["tex"] ** 2)
+    )
     creg_loss = creg_loss / coeffs_dict["id"].shape[0]
 
     # gamma regularization to ensure a nearly-monochromatic light
@@ -97,6 +110,7 @@ def reg_loss(coeffs_dict, opt=None):
     gamma_loss = torch.mean((gamma - gamma_mean) ** 2)
 
     return creg_loss, gamma_loss
+
 
 def reflectance_loss(texture, mask):
     """
@@ -108,6 +122,7 @@ def reflectance_loss(texture, mask):
     """
     mask = mask.reshape([1, mask.shape[0], 1])
     texture_mean = torch.sum(mask * texture, dim=1, keepdims=True) / torch.sum(mask)
-    loss = torch.sum(((texture - texture_mean) * mask)**2) / (texture.shape[0] * torch.sum(mask))
+    loss = torch.sum(((texture - texture_mean) * mask) ** 2) / (
+        texture.shape[0] * torch.sum(mask)
+    )
     return loss
-
