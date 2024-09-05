@@ -1,11 +1,13 @@
-"""This script defines the visualizer for Deep3DFaceRecon_pytorch
-"""
+"""This script defines the visualizer for Deep3DFaceRecon_pytorch"""
 
-import os
 import ntpath
+import os
 import time
-from . import util, html
+
 from torch.utils.tensorboard import SummaryWriter
+
+from . import html, util
+
 
 def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
     """Save images to the disk.
@@ -38,7 +40,7 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
     webpage.add_images(ims, txts, links, width=width)
 
 
-class Visualizer():
+class Visualizer:
     """This class includes several functions that can display/save images and print/save logging information.
 
     It uses a Python library tensprboardX for display, and a Python library 'dominate' (wrapped in 'HTML') for creating HTML files with images.
@@ -60,7 +62,9 @@ class Visualizer():
         self.win_size = opt.display_winsize
         self.name = opt.name
         self.saved = False
-        if self.use_html:  # create an HTML object at <checkpoints_dir>/web/; images will be saved under <checkpoints_dir>/web/images/
+        if (
+            self.use_html
+        ):  # create an HTML object at <checkpoints_dir>/web/; images will be saved under <checkpoints_dir>/web/images/
             self.web_dir = os.path.join(opt.checkpoints_dir, opt.name, "web")
             self.img_dir = os.path.join(self.web_dir, "images")
             print("create web directory %s..." % self.web_dir)
@@ -69,12 +73,13 @@ class Visualizer():
         self.log_name = os.path.join(opt.checkpoints_dir, opt.name, "loss_log.txt")
         with open(self.log_name, "a") as log_file:
             now = time.strftime("%c")
-            log_file.write("================ Training Loss (%s) ================\n" % now)
+            log_file.write(
+                "================ Training Loss (%s) ================\n" % now
+            )
 
     def reset(self):
         """Reset the self.saved status"""
         self.saved = False
-
 
     def display_current_results(self, visuals, total_iters, epoch, save_result):
         """Display current results on tensorboad; save current results to an HTML file.
@@ -86,18 +91,25 @@ class Visualizer():
             save_result (bool) - - if save the current results to an HTML file
         """
         for label, image in visuals.items():
-            self.writer.add_image(label, util.tensor2im(image), total_iters, dataformats="HWC")
+            self.writer.add_image(
+                label, util.tensor2im(image), total_iters, dataformats="HWC"
+            )
 
-        if self.use_html and (save_result or not self.saved):  # save images to an HTML file if they haven't been saved.
+        # save images to an HTML file if they haven't been saved.
+        if self.use_html and (save_result or not self.saved):
             self.saved = True
             # save images to the disk
             for label, image in visuals.items():
                 image_numpy = util.tensor2im(image)
-                img_path = os.path.join(self.img_dir, "epoch%.3d_%s.png" % (epoch, label))
+                img_path = os.path.join(
+                    self.img_dir, "epoch%.3d_%s.png" % (epoch, label)
+                )
                 util.save_image(image_numpy, img_path)
 
             # update website
-            webpage = html.HTML(self.web_dir, "Experiment name = %s" % self.name, refresh=0)
+            webpage = html.HTML(
+                self.web_dir, "Experiment name = %s" % self.name, refresh=0
+            )
             for n in range(epoch, 0, -1):
                 webpage.add_header("epoch [%d]" % n)
                 ims, txts, links = [], [], []
@@ -135,7 +147,12 @@ class Visualizer():
             t_comp (float) -- computational time per data point (normalized by batch_size)
             t_data (float) -- data loading time per data point (normalized by batch_size)
         """
-        message = "(epoch: %d, iters: %d, time: %.3f, data: %.3f) " % (epoch, iters, t_comp, t_data)
+        message = "(epoch: %d, iters: %d, time: %.3f, data: %.3f) " % (
+            epoch,
+            iters,
+            t_comp,
+            t_data,
+        )
         for k, v in losses.items():
             message += "%s: %.3f " % (k, v)
 
@@ -145,6 +162,7 @@ class Visualizer():
 
 
 class MyVisualizer:
+
     def __init__(self, opt):
         """Initialize the Visualizer class
 
@@ -160,16 +178,28 @@ class MyVisualizer:
         self.img_dir = os.path.join(opt.checkpoints_dir, opt.name, "results")
 
         if opt.phase != "test":
-            self.writer = SummaryWriter(os.path.join(opt.checkpoints_dir, opt.name, "logs"))
+            self.writer = SummaryWriter(
+                os.path.join(opt.checkpoints_dir, opt.name, "logs")
+            )
             # create a logging file to store training losses
             self.log_name = os.path.join(opt.checkpoints_dir, opt.name, "loss_log.txt")
             with open(self.log_name, "a") as log_file:
                 now = time.strftime("%c")
-                log_file.write("================ Training Loss (%s) ================\n" % now)
+                log_file.write(
+                    "================ Training Loss (%s) ================\n" % now
+                )
 
-
-    def display_current_results(self, visuals, total_iters, epoch, dataset="train", save_results=False, count=0, name=None,
-            add_image=True):
+    def display_current_results(
+        self,
+        visuals,
+        total_iters,
+        epoch,
+        dataset="train",
+        save_results=False,
+        count=0,
+        name=None,
+        add_image=True,
+    ):
         """Display current results on tensorboad; save current results to an HTML file.
 
         Parameters:
@@ -184,27 +214,36 @@ class MyVisualizer:
             for i in range(image.shape[0]):
                 image_numpy = util.tensor2im(image[i])
                 if add_image:
-                    self.writer.add_image(label + "%s_%02d"%(dataset, i + count),
-                            image_numpy, total_iters, dataformats="HWC")
+                    self.writer.add_image(
+                        label + "%s_%02d" % (dataset, i + count),
+                        image_numpy,
+                        total_iters,
+                        dataformats="HWC",
+                    )
 
                 if save_results:
-                    save_path = os.path.join(self.img_dir, dataset, "epoch_%s_%06d"%(epoch, total_iters))
+                    save_path = os.path.join(
+                        self.img_dir, dataset, "epoch_%s_%06d" % (epoch, total_iters)
+                    )
                     if not os.path.isdir(save_path):
                         os.makedirs(save_path)
 
                     if name is not None:
                         img_path = os.path.join(save_path, "%s.png" % name)
                     else:
-                        img_path = os.path.join(save_path, "%s_%03d.png" % (label, i + count))
+                        img_path = os.path.join(
+                            save_path, "%s_%03d.png" % (label, i + count)
+                        )
                     util.save_image(image_numpy, img_path)
-
 
     def plot_current_losses(self, total_iters, losses, dataset="train"):
         for name, value in losses.items():
-            self.writer.add_scalar(name + "/%s"%dataset, value, total_iters)
+            self.writer.add_scalar(name + "/%s" % dataset, value, total_iters)
 
     # losses: same format as |losses| of plot_current_losses
-    def print_current_losses(self, epoch, iters, losses, t_comp, t_data, dataset="train"):
+    def print_current_losses(
+        self, epoch, iters, losses, t_comp, t_data, dataset="train"
+    ):
         """print current losses on console; also save the losses to the disk
 
         Parameters:
@@ -215,7 +254,12 @@ class MyVisualizer:
             t_data (float) -- data loading time per data point (normalized by batch_size)
         """
         message = "(dataset: %s, epoch: %d, iters: %d, time: %.3f, data: %.3f) " % (
-            dataset, epoch, iters, t_comp, t_data)
+            dataset,
+            epoch,
+            iters,
+            t_comp,
+            t_data,
+        )
         for k, v in losses.items():
             message += "%s: %.3f " % (k, v)
 

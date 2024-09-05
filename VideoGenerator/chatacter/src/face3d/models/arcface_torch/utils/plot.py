@@ -7,12 +7,10 @@ import numpy as np
 import pandas as pd
 from menpo.visualize.viewmatplotlib import sample_colours_from_colourmap
 from prettytable import PrettyTable
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import auc, roc_curve
 
 image_path = "/data/anxiang/IJB_release/IJBC"
-files = [
-        "./ms1mv3_arcface_r100/ms1mv3_arcface_r100/ijbc.npy"
-]
+files = ["./ms1mv3_arcface_r100/ms1mv3_arcface_r100/ijbc.npy"]
 
 
 def read_template_pair_list(path):
@@ -24,8 +22,8 @@ def read_template_pair_list(path):
 
 
 p1, p2, label = read_template_pair_list(
-    os.path.join("%s/meta" % image_path,
-                 "%s_template_pair_label.txt" % "ijbc"))
+    os.path.join("%s/meta" % image_path, "%s_template_pair_label.txt" % "ijbc")
+)
 
 methods = []
 scores = []
@@ -36,8 +34,9 @@ for file in files:
 methods = np.array(methods)
 scores = dict(zip(methods, scores, strict=False))
 colours = dict(
-    zip(methods, sample_colours_from_colourmap(methods.shape[0], "Set2"), strict=False))
-x_labels = [10 ** -6, 10 ** -5, 10 ** -4, 10 ** -3, 10 ** -2, 10 ** -1]
+    zip(methods, sample_colours_from_colourmap(methods.shape[0], "Set2"), strict=False)
+)
+x_labels = [10**-6, 10**-5, 10**-4, 10**-3, 10**-2, 10**-1]
 tpr_fpr_table = PrettyTable(["Methods"] + [str(x) for x in x_labels])
 fig = plt.figure()
 for method in methods:
@@ -45,20 +44,22 @@ for method in methods:
     roc_auc = auc(fpr, tpr)
     fpr = np.flipud(fpr)
     tpr = np.flipud(tpr)  # select largest tpr at same fpr
-    plt.plot(fpr,
-             tpr,
-             color=colours[method],
-             lw=1,
-             label=("[%s (AUC = %0.4f %%)]" %
-                    (method.split("-")[-1], roc_auc * 100)))
+    plt.plot(
+        fpr,
+        tpr,
+        color=colours[method],
+        lw=1,
+        label=("[%s (AUC = %0.4f %%)]" % (method.split("-")[-1], roc_auc * 100)),
+    )
     tpr_fpr_row = []
     tpr_fpr_row.append("%s-%s" % (method, "IJBC"))
     for fpr_iter in np.arange(len(x_labels)):
         _, min_index = min(
-            list(zip(abs(fpr - x_labels[fpr_iter]), range(len(fpr)), strict=False)))
+            list(zip(abs(fpr - x_labels[fpr_iter]), range(len(fpr)), strict=False))
+        )
         tpr_fpr_row.append("%.2f" % (tpr[min_index] * 100))
     tpr_fpr_table.add_row(tpr_fpr_row)
-plt.xlim([10 ** -6, 0.1])
+plt.xlim([10**-6, 0.1])
 plt.ylim([0.3, 1.0])
 plt.grid(linestyle="--", linewidth=1)
 plt.xticks(x_labels)

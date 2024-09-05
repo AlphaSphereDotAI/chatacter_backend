@@ -1,14 +1,14 @@
-"""This script contains base options for Deep3DFaceRecon_pytorch
-"""
+"""This script contains base options for Deep3DFaceRecon_pytorch"""
 
 import argparse
 import os
-from util import util
-import face3d.models as models
+
 import face3d.data as data
+import face3d.models as models
+from util import util
 
 
-class BaseOptions():
+class BaseOptions:
     """This class defines options used during both training and test time.
 
     It also implements several helper functions such as parsing, printing, and saving the options.
@@ -25,24 +25,91 @@ class BaseOptions():
     def initialize(self, parser):
         """Define the common options that are used in both training and test."""
         # basic parameters
-        parser.add_argument("--name", type=str, default="face_recon", help="name of the experiment. It decides where to store samples and models")
-        parser.add_argument("--gpu_ids", type=str, default="0", help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU")
-        parser.add_argument("--checkpoints_dir", type=str, default="./checkpoints", help="models are saved here")
-        parser.add_argument("--vis_batch_nums", type=float, default=1, help="batch nums of images for visulization")
-        parser.add_argument("--eval_batch_nums", type=float, default=float("inf"), help="batch nums of images for evaluation")
-        parser.add_argument("--use_ddp", type=util.str2bool, nargs="?", const=True, default=True, help="whether use distributed data parallel")
+        parser.add_argument(
+            "--name",
+            type=str,
+            default="face_recon",
+            help="name of the experiment. It decides where to store samples and models",
+        )
+        parser.add_argument(
+            "--gpu_ids",
+            type=str,
+            default="0",
+            help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU",
+        )
+        parser.add_argument(
+            "--checkpoints_dir",
+            type=str,
+            default="./checkpoints",
+            help="models are saved here",
+        )
+        parser.add_argument(
+            "--vis_batch_nums",
+            type=float,
+            default=1,
+            help="batch nums of images for visulization",
+        )
+        parser.add_argument(
+            "--eval_batch_nums",
+            type=float,
+            default=float("inf"),
+            help="batch nums of images for evaluation",
+        )
+        parser.add_argument(
+            "--use_ddp",
+            type=util.str2bool,
+            nargs="?",
+            const=True,
+            default=True,
+            help="whether use distributed data parallel",
+        )
         parser.add_argument("--ddp_port", type=str, default="12355", help="ddp port")
-        parser.add_argument("--display_per_batch", type=util.str2bool, nargs="?", const=True, default=True, help="whether use batch to show losses")
-        parser.add_argument("--add_image", type=util.str2bool, nargs="?", const=True, default=True, help="whether add image to tensorboard")
-        parser.add_argument("--world_size", type=int, default=1, help="batch nums of images for evaluation")
+        parser.add_argument(
+            "--display_per_batch",
+            type=util.str2bool,
+            nargs="?",
+            const=True,
+            default=True,
+            help="whether use batch to show losses",
+        )
+        parser.add_argument(
+            "--add_image",
+            type=util.str2bool,
+            nargs="?",
+            const=True,
+            default=True,
+            help="whether add image to tensorboard",
+        )
+        parser.add_argument(
+            "--world_size",
+            type=int,
+            default=1,
+            help="batch nums of images for evaluation",
+        )
 
         # model parameters
-        parser.add_argument("--model", type=str, default="facerecon", help="chooses which model to use.")
+        parser.add_argument(
+            "--model", type=str, default="facerecon", help="chooses which model to use."
+        )
 
         # additional parameters
-        parser.add_argument("--epoch", type=str, default="latest", help="which epoch to load? set to latest to use latest cached model")
-        parser.add_argument("--verbose", action="store_true", help="if specified, print more debugging information")
-        parser.add_argument("--suffix", default="", type=str, help="customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}")
+        parser.add_argument(
+            "--epoch",
+            type=str,
+            default="latest",
+            help="which epoch to load? set to latest to use latest cached model",
+        )
+        parser.add_argument(
+            "--verbose",
+            action="store_true",
+            help="if specified, print more debugging information",
+        )
+        parser.add_argument(
+            "--suffix",
+            default="",
+            type=str,
+            help="customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}",
+        )
 
         self.initialized = True
         return parser
@@ -54,7 +121,9 @@ class BaseOptions():
         in model and dataset classes.
         """
         if not self.initialized:  # check if it has been initialized
-            parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+            parser = argparse.ArgumentParser(
+                formatter_class=argparse.ArgumentDefaultsHelpFormatter
+            )
             parser = self.initialize(parser)
 
         # get the basic options
@@ -73,7 +142,8 @@ class BaseOptions():
         if self.cmd_line is None:
             opt, _ = parser.parse_known_args()  # parse again with new defaults
         else:
-            opt, _ = parser.parse_known_args(self.cmd_line)  # parse again with new defaults
+            # parse again with new defaults
+            opt, _ = parser.parse_known_args(self.cmd_line)
 
         # modify dataset-related parser options
         if opt.dataset_mode:
@@ -120,13 +190,12 @@ class BaseOptions():
     def parse(self):
         """Parse our options, create checkpoints directory suffix, and set up gpu device."""
         opt = self.gather_options()
-        opt.isTrain = self.isTrain   # train or test
+        opt.isTrain = self.isTrain  # train or test
 
         # process opt.suffix
         if opt.suffix:
             suffix = ("_" + opt.suffix.format(**vars(opt))) if opt.suffix != "" else ""
             opt.name = opt.name + suffix
-
 
         # set gpu ids
         str_ids = opt.gpu_ids.split(",")
@@ -150,17 +219,20 @@ class BaseOptions():
             if os.path.isdir(model_dir):
                 model_pths = [i for i in os.listdir(model_dir) if i.endswith("pth")]
                 if os.path.isdir(model_dir) and len(model_pths) != 0:
-                    opt.continue_train= True
+                    opt.continue_train = True
 
             # update the latest epoch count
             if opt.continue_train:
                 if opt.epoch == "latest":
-                    epoch_counts = [int(i.split(".")[0].split("_")[-1]) for i in model_pths if "latest" not in i]
+                    epoch_counts = [
+                        int(i.split(".")[0].split("_")[-1])
+                        for i in model_pths
+                        if "latest" not in i
+                    ]
                     if len(epoch_counts) != 0:
                         opt.epoch_count = max(epoch_counts) + 1
                 else:
                     opt.epoch_count = int(opt.epoch) + 1
-
 
         self.print_options(opt)
         self.opt = opt
