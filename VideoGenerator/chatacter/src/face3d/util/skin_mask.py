@@ -19,7 +19,7 @@ class GMM:
         self.factor = [0]*num
         for i in range(self.num):
             self.factor[i] = (2*math.pi)**(self.dim/2) * self.cov_det[i]**0.5
-        
+
     def likelihood(self, data):
         assert(data.shape[1] == self.dim)
         N = data.shape[0]
@@ -35,7 +35,7 @@ class GMM:
             p = np.array([math.exp(power[j]) for j in range(N)])
             p = p/self.factor[i]
             lh += p*self.w[i]
-        
+
         return lh
 
 
@@ -109,16 +109,16 @@ def skinmask(imbgr):
 
 
 def get_skin_mask(img_path):
-    print('generating skin masks......')
+    print("generating skin masks......")
     names = [i for i in sorted(os.listdir(
-        img_path)) if 'jpg' in i or 'png' in i or 'jpeg' in i or 'PNG' in i]
-    save_path = os.path.join(img_path, 'mask')
+        img_path)) if "jpg" in i or "png" in i or "jpeg" in i or "PNG" in i]
+    save_path = os.path.join(img_path, "mask")
     if not os.path.isdir(save_path):
         os.makedirs(save_path)
-    
+
     for i in range(0, len(names)):
         name = names[i]
-        print('%05d' % (i), ' ', name)
+        print("%05d" % (i), " ", name)
         full_image_name = os.path.join(img_path, name)
         img = cv2.imread(full_image_name).astype(np.float32)
         skin_img = skinmask(img)

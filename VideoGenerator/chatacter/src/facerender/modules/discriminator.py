@@ -1,7 +1,5 @@
 from torch import nn
 import torch.nn.functional as F
-from facerender.modules.util import kp2gaussian
-import torch
 
 
 class DownBlock2d(nn.Module):
@@ -76,15 +74,15 @@ class MultiScaleDiscriminator(nn.Module):
         self.scales = scales
         discs = {}
         for scale in scales:
-            discs[str(scale).replace('.', '-')] = Discriminator(**kwargs)
+            discs[str(scale).replace(".", "-")] = Discriminator(**kwargs)
         self.discs = nn.ModuleDict(discs)
 
     def forward(self, x):
         out_dict = {}
         for scale, disc in self.discs.items():
-            scale = str(scale).replace('-', '.')
-            key = 'prediction_' + scale
+            scale = str(scale).replace("-", ".")
+            key = "prediction_" + scale
             feature_maps, prediction_map = disc(x[key])
-            out_dict['feature_maps_' + scale] = feature_maps
-            out_dict['prediction_map_' + scale] = prediction_map
+            out_dict["feature_maps_" + scale] = feature_maps
+            out_dict["prediction_map_" + scale] = prediction_map
         return out_dict

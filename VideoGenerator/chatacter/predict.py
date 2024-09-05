@@ -18,7 +18,7 @@ class Predictor(BasePredictor):
         """Load the model into memory to make running multiple predictions efficient"""
         device = "cuda"
 
-        
+
         sadtalker_paths = init_path(checkpoints,os.path.join("src","config"))
 
         # init model

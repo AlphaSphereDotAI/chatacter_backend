@@ -27,7 +27,7 @@ def find_dataset_using_name(dataset_name):
     datasetlib = importlib.import_module(dataset_filename)
 
     dataset = None
-    target_dataset_name = dataset_name.replace('_', '') + 'dataset'
+    target_dataset_name = dataset_name.replace("_", "") + "dataset"
     for name, cls in datasetlib.__dict__.items():
         if name.lower() == target_dataset_name.lower() \
            and issubclass(cls, BaseDataset):
@@ -84,8 +84,8 @@ class CustomDatasetDataLoader():
             self.dataloader = torch.utils.data.DataLoader(
                         self.dataset,
                         sampler=self.sampler,
-                        num_workers=int(opt.num_threads / world_size), 
-                        batch_size=int(opt.batch_size / world_size), 
+                        num_workers=int(opt.num_threads / world_size),
+                        batch_size=int(opt.batch_size / world_size),
                         drop_last=True)
         else:
             self.dataloader = torch.utils.data.DataLoader(

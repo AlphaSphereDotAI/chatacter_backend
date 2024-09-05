@@ -2,7 +2,6 @@ import time
 from typing import List
 
 from chatacter.crawler import crawl
-from chatacter.settings import Settings, load_settings
 from chatacter.vector_database import add_data, get_chunks, query_db
 from langchain.chains import LLMChain
 from langchain_core.prompts import ChatPromptTemplate

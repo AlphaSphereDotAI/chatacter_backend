@@ -14,12 +14,12 @@ import torchvision
 def str2bool(v):
     if isinstance(v, bool):
         return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+    if v.lower() in ("yes", "true", "t", "y", "1"):
         return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+    elif v.lower() in ("no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
 def copyconf(default_opt, **kwargs):
@@ -32,16 +32,16 @@ def genvalconf(train_opt, **kwargs):
     conf = Namespace(**vars(train_opt))
     attr_dict = train_opt.__dict__
     for key, value in attr_dict.items():
-        if 'val' in key and key.split('_')[0] in attr_dict:
-            setattr(conf, key.split('_')[0], value)
+        if "val" in key and key.split("_")[0] in attr_dict:
+            setattr(conf, key.split("_")[0], value)
 
     for key in kwargs:
         setattr(conf, key, kwargs[key])
 
     return conf
-        
+
 def find_class_in_module(target_cls_name, module):
-    target_cls_name = target_cls_name.replace('_', '').lower()
+    target_cls_name = target_cls_name.replace("_", "").lower()
     clslib = importlib.import_module(module)
     cls = None
     for name, clsobj in clslib.__dict__.items():
@@ -74,7 +74,7 @@ def tensor2im(input_image, imtype=np.uint8):
     return image_numpy.astype(imtype)
 
 
-def diagnose_network(net, name='network'):
+def diagnose_network(net, name="network"):
     """Calculate and print the mean of average absolute(gradients)
 
     Parameters:
@@ -122,10 +122,10 @@ def print_numpy(x, val=True, shp=False):
     """
     x = x.astype(np.float64)
     if shp:
-        print('shape,', x.shape)
+        print("shape,", x.shape)
     if val:
         x = x.flatten()
-        print('mean = %3.3f, min = %3.3f, max = %3.3f, median = %3.3f, std=%3.3f' % (
+        print("mean = %3.3f, min = %3.3f, max = %3.3f, median = %3.3f, std=%3.3f" % (
             np.mean(x), np.min(x), np.max(x), np.median(x), np.std(x)))
 
 
@@ -177,7 +177,7 @@ def correct_resize(t, size, mode=Image.BICUBIC):
         resized.append(resized_t)
     return torch.stack(resized, dim=0).to(device)
 
-def draw_landmarks(img, landmark, color='r', step=2):
+def draw_landmarks(img, landmark, color="r", step=2):
     """
     Return:
         img              -- numpy.array, (B, H, W, 3) img with landmark, RGB order, range (0, 255)
@@ -188,7 +188,7 @@ def draw_landmarks(img, landmark, color='r', step=2):
         landmark         -- numpy.array, (B, 68, 2), y direction is opposite to v direction
         color            -- str, 'r' or 'b' (red or blue)
     """
-    if color =='r':
+    if color =="r":
         c = np.array([255., 0, 0])
     else:
         c = np.array([0, 0, 255.])

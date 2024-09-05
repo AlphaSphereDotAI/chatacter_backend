@@ -3,7 +3,6 @@
 We modify the official PyTorch image folder (https://github.com/pytorch/vision/blob/master/torchvision/datasets/folder.py)
 so that this class can load images from both current directory and its subdirectories.
 """
-import numpy as np
 import torch.utils.data as data
 
 from PIL import Image
@@ -11,9 +10,9 @@ import os
 import os.path
 
 IMG_EXTENSIONS = [
-    '.jpg', '.JPG', '.jpeg', '.JPEG',
-    '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP',
-    '.tif', '.TIF', '.tiff', '.TIFF',
+    ".jpg", ".JPG", ".jpeg", ".JPEG",
+    ".png", ".PNG", ".ppm", ".PPM", ".bmp", ".BMP",
+    ".tif", ".TIF", ".tiff", ".TIFF",
 ]
 
 
@@ -23,7 +22,7 @@ def is_image_file(filename):
 
 def make_dataset(dir, max_dataset_size=float("inf")):
     images = []
-    assert os.path.isdir(dir) or os.path.islink(dir), '%s is not a valid directory' % dir
+    assert os.path.isdir(dir) or os.path.islink(dir), "%s is not a valid directory" % dir
 
     for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
         for fname in fnames:
@@ -34,7 +33,7 @@ def make_dataset(dir, max_dataset_size=float("inf")):
 
 
 def default_loader(path):
-    return Image.open(path).convert('RGB')
+    return Image.open(path).convert("RGB")
 
 
 class ImageFolder(data.Dataset):

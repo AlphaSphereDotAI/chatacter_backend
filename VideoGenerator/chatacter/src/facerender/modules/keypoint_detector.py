@@ -25,12 +25,12 @@ class KPDetector(nn.Module):
             self.num_jacobian_maps = 1 if single_jacobian_map else num_kp
             # self.jacobian = nn.Conv3d(in_channels=self.predictor.out_filters, out_channels=9 * self.num_jacobian_maps, kernel_size=7, padding=3)
             self.jacobian = nn.Conv3d(in_channels=self.predictor.out_filters, out_channels=9 * self.num_jacobian_maps, kernel_size=3, padding=1)
-            '''
+            """
             initial as:
             [[1 0 0]
              [0 1 0]
              [0 0 1]]
-            '''
+            """
             self.jacobian.weight.data.zero_()
             self.jacobian.bias.data.copy_(torch.tensor([1, 0, 0, 0, 1, 0, 0, 0, 1] * self.num_jacobian_maps, dtype=torch.float))
         else:
@@ -49,7 +49,7 @@ class KPDetector(nn.Module):
         heatmap = heatmap.unsqueeze(-1)
         grid = make_coordinate_grid(shape[2:], heatmap.type()).unsqueeze_(0).unsqueeze_(0)
         value = (heatmap * grid).sum(dim=(2, 3, 4))
-        kp = {'value': value}
+        kp = {"value": value}
 
         return kp
 
@@ -77,7 +77,7 @@ class KPDetector(nn.Module):
             jacobian = jacobian.view(final_shape[0], final_shape[1], 9, -1)
             jacobian = jacobian.sum(dim=-1)
             jacobian = jacobian.view(jacobian.shape[0], jacobian.shape[1], 3, 3)
-            out['jacobian'] = jacobian
+            out["jacobian"] = jacobian
 
         return out
 
@@ -99,7 +99,7 @@ class HEEstimator(nn.Module):
 
         self.block1 = nn.Sequential()
         for i in range(3):
-            self.block1.add_module('b1_'+ str(i), ResBottleneck(in_features=256, stride=1))
+            self.block1.add_module("b1_"+ str(i), ResBottleneck(in_features=256, stride=1))
 
         self.conv3 = nn.Conv2d(in_channels=256, out_channels=512, kernel_size=1)
         self.norm3 = BatchNorm2d(512, affine=True)
@@ -107,7 +107,7 @@ class HEEstimator(nn.Module):
 
         self.block3 = nn.Sequential()
         for i in range(3):
-            self.block3.add_module('b3_'+ str(i), ResBottleneck(in_features=512, stride=1))
+            self.block3.add_module("b3_"+ str(i), ResBottleneck(in_features=512, stride=1))
 
         self.conv4 = nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=1)
         self.norm4 = BatchNorm2d(1024, affine=True)
@@ -115,7 +115,7 @@ class HEEstimator(nn.Module):
 
         self.block5 = nn.Sequential()
         for i in range(5):
-            self.block5.add_module('b5_'+ str(i), ResBottleneck(in_features=1024, stride=1))
+            self.block5.add_module("b5_"+ str(i), ResBottleneck(in_features=1024, stride=1))
 
         self.conv5 = nn.Conv2d(in_channels=1024, out_channels=2048, kernel_size=1)
         self.norm5 = BatchNorm2d(2048, affine=True)
@@ -123,7 +123,7 @@ class HEEstimator(nn.Module):
 
         self.block7 = nn.Sequential()
         for i in range(2):
-            self.block7.add_module('b7_'+ str(i), ResBottleneck(in_features=2048, stride=1))
+            self.block7.add_module("b7_"+ str(i), ResBottleneck(in_features=2048, stride=1))
 
         self.fc_roll = nn.Linear(2048, num_bins)
         self.fc_pitch = nn.Linear(2048, num_bins)
@@ -175,5 +175,5 @@ class HEEstimator(nn.Module):
         t = self.fc_t(out)
         exp = self.fc_exp(out)
 
-        return {'yaw': yaw, 'pitch': pitch, 'roll': roll, 't': t, 'exp': exp}
+        return {"yaw": yaw, "pitch": pitch, "roll": roll, "t": t, "exp": exp}
 

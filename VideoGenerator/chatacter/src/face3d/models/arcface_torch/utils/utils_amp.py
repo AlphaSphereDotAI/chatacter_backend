@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import torch
 
-if torch.__version__ < '1.9':
+if torch.__version__ < "1.9":
     Iterable = torch._six.container_abcs.Iterable
 else:
     import collections

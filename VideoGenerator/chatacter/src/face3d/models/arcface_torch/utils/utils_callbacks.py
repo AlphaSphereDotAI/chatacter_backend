@@ -17,7 +17,7 @@ class CallBackVerification(object):
         self.highest_acc_list: List[float] = [0.0] * len(val_targets)
         self.ver_list: List[object] = []
         self.ver_name_list: List[str] = []
-        if self.rank is 0:
+        if self.rank == 0:
             self.init_dataset(val_targets=val_targets, data_dir=rec_prefix, image_size=image_size)
 
     def ver_test(self, backbone: torch.nn.Module, global_step: int):
@@ -25,12 +25,12 @@ class CallBackVerification(object):
         for i in range(len(self.ver_list)):
             acc1, std1, acc2, std2, xnorm, embeddings_list = verification.test(
                 self.ver_list[i], backbone, 10, 10)
-            logging.info('[%s][%d]XNorm: %f' % (self.ver_name_list[i], global_step, xnorm))
-            logging.info('[%s][%d]Accuracy-Flip: %1.5f+-%1.5f' % (self.ver_name_list[i], global_step, acc2, std2))
+            logging.info("[%s][%d]XNorm: %f" % (self.ver_name_list[i], global_step, xnorm))
+            logging.info("[%s][%d]Accuracy-Flip: %1.5f+-%1.5f" % (self.ver_name_list[i], global_step, acc2, std2))
             if acc2 > self.highest_acc_list[i]:
                 self.highest_acc_list[i] = acc2
             logging.info(
-                '[%s][%d]Accuracy-Highest: %1.5f' % (self.ver_name_list[i], global_step, self.highest_acc_list[i]))
+                "[%s][%d]Accuracy-Highest: %1.5f" % (self.ver_name_list[i], global_step, self.highest_acc_list[i]))
             results.append(acc2)
 
     def init_dataset(self, val_targets, data_dir, image_size):
@@ -42,7 +42,7 @@ class CallBackVerification(object):
                 self.ver_name_list.append(name)
 
     def __call__(self, num_update, backbone: torch.nn.Module):
-        if self.rank is 0 and num_update > 0 and num_update % self.frequent == 0:
+        if self.rank == 0 and num_update > 0 and num_update % self.frequent == 0:
             backbone.eval()
             self.ver_test(backbone, num_update)
             backbone.train()
@@ -74,15 +74,15 @@ class CallBackLogging(object):
                     speed: float = self.frequent * self.batch_size / (time.time() - self.tic)
                     speed_total = speed * self.world_size
                 except ZeroDivisionError:
-                    speed_total = float('inf')
+                    speed_total = float("inf")
 
                 time_now = (time.time() - self.time_start) / 3600
                 time_total = time_now / ((global_step + 1) / self.total_step)
                 time_for_end = time_total - time_now
                 if self.writer is not None:
-                    self.writer.add_scalar('time_for_end', time_for_end, global_step)
-                    self.writer.add_scalar('learning_rate', learning_rate, global_step)
-                    self.writer.add_scalar('loss', loss.avg, global_step)
+                    self.writer.add_scalar("time_for_end", time_for_end, global_step)
+                    self.writer.add_scalar("learning_rate", learning_rate, global_step)
+                    self.writer.add_scalar("loss", loss.avg, global_step)
                 if fp16:
                     msg = "Speed %.2f samples/sec   Loss %.4f   LearningRate %.4f   Epoch: %d   Global Step: %d   " \
                           "Fp16 Grad Scale: %2.f   Required: %1.f hours" % (

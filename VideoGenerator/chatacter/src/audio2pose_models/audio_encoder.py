@@ -1,6 +1,5 @@
 import torch
 from torch import nn
-from torch.nn import functional as F
 
 class Conv2d(nn.Module):
     def __init__(self, cin, cout, kernel_size, stride, padding, residual=False, *args, **kwargs):
@@ -61,4 +60,4 @@ class AudioEncoder(nn.Module):
         dim = audio_embedding.shape[1]
         audio_embedding = audio_embedding.reshape((B, -1, dim, 1, 1))
 
-        return audio_embedding.squeeze(-1).squeeze(-1) #B seq_len+1 512 
+        return audio_embedding.squeeze(-1).squeeze(-1) #B seq_len+1 512

@@ -4,7 +4,7 @@ from torch import nn
 assert torch.__version__ >= "1.8.1"
 from torch.utils.checkpoint import checkpoint_sequential
 
-__all__ = ['iresnet2060']
+__all__ = ["iresnet2060"]
 
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -35,7 +35,7 @@ class IBasicBlock(nn.Module):
                  groups=1, base_width=64, dilation=1):
         super(IBasicBlock, self).__init__()
         if groups != 1 or base_width != 64:
-            raise ValueError('BasicBlock only supports groups=1 and base_width=64')
+            raise ValueError("BasicBlock only supports groups=1 and base_width=64")
         if dilation > 1:
             raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
         self.bn1 = nn.BatchNorm2d(inplanes, eps=1e-05, )
@@ -173,4 +173,4 @@ def _iresnet(arch, block, layers, pretrained, progress, **kwargs):
 
 
 def iresnet2060(pretrained=False, progress=True, **kwargs):
-    return _iresnet('iresnet2060', IBasicBlock, [3, 128, 1024 - 128, 3], pretrained, progress, **kwargs)
+    return _iresnet("iresnet2060", IBasicBlock, [3, 128, 1024 - 128, 3], pretrained, progress, **kwargs)

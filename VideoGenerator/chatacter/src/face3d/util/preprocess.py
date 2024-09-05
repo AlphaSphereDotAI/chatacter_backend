@@ -2,15 +2,10 @@
 """
 
 import numpy as np
-from scipy.io import loadmat
 from PIL import Image
-import cv2
-import os
-from skimage import transform as trans
-import torch
 import warnings
-warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
-warnings.filterwarnings("ignore", category=FutureWarning) 
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 # calculating least square problem for image alignment
@@ -37,7 +32,7 @@ def POS(xp, x):
     t = np.stack([sTx, sTy], axis=0)
 
     return t, s
-    
+
 # resize and crop images for face reconstruction
 def resize_n_crop_img(img, lm, t, s, target_size=224., mask=None):
     w0, h0 = img.size

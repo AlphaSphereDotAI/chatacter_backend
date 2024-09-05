@@ -29,17 +29,17 @@ class PerceptualLoss(nn.Module):
 
         # freeze bn
         self.recog_net.eval()
-        
+
         id_featureA = F.normalize(self.recog_net(imageA), dim=-1, p=2)
-        id_featureB = F.normalize(self.recog_net(imageB), dim=-1, p=2)  
+        id_featureB = F.normalize(self.recog_net(imageB), dim=-1, p=2)
         cosine_d = torch.sum(id_featureA * id_featureB, dim=-1)
         # assert torch.sum((cosine_d > 1).float()) == 0
-        return torch.sum(1 - cosine_d) / cosine_d.shape[0]        
+        return torch.sum(1 - cosine_d) / cosine_d.shape[0]
 
 def perceptual_loss(id_featureA, id_featureB):
     cosine_d = torch.sum(id_featureA * id_featureB, dim=-1)
         # assert torch.sum((cosine_d > 1).float()) == 0
-    return torch.sum(1 - cosine_d) / cosine_d.shape[0]  
+    return torch.sum(1 - cosine_d) / cosine_d.shape[0]
 
 ### image level loss
 def photo_loss(imageA, imageB, mask, eps=1e-6):
@@ -86,13 +86,13 @@ def reg_loss(coeffs_dict, opt=None):
         w_id, w_exp, w_tex = opt.w_id, opt.w_exp, opt.w_tex
     else:
         w_id, w_exp, w_tex = 1, 1, 1, 1
-    creg_loss = w_id * torch.sum(coeffs_dict['id'] ** 2) +  \
-           w_exp * torch.sum(coeffs_dict['exp'] ** 2) + \
-           w_tex * torch.sum(coeffs_dict['tex'] ** 2)
-    creg_loss = creg_loss / coeffs_dict['id'].shape[0]
+    creg_loss = w_id * torch.sum(coeffs_dict["id"] ** 2) +  \
+           w_exp * torch.sum(coeffs_dict["exp"] ** 2) + \
+           w_tex * torch.sum(coeffs_dict["tex"] ** 2)
+    creg_loss = creg_loss / coeffs_dict["id"].shape[0]
 
     # gamma regularization to ensure a nearly-monochromatic light
-    gamma = coeffs_dict['gamma'].reshape([-1, 3, 9])
+    gamma = coeffs_dict["gamma"].reshape([-1, 3, 9])
     gamma_mean = torch.mean(gamma, dim=1, keepdims=True)
     gamma_loss = torch.mean((gamma - gamma_mean) ** 2)
 

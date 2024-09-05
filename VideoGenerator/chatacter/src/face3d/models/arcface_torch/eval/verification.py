@@ -74,7 +74,7 @@ def calculate_roc(thresholds,
 
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         if pca > 0:
-            print('doing pca on', fold_idx)
+            print("doing pca on", fold_idx)
             embed1_train = embeddings1[train_set]
             embed2_train = embeddings2[train_set]
             _embed_train = np.concatenate((embed1_train, embed2_train), axis=0)
@@ -148,7 +148,7 @@ def calculate_val(thresholds,
             _, far_train[threshold_idx] = calculate_val_far(
                 threshold, dist[train_set], actual_issame[train_set])
         if np.max(far_train) >= far_target:
-            f = interpolate.interp1d(far_train, thresholds, kind='slinear')
+            f = interpolate.interp1d(far_train, thresholds, kind="slinear")
             threshold = f(far_target)
         else:
             threshold = 0.0
@@ -199,11 +199,11 @@ def evaluate(embeddings, actual_issame, nrof_folds=10, pca=0):
 @torch.no_grad()
 def load_bin(path, image_size):
     try:
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             bins, issame_list = pickle.load(f)  # py2
-    except UnicodeDecodeError as e:
-        with open(path, 'rb') as f:
-            bins, issame_list = pickle.load(f, encoding='bytes')  # py3
+    except UnicodeDecodeError:
+        with open(path, "rb") as f:
+            bins, issame_list = pickle.load(f, encoding="bytes")  # py3
     data_list = []
     for flip in [0, 1]:
         data = torch.empty((len(issame_list) * 2, 3, image_size[0], image_size[1]))
@@ -219,13 +219,13 @@ def load_bin(path, image_size):
                 img = mx.ndarray.flip(data=img, axis=2)
             data_list[flip][idx][:] = torch.from_numpy(img.asnumpy())
         if idx % 1000 == 0:
-            print('loading bin', idx)
+            print("loading bin", idx)
     print(data_list[0].shape)
     return data_list, issame_list
 
 @torch.no_grad()
 def test(data_set, backbone, batch_size, nfolds=10):
-    print('testing verification..')
+    print("testing verification..")
     data_list = data_set[0]
     issame_list = data_set[1]
     embeddings_list = []
@@ -266,7 +266,7 @@ def test(data_set, backbone, batch_size, nfolds=10):
     embeddings = embeddings_list[0] + embeddings_list[1]
     embeddings = sklearn.preprocessing.normalize(embeddings)
     print(embeddings.shape)
-    print('infer time', time_consumed)
+    print("infer time", time_consumed)
     _, _, accuracy, val, val_std, far = evaluate(embeddings, issame_list, nrof_folds=nfolds)
     acc2, std2 = np.mean(accuracy), np.std(accuracy)
     return acc1, std1, acc2, std2, _xnorm, embeddings_list
@@ -275,10 +275,10 @@ def test(data_set, backbone, batch_size, nfolds=10):
 def dumpR(data_set,
           backbone,
           batch_size,
-          name='',
+          name="",
           data_extra=None,
           label_shape=None):
-    print('dump verification embedding..')
+    print("dump verification embedding..")
     data_list = data_set[0]
     issame_list = data_set[1]
     embeddings_list = []
@@ -312,8 +312,8 @@ def dumpR(data_set,
     embeddings = embeddings_list[0] + embeddings_list[1]
     embeddings = sklearn.preprocessing.normalize(embeddings)
     actual_issame = np.asarray(issame_list)
-    outname = os.path.join('temp.bin')
-    with open(outname, 'wb') as f:
+    outname = os.path.join("temp.bin")
+    with open(outname, "wb") as f:
         pickle.dump((embeddings, issame_list),
                     f,
                     protocol=pickle.HIGHEST_PROTOCOL)

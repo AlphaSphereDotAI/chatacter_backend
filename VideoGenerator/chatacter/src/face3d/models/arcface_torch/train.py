@@ -21,13 +21,13 @@ from utils.utils_logging import AverageMeter, init_logging
 def main(args):
     cfg = get_config(args.config)
     try:
-        world_size = int(os.environ['WORLD_SIZE'])
-        rank = int(os.environ['RANK'])
-        dist.init_process_group('nccl')
+        world_size = int(os.environ["WORLD_SIZE"])
+        rank = int(os.environ["RANK"])
+        dist.init_process_group("nccl")
     except KeyError:
         world_size = 1
         rank = 0
-        dist.init_process_group(backend='nccl', init_method="tcp://127.0.0.1:12584", rank=rank, world_size=world_size)
+        dist.init_process_group(backend="nccl", init_method="tcp://127.0.0.1:12584", rank=rank, world_size=world_size)
 
     local_rank = args.local_rank
     torch.cuda.set_device(local_rank)
@@ -65,11 +65,11 @@ def main(args):
         sample_rate=cfg.sample_rate, embedding_size=cfg.embedding_size, prefix=cfg.output)
 
     opt_backbone = torch.optim.SGD(
-        params=[{'params': backbone.parameters()}],
+        params=[{"params": backbone.parameters()}],
         lr=cfg.lr / 512 * cfg.batch_size * world_size,
         momentum=0.9, weight_decay=cfg.weight_decay)
     opt_pfc = torch.optim.SGD(
-        params=[{'params': module_partial_fc.parameters()}],
+        params=[{"params": module_partial_fc.parameters()}],
         lr=cfg.lr / 512 * cfg.batch_size * world_size,
         momentum=0.9, weight_decay=cfg.weight_decay)
 
@@ -135,7 +135,7 @@ def main(args):
 
 if __name__ == "__main__":
     torch.backends.cudnn.benchmark = True
-    parser = argparse.ArgumentParser(description='PyTorch ArcFace Training')
-    parser.add_argument('config', type=str, help='py config file')
-    parser.add_argument('--local_rank', type=int, default=0, help='local_rank')
+    parser = argparse.ArgumentParser(description="PyTorch ArcFace Training")
+    parser.add_argument("config", type=str, help="py config file")
+    parser.add_argument("--local_rank", type=int, default=0, help="local_rank")
     main(parser.parse_args())

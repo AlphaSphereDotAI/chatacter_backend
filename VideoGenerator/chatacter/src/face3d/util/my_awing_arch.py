@@ -128,7 +128,7 @@ class CoordConvTh(nn.Module):
 
 
 def conv3x3(in_planes, out_planes, strd=1, padding=1, bias=False, dilation=1):
-    '3x3 convolution with padding'
+    "3x3 convolution with padding"
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=strd, padding=padding, bias=bias, dilation=dilation)
 
 
@@ -228,36 +228,36 @@ class HourGlass(nn.Module):
         self._generate_network(self.depth)
 
     def _generate_network(self, level):
-        self.add_module('b1_' + str(level), ConvBlock(256, 256))
+        self.add_module("b1_" + str(level), ConvBlock(256, 256))
 
-        self.add_module('b2_' + str(level), ConvBlock(256, 256))
+        self.add_module("b2_" + str(level), ConvBlock(256, 256))
 
         if level > 1:
             self._generate_network(level - 1)
         else:
-            self.add_module('b2_plus_' + str(level), ConvBlock(256, 256))
+            self.add_module("b2_plus_" + str(level), ConvBlock(256, 256))
 
-        self.add_module('b3_' + str(level), ConvBlock(256, 256))
+        self.add_module("b3_" + str(level), ConvBlock(256, 256))
 
     def _forward(self, level, inp):
         # Upper branch
         up1 = inp
-        up1 = self._modules['b1_' + str(level)](up1)
+        up1 = self._modules["b1_" + str(level)](up1)
 
         # Lower branch
         low1 = F.avg_pool2d(inp, 2, stride=2)
-        low1 = self._modules['b2_' + str(level)](low1)
+        low1 = self._modules["b2_" + str(level)](low1)
 
         if level > 1:
             low2 = self._forward(level - 1, low1)
         else:
             low2 = low1
-            low2 = self._modules['b2_plus_' + str(level)](low2)
+            low2 = self._modules["b2_plus_" + str(level)](low2)
 
         low3 = low2
-        low3 = self._modules['b3_' + str(level)](low3)
+        low3 = self._modules["b3_" + str(level)](low3)
 
-        up2 = F.interpolate(low3, scale_factor=2, mode='nearest')
+        up2 = F.interpolate(low3, scale_factor=2, mode="nearest")
 
         return up1 + up2
 
@@ -268,7 +268,7 @@ class HourGlass(nn.Module):
 
 class FAN(nn.Module):
 
-    def __init__(self, num_modules=1, end_relu=False, gray_scale=False, num_landmarks=68, device='cuda'):
+    def __init__(self, num_modules=1, end_relu=False, gray_scale=False, num_landmarks=68, device="cuda"):
         super(FAN, self).__init__()
         self.device = device
         self.num_modules = num_modules
@@ -310,15 +310,15 @@ class FAN(nn.Module):
                 first_one = True
             else:
                 first_one = False
-            self.add_module('m' + str(hg_module), HourGlass(1, 4, 256, first_one))
-            self.add_module('top_m_' + str(hg_module), ConvBlock(256, 256))
-            self.add_module('conv_last' + str(hg_module), nn.Conv2d(256, 256, kernel_size=1, stride=1, padding=0))
-            self.add_module('bn_end' + str(hg_module), nn.BatchNorm2d(256))
-            self.add_module('l' + str(hg_module), nn.Conv2d(256, num_landmarks + 1, kernel_size=1, stride=1, padding=0))
+            self.add_module("m" + str(hg_module), HourGlass(1, 4, 256, first_one))
+            self.add_module("top_m_" + str(hg_module), ConvBlock(256, 256))
+            self.add_module("conv_last" + str(hg_module), nn.Conv2d(256, 256, kernel_size=1, stride=1, padding=0))
+            self.add_module("bn_end" + str(hg_module), nn.BatchNorm2d(256))
+            self.add_module("l" + str(hg_module), nn.Conv2d(256, num_landmarks + 1, kernel_size=1, stride=1, padding=0))
 
             if hg_module < self.num_modules - 1:
-                self.add_module('bl' + str(hg_module), nn.Conv2d(256, 256, kernel_size=1, stride=1, padding=0))
-                self.add_module('al' + str(hg_module),
+                self.add_module("bl" + str(hg_module), nn.Conv2d(256, 256, kernel_size=1, stride=1, padding=0))
+                self.add_module("al" + str(hg_module),
                                 nn.Conv2d(num_landmarks + 1, 256, kernel_size=1, stride=1, padding=0))
 
     def forward(self, x):
@@ -335,23 +335,23 @@ class FAN(nn.Module):
         boundary_channels = []
         tmp_out = None
         for i in range(self.num_modules):
-            hg, boundary_channel = self._modules['m' + str(i)](previous, tmp_out)
+            hg, boundary_channel = self._modules["m" + str(i)](previous, tmp_out)
 
             ll = hg
-            ll = self._modules['top_m_' + str(i)](ll)
+            ll = self._modules["top_m_" + str(i)](ll)
 
-            ll = F.relu(self._modules['bn_end' + str(i)](self._modules['conv_last' + str(i)](ll)), True)
+            ll = F.relu(self._modules["bn_end" + str(i)](self._modules["conv_last" + str(i)](ll)), True)
 
             # Predict heatmaps
-            tmp_out = self._modules['l' + str(i)](ll)
+            tmp_out = self._modules["l" + str(i)](ll)
             if self.end_relu:
                 tmp_out = F.relu(tmp_out)  # HACK: Added relu
             outputs.append(tmp_out)
             boundary_channels.append(boundary_channel)
 
             if i < self.num_modules - 1:
-                ll = self._modules['bl' + str(i)](ll)
-                tmp_out_ = self._modules['al' + str(i)](tmp_out)
+                ll = self._modules["bl" + str(i)](ll)
+                tmp_out_ = self._modules["al" + str(i)](tmp_out)
                 previous = previous + ll + tmp_out_
 
         return outputs, boundary_channels

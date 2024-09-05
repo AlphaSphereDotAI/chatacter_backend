@@ -79,9 +79,9 @@ class MXFaceDataset(Dataset):
              ])
         self.root_dir = root_dir
         self.local_rank = local_rank
-        path_imgrec = os.path.join(root_dir, 'train.rec')
-        path_imgidx = os.path.join(root_dir, 'train.idx')
-        self.imgrec = mx.recordio.MXIndexedRecordIO(path_imgidx, path_imgrec, 'r')
+        path_imgrec = os.path.join(root_dir, "train.rec")
+        path_imgidx = os.path.join(root_dir, "train.idx")
+        self.imgrec = mx.recordio.MXIndexedRecordIO(path_imgidx, path_imgrec, "r")
         s = self.imgrec.read_idx(0)
         header, _ = mx.recordio.unpack(s)
         if header.flag > 0:

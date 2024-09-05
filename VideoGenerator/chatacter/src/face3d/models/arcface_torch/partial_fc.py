@@ -150,9 +150,9 @@ class PartialFC(Module):
                 size=[self.batch_size * self.world_size], device=self.device, dtype=torch.long)
             dist.all_gather(list(total_label.chunk(self.world_size, dim=0)), label)
             self.sample(total_label)
-            optimizer.state.pop(optimizer.param_groups[-1]['params'][0], None)
-            optimizer.param_groups[-1]['params'][0] = self.sub_weight
-            optimizer.state[self.sub_weight]['momentum_buffer'] = self.sub_weight_mom
+            optimizer.state.pop(optimizer.param_groups[-1]["params"][0], None)
+            optimizer.param_groups[-1]["params"][0] = self.sub_weight
+            optimizer.state[self.sub_weight]["momentum_buffer"] = self.sub_weight_mom
             norm_weight = normalize(self.sub_weight)
             return total_label, norm_weight
 

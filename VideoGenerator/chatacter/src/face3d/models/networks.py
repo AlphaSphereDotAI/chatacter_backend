@@ -2,10 +2,7 @@
 """
 
 import os
-import numpy as np
 import torch.nn.functional as F
-from torch.nn import init
-import functools
 from torch.optim import lr_scheduler
 import torch
 from torch import Tensor
@@ -23,7 +20,7 @@ def resize_n_crop(image, M, dsize=112):
     # M   :  (b, 2, 3)
     return warp_affine(image, M, dsize=(dsize, dsize), align_corners=True)
 
-def filter_state_dict(state_dict, remove_name='fc'):
+def filter_state_dict(state_dict, remove_name="fc"):
     new_state_dict = {}
     for key in state_dict:
         if remove_name in key:
@@ -42,19 +39,19 @@ def get_scheduler(optimizer, opt):
     For other schedulers (step, plateau, and cosine), we use the default PyTorch schedulers.
     See https://pytorch.org/docs/stable/optim.html for more details.
     """
-    if opt.lr_policy == 'linear':
+    if opt.lr_policy == "linear":
         def lambda_rule(epoch):
             lr_l = 1.0 - max(0, epoch + opt.epoch_count - opt.n_epochs) / float(opt.n_epochs + 1)
             return lr_l
         scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_rule)
-    elif opt.lr_policy == 'step':
+    elif opt.lr_policy == "step":
         scheduler = lr_scheduler.StepLR(optimizer, step_size=opt.lr_decay_epochs, gamma=0.2)
-    elif opt.lr_policy == 'plateau':
-        scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.2, threshold=0.01, patience=5)
-    elif opt.lr_policy == 'cosine':
+    elif opt.lr_policy == "plateau":
+        scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.2, threshold=0.01, patience=5)
+    elif opt.lr_policy == "cosine":
         scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=opt.n_epochs, eta_min=0)
     else:
-        return NotImplementedError('learning rate policy [%s] is not implemented', opt.lr_policy)
+        return NotImplementedError("learning rate policy [%s] is not implemented", opt.lr_policy)
     return scheduler
 
 
@@ -72,11 +69,11 @@ class ReconNetWrapper(nn.Module):
         super(ReconNetWrapper, self).__init__()
         self.use_last_fc = use_last_fc
         if net_recon not in func_dict:
-            return  NotImplementedError('network [%s] is not implemented', net_recon)
+            return  NotImplementedError("network [%s] is not implemented", net_recon)
         func, last_dim = func_dict[net_recon]
         backbone = func(use_last_fc=use_last_fc, num_classes=self.fc_dim)
         if init_path and os.path.isfile(init_path):
-            state_dict = filter_state_dict(torch.load(init_path, map_location='cpu'))
+            state_dict = filter_state_dict(torch.load(init_path, map_location="cpu"))
             backbone.load_state_dict(state_dict)
             print("loading init net_recon %s from %s" %(net_recon, init_path))
         self.backbone = backbone
@@ -109,7 +106,7 @@ class RecogNetWrapper(nn.Module):
         super(RecogNetWrapper, self).__init__()
         net = get_model(name=net_recog, fp16=False)
         if pretrained_path:
-            state_dict = torch.load(pretrained_path, map_location='cpu')
+            state_dict = torch.load(pretrained_path, map_location="cpu")
             net.load_state_dict(state_dict)
             print("loading pretrained net_recog %s from %s" %(net_recog, pretrained_path))
         for param in net.parameters():
@@ -117,7 +114,7 @@ class RecogNetWrapper(nn.Module):
         self.net = net
         self.preprocess = lambda x: 2 * x - 1
         self.input_size=input_size
-        
+
     def forward(self, image, M):
         image = self.preprocess(resize_n_crop(image, M, self.input_size))
         id_feature = F.normalize(self.net(image), dim=-1, p=2)
@@ -125,21 +122,21 @@ class RecogNetWrapper(nn.Module):
 
 
 # adapted from https://github.com/pytorch/vision/edit/master/torchvision/models/resnet.py
-__all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
-           'resnet152', 'resnext50_32x4d', 'resnext101_32x8d',
-           'wide_resnet50_2', 'wide_resnet101_2']
+__all__ = ["ResNet", "resnet18", "resnet34", "resnet50", "resnet101",
+           "resnet152", "resnext50_32x4d", "resnext101_32x8d",
+           "wide_resnet50_2", "wide_resnet101_2"]
 
 
 model_urls = {
-    'resnet18': 'https://download.pytorch.org/models/resnet18-f37072fd.pth',
-    'resnet34': 'https://download.pytorch.org/models/resnet34-b627a593.pth',
-    'resnet50': 'https://download.pytorch.org/models/resnet50-0676ba61.pth',
-    'resnet101': 'https://download.pytorch.org/models/resnet101-63fe2227.pth',
-    'resnet152': 'https://download.pytorch.org/models/resnet152-394f9c45.pth',
-    'resnext50_32x4d': 'https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth',
-    'resnext101_32x8d': 'https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth',
-    'wide_resnet50_2': 'https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth',
-    'wide_resnet101_2': 'https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth',
+    "resnet18": "https://download.pytorch.org/models/resnet18-f37072fd.pth",
+    "resnet34": "https://download.pytorch.org/models/resnet34-b627a593.pth",
+    "resnet50": "https://download.pytorch.org/models/resnet50-0676ba61.pth",
+    "resnet101": "https://download.pytorch.org/models/resnet101-63fe2227.pth",
+    "resnet152": "https://download.pytorch.org/models/resnet152-394f9c45.pth",
+    "resnext50_32x4d": "https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth",
+    "resnext101_32x8d": "https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth",
+    "wide_resnet50_2": "https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth",
+    "wide_resnet101_2": "https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth",
 }
 
 
@@ -172,7 +169,7 @@ class BasicBlock(nn.Module):
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         if groups != 1 or base_width != 64:
-            raise ValueError('BasicBlock only supports groups=1 and base_width=64')
+            raise ValueError("BasicBlock only supports groups=1 and base_width=64")
         if dilation > 1:
             raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
@@ -305,13 +302,13 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        
+
         if self.use_last_fc:
             self.fc = nn.Linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
@@ -399,7 +396,7 @@ def resnet18(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> 
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet('resnet18', BasicBlock, [2, 2, 2, 2], pretrained, progress,
+    return _resnet("resnet18", BasicBlock, [2, 2, 2, 2], pretrained, progress,
                    **kwargs)
 
 
@@ -411,7 +408,7 @@ def resnet34(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> 
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet('resnet34', BasicBlock, [3, 4, 6, 3], pretrained, progress,
+    return _resnet("resnet34", BasicBlock, [3, 4, 6, 3], pretrained, progress,
                    **kwargs)
 
 
@@ -423,7 +420,7 @@ def resnet50(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> 
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress,
+    return _resnet("resnet50", Bottleneck, [3, 4, 6, 3], pretrained, progress,
                    **kwargs)
 
 
@@ -435,7 +432,7 @@ def resnet101(pretrained: bool = False, progress: bool = True, **kwargs: Any) ->
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet('resnet101', Bottleneck, [3, 4, 23, 3], pretrained, progress,
+    return _resnet("resnet101", Bottleneck, [3, 4, 23, 3], pretrained, progress,
                    **kwargs)
 
 
@@ -447,7 +444,7 @@ def resnet152(pretrained: bool = False, progress: bool = True, **kwargs: Any) ->
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet('resnet152', Bottleneck, [3, 8, 36, 3], pretrained, progress,
+    return _resnet("resnet152", Bottleneck, [3, 8, 36, 3], pretrained, progress,
                    **kwargs)
 
 
@@ -459,9 +456,9 @@ def resnext50_32x4d(pretrained: bool = False, progress: bool = True, **kwargs: A
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    kwargs['groups'] = 32
-    kwargs['width_per_group'] = 4
-    return _resnet('resnext50_32x4d', Bottleneck, [3, 4, 6, 3],
+    kwargs["groups"] = 32
+    kwargs["width_per_group"] = 4
+    return _resnet("resnext50_32x4d", Bottleneck, [3, 4, 6, 3],
                    pretrained, progress, **kwargs)
 
 
@@ -473,9 +470,9 @@ def resnext101_32x8d(pretrained: bool = False, progress: bool = True, **kwargs: 
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    kwargs['groups'] = 32
-    kwargs['width_per_group'] = 8
-    return _resnet('resnext101_32x8d', Bottleneck, [3, 4, 23, 3],
+    kwargs["groups"] = 32
+    kwargs["width_per_group"] = 8
+    return _resnet("resnext101_32x8d", Bottleneck, [3, 4, 23, 3],
                    pretrained, progress, **kwargs)
 
 
@@ -492,8 +489,8 @@ def wide_resnet50_2(pretrained: bool = False, progress: bool = True, **kwargs: A
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    kwargs['width_per_group'] = 64 * 2
-    return _resnet('wide_resnet50_2', Bottleneck, [3, 4, 6, 3],
+    kwargs["width_per_group"] = 64 * 2
+    return _resnet("wide_resnet50_2", Bottleneck, [3, 4, 6, 3],
                    pretrained, progress, **kwargs)
 
 
@@ -510,12 +507,12 @@ def wide_resnet101_2(pretrained: bool = False, progress: bool = True, **kwargs: 
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    kwargs['width_per_group'] = 64 * 2
-    return _resnet('wide_resnet101_2', Bottleneck, [3, 4, 23, 3],
+    kwargs["width_per_group"] = 64 * 2
+    return _resnet("wide_resnet101_2", Bottleneck, [3, 4, 23, 3],
                    pretrained, progress, **kwargs)
 
 
 func_dict = {
-    'resnet18': (resnet18, 512),
-    'resnet50': (resnet50, 2048)
+    "resnet18": (resnet18, 512),
+    "resnet50": (resnet50, 2048)
 }

@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-__all__ = ['iresnet18', 'iresnet34', 'iresnet50', 'iresnet100', 'iresnet200']
+__all__ = ["iresnet18", "iresnet34", "iresnet50", "iresnet100", "iresnet200"]
 
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -31,7 +31,7 @@ class IBasicBlock(nn.Module):
                  groups=1, base_width=64, dilation=1):
         super(IBasicBlock, self).__init__()
         if groups != 1 or base_width != 64:
-            raise ValueError('BasicBlock only supports groups=1 and base_width=64')
+            raise ValueError("BasicBlock only supports groups=1 and base_width=64")
         if dilation > 1:
             raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
         self.bn1 = nn.BatchNorm2d(inplanes, eps=1e-05,)
@@ -162,26 +162,26 @@ def _iresnet(arch, block, layers, pretrained, progress, **kwargs):
 
 
 def iresnet18(pretrained=False, progress=True, **kwargs):
-    return _iresnet('iresnet18', IBasicBlock, [2, 2, 2, 2], pretrained,
+    return _iresnet("iresnet18", IBasicBlock, [2, 2, 2, 2], pretrained,
                     progress, **kwargs)
 
 
 def iresnet34(pretrained=False, progress=True, **kwargs):
-    return _iresnet('iresnet34', IBasicBlock, [3, 4, 6, 3], pretrained,
+    return _iresnet("iresnet34", IBasicBlock, [3, 4, 6, 3], pretrained,
                     progress, **kwargs)
 
 
 def iresnet50(pretrained=False, progress=True, **kwargs):
-    return _iresnet('iresnet50', IBasicBlock, [3, 4, 14, 3], pretrained,
+    return _iresnet("iresnet50", IBasicBlock, [3, 4, 14, 3], pretrained,
                     progress, **kwargs)
 
 
 def iresnet100(pretrained=False, progress=True, **kwargs):
-    return _iresnet('iresnet100', IBasicBlock, [3, 13, 30, 3], pretrained,
+    return _iresnet("iresnet100", IBasicBlock, [3, 13, 30, 3], pretrained,
                     progress, **kwargs)
 
 
 def iresnet200(pretrained=False, progress=True, **kwargs):
-    return _iresnet('iresnet200', IBasicBlock, [6, 26, 60, 6], pretrained,
+    return _iresnet("iresnet200", IBasicBlock, [6, 26, 60, 6], pretrained,
                     progress, **kwargs)
 

@@ -13,7 +13,7 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     """
     Transform a keypoint into gaussian like representation
     """
-    mean = kp['value']
+    mean = kp["value"]
 
     coordinate_grid = make_coordinate_grid(spatial_size, mean.type())
     number_of_leading_dimensions = len(mean.shape) - 1
@@ -60,7 +60,7 @@ def make_coordinate_grid(spatial_size, type):
     x = (2 * (x / (w - 1)) - 1)
     y = (2 * (y / (h - 1)) - 1)
     z = (2 * (z / (d - 1)) - 1)
-   
+
     yy = y.view(1, -1, 1).repeat(d, 1, w)
     xx = x.view(1, 1, -1).repeat(d, h, 1)
     zz = z.view(-1, 1, 1).repeat(1, h, w)
@@ -219,10 +219,10 @@ class DownBlock3d(nn.Module):
 
     def __init__(self, in_features, out_features, kernel_size=3, padding=1, groups=1):
         super(DownBlock3d, self).__init__()
-        '''
+        """
         self.conv = nn.Conv3d(in_channels=in_features, out_channels=out_features, kernel_size=kernel_size,
                               padding=padding, groups=groups, stride=(1, 2, 2))
-        '''
+        """
         self.conv = nn.Conv3d(in_channels=in_features, out_channels=out_features, kernel_size=kernel_size,
                               padding=padding, groups=groups)
         self.norm = BatchNorm3d(out_features, affine=True)
@@ -334,14 +334,14 @@ class Hourglass(nn.Module):
 class KPHourglass(nn.Module):
     """
     Hourglass architecture.
-    """ 
+    """
 
     def __init__(self, block_expansion, in_features, reshape_features, reshape_depth, num_blocks=3, max_features=256):
         super(KPHourglass, self).__init__()
-        
+
         self.down_blocks = nn.Sequential()
         for i in range(num_blocks):
-            self.down_blocks.add_module('down'+ str(i), DownBlock2d(in_features if i == 0 else min(max_features, block_expansion * (2 ** i)),
+            self.down_blocks.add_module("down"+ str(i), DownBlock2d(in_features if i == 0 else min(max_features, block_expansion * (2 ** i)),
                                                                    min(max_features, block_expansion * (2 ** (i + 1))),
                                                                    kernel_size=3, padding=1))
 
@@ -352,7 +352,7 @@ class KPHourglass(nn.Module):
         for i in range(num_blocks):
             in_filters = min(max_features, block_expansion * (2 ** (num_blocks - i)))
             out_filters = min(max_features, block_expansion * (2 ** (num_blocks - i - 1)))
-            self.up_blocks.add_module('up'+ str(i), UpBlock3d(in_filters, out_filters, kernel_size=3, padding=1))
+            self.up_blocks.add_module("up"+ str(i), UpBlock3d(in_filters, out_filters, kernel_size=3, padding=1))
 
         self.reshape_depth = reshape_depth
         self.out_filters = out_filters
@@ -365,7 +365,7 @@ class KPHourglass(nn.Module):
         out = self.up_blocks(out)
 
         return out
-        
+
 
 
 class AntiAliasInterpolation2d(nn.Module):
@@ -390,7 +390,7 @@ class AntiAliasInterpolation2d(nn.Module):
                 for size in kernel_size
                 ]
         )
-        for size, std, mgrid in zip(kernel_size, sigma, meshgrids):
+        for size, std, mgrid in zip(kernel_size, sigma, meshgrids, strict=False):
             mean = (size - 1) / 2
             kernel *= torch.exp(-(mgrid - mean) ** 2 / (2 * std ** 2))
 
@@ -400,7 +400,7 @@ class AntiAliasInterpolation2d(nn.Module):
         kernel = kernel.view(1, 1, *kernel.size())
         kernel = kernel.repeat(channels, *[1] * (kernel.dim() - 1))
 
-        self.register_buffer('weight', kernel)
+        self.register_buffer("weight", kernel)
         self.groups = channels
         self.scale = scale
         inv_scale = 1 / scale
@@ -432,13 +432,13 @@ class SPADE(nn.Module):
 
     def forward(self, x, segmap):
         normalized = self.param_free_norm(x)
-        segmap = F.interpolate(segmap, size=x.size()[2:], mode='nearest')
+        segmap = F.interpolate(segmap, size=x.size()[2:], mode="nearest")
         actv = self.mlp_shared(segmap)
         gamma = self.mlp_gamma(actv)
         beta = self.mlp_beta(actv)
         out = normalized * (1 + gamma) + beta
         return out
-    
+
 
 class SPADEResnetBlock(nn.Module):
     def __init__(self, fin, fout, norm_G, label_nc, use_se=False, dilation=1):
@@ -453,7 +453,7 @@ class SPADEResnetBlock(nn.Module):
         if self.learned_shortcut:
             self.conv_s = nn.Conv2d(fin, fout, kernel_size=1, bias=False)
         # apply spectral norm if specified
-        if 'spectral' in norm_G:
+        if "spectral" in norm_G:
             self.conv_0 = spectral_norm(self.conv_0)
             self.conv_1 = spectral_norm(self.conv_1)
             if self.learned_shortcut:
@@ -499,7 +499,7 @@ class audio2image(nn.Module):
         degree = torch.sum(pred*idx_tensor, 1) * 3 - 99
 
         return degree
-    
+
     def get_rotation_matrix(self, yaw, pitch, roll):
         yaw = yaw / 180 * 3.14
         pitch = pitch / 180 * 3.14
@@ -509,50 +509,50 @@ class audio2image(nn.Module):
         pitch = pitch.unsqueeze(1)
         yaw = yaw.unsqueeze(1)
 
-        roll_mat = torch.cat([torch.ones_like(roll), torch.zeros_like(roll), torch.zeros_like(roll), 
+        roll_mat = torch.cat([torch.ones_like(roll), torch.zeros_like(roll), torch.zeros_like(roll),
                           torch.zeros_like(roll), torch.cos(roll), -torch.sin(roll),
                           torch.zeros_like(roll), torch.sin(roll), torch.cos(roll)], dim=1)
         roll_mat = roll_mat.view(roll_mat.shape[0], 3, 3)
 
-        pitch_mat = torch.cat([torch.cos(pitch), torch.zeros_like(pitch), torch.sin(pitch), 
+        pitch_mat = torch.cat([torch.cos(pitch), torch.zeros_like(pitch), torch.sin(pitch),
                            torch.zeros_like(pitch), torch.ones_like(pitch), torch.zeros_like(pitch),
                            -torch.sin(pitch), torch.zeros_like(pitch), torch.cos(pitch)], dim=1)
         pitch_mat = pitch_mat.view(pitch_mat.shape[0], 3, 3)
 
-        yaw_mat = torch.cat([torch.cos(yaw), -torch.sin(yaw), torch.zeros_like(yaw),  
+        yaw_mat = torch.cat([torch.cos(yaw), -torch.sin(yaw), torch.zeros_like(yaw),
                          torch.sin(yaw), torch.cos(yaw), torch.zeros_like(yaw),
                          torch.zeros_like(yaw), torch.zeros_like(yaw), torch.ones_like(yaw)], dim=1)
         yaw_mat = yaw_mat.view(yaw_mat.shape[0], 3, 3)
 
-        rot_mat = torch.einsum('bij,bjk,bkm->bim', roll_mat, pitch_mat, yaw_mat)
+        rot_mat = torch.einsum("bij,bjk,bkm->bim", roll_mat, pitch_mat, yaw_mat)
 
         return rot_mat
 
     def keypoint_transformation(self, kp_canonical, he):
-        kp = kp_canonical['value']    # (bs, k, 3)
-        yaw, pitch, roll = he['yaw'], he['pitch'], he['roll']
-        t, exp = he['t'], he['exp']
-    
+        kp = kp_canonical["value"]    # (bs, k, 3)
+        yaw, pitch, roll = he["yaw"], he["pitch"], he["roll"]
+        t, exp = he["t"], he["exp"]
+
         yaw = self.headpose_pred_to_degree(yaw)
         pitch = self.headpose_pred_to_degree(pitch)
         roll = self.headpose_pred_to_degree(roll)
 
         rot_mat = self.get_rotation_matrix(yaw, pitch, roll)    # (bs, 3, 3)
-    
-        # keypoint rotation
-        kp_rotated = torch.einsum('bmp,bkp->bkm', rot_mat, kp)
 
-    
+        # keypoint rotation
+        kp_rotated = torch.einsum("bmp,bkp->bkm", rot_mat, kp)
+
+
 
         # keypoint translation
         t = t.unsqueeze_(1).repeat(1, kp.shape[1], 1)
         kp_t = kp_rotated + t
 
-        # add expression deviation 
+        # add expression deviation
         exp = exp.view(exp.shape[0], -1, 3)
         kp_transformed = kp_t + exp
 
-        return {'value': kp_transformed}
+        return {"value": kp_transformed}
 
     def forward(self, source_image, target_audio):
         pose_source = self.he_estimator_video(source_image)

@@ -22,7 +22,7 @@ def generate_video(character : str) -> str:
             "--enhancer",
             "gfpgan",
         ]
-    print(' '.join(command))
+    print(" ".join(command))
     subprocess.run(
         command
     )
