@@ -18,10 +18,12 @@ class KPDetector(nn.Module):
         self.predictor = KPHourglass(block_expansion, in_features=image_channel,
                                      max_features=max_features,  reshape_features=reshape_channel, reshape_depth=reshape_depth, num_blocks=num_blocks)
 
+        # self.kp = nn.Conv3d(in_channels=self.predictor.out_filters, out_channels=num_kp, kernel_size=7, padding=3)
         self.kp = nn.Conv3d(in_channels=self.predictor.out_filters, out_channels=num_kp, kernel_size=3, padding=1)
 
         if estimate_jacobian:
             self.num_jacobian_maps = 1 if single_jacobian_map else num_kp
+            # self.jacobian = nn.Conv3d(in_channels=self.predictor.out_filters, out_channels=9 * self.num_jacobian_maps, kernel_size=7, padding=3)
             self.jacobian = nn.Conv3d(in_channels=self.predictor.out_filters, out_channels=9 * self.num_jacobian_maps, kernel_size=3, padding=1)
             '''
             initial as:

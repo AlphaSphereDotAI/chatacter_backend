@@ -29,14 +29,16 @@ class PerceptualLoss(nn.Module):
 
         # freeze bn
         self.recog_net.eval()
-
+        
         id_featureA = F.normalize(self.recog_net(imageA), dim=-1, p=2)
         id_featureB = F.normalize(self.recog_net(imageB), dim=-1, p=2)  
         cosine_d = torch.sum(id_featureA * id_featureB, dim=-1)
+        # assert torch.sum((cosine_d > 1).float()) == 0
         return torch.sum(1 - cosine_d) / cosine_d.shape[0]        
 
 def perceptual_loss(id_featureA, id_featureB):
     cosine_d = torch.sum(id_featureA * id_featureB, dim=-1)
+        # assert torch.sum((cosine_d > 1).float()) == 0
     return torch.sum(1 - cosine_d) / cosine_d.shape[0]  
 
 ### image level loss
