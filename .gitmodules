@@ -4,3 +4,6 @@
 [submodule "VideoGenerator"]
 	path = VideoGenerator
 	url = https://github.com/AlphaSphereDotAI/chatacter_backend_video_generator
+[submodule "VoiceGenerator"]
+	path = VoiceGenerator
+	url = https://github.com/AlphaSphereDotAI/chatacter_backend_voice_generator
