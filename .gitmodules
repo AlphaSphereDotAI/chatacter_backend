@@ -1,0 +1,3 @@
+[submodule "App"]
+	path = App
+	url = https://github.com/AlphaSphereDotAI/chatacter_backend_app
