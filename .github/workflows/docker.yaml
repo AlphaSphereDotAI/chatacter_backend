@@ -50,7 +50,7 @@ jobs:
                   cache-to: type=gha,mode=max
                   provenance: false
             - name: Generate artifact attestation for App
-              uses: actions/attest-build-provenance@v1.4.2
+              uses: actions/attest-build-provenance@v1.4.3
               with:
                   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
                   subject-digest: ${{ steps.push.outputs.digest }}
@@ -96,7 +96,7 @@ jobs:
                   cache-to: type=gha,mode=max
                   provenance: false
             - name: Generate artifact attestation for Video Generator
-              uses: actions/attest-build-provenance@v1.4.2
+              uses: actions/attest-build-provenance@v1.4.3
               with:
                   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VIDEO_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}
@@ -142,7 +142,7 @@ jobs:
                   cache-to: type=gha,mode=max
                   provenance: false
             - name: Generate artifact attestation for Voice Generator
-              uses: actions/attest-build-provenance@v1.4.2
+              uses: actions/attest-build-provenance@v1.4.3
               with:
                   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VOICE_GENERATOR }}
                   subject-digest: ${{ steps.push.outputs.digest }}

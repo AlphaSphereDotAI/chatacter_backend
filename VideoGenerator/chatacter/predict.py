@@ -1,29 +1,30 @@
 """run bash scripts/download_models.sh first to prepare the weights file"""
+
 import os
 import shutil
 from argparse import Namespace
-from src.utils.preprocess import CropAndExtract
-from src.test_audio2coeff import Audio2Coeff
+
+from cog import BasePredictor, Input, Path
 from src.facerender.animate import AnimateFromCoeff
 from src.generate_batch import get_data
 from src.generate_facerender_batch import get_facerender_data
+from src.test_audio2coeff import Audio2Coeff
 from src.utils.init_path import init_path
-from cog import BasePredictor, Input, Path
+from src.utils.preprocess import CropAndExtract
 
 checkpoints = "checkpoints"
 
 
 class Predictor(BasePredictor):
+
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
         device = "cuda"
 
-        
-        sadtalker_paths = init_path(checkpoints,os.path.join("src","config"))
+        sadtalker_paths = init_path(checkpoints, os.path.join("src", "config"))
 
         # init model
-        self.preprocess_model = CropAndExtract(sadtalker_paths, device
-        )
+        self.preprocess_model = CropAndExtract(sadtalker_paths, device)
 
         self.audio_to_coeff = Audio2Coeff(
             sadtalker_paths,
@@ -158,12 +159,19 @@ class Predictor(BasePredictor):
             preprocess=preprocess,
         )
         animate_from_coeff.generate(
-            data, results_dir, args.pic_path, crop_info,
-            enhancer=enhancer, background_enhancer=args.background_enhancer,
-            preprocess=preprocess)
+            data,
+            results_dir,
+            args.pic_path,
+            crop_info,
+            enhancer=enhancer,
+            background_enhancer=args.background_enhancer,
+            preprocess=preprocess,
+        )
 
         output = "/tmp/out.mp4"
-        mp4_path = os.path.join(results_dir, [f for f in os.listdir(results_dir) if "enhanced.mp4" in f][0])
+        mp4_path = os.path.join(
+            results_dir, [f for f in os.listdir(results_dir) if "enhanced.mp4" in f][0]
+        )
         shutil.copy(mp4_path, output)
 
         return Path(output)
