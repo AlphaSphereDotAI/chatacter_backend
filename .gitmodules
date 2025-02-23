@@ -9,4 +9,4 @@
 	url = https://github.com/AlphaSphereDotAI/chatacter_backend_voice_generator
 [submodule "Ollama"]
 	path = Ollama
-	url = https://github.com/AlphaSphereDotAI/chatacter_backend_ollama.git
+	url = https://github.com/AlphaSphereDotAI/chatacter_backend_ollama
