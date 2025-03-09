@@ -37,5 +37,9 @@ target "default" {
       mode = "max"
     }
   ]
-  output = [{ type = "registry" }]
+  output = [
+    { 
+      type = "registry" 
+    }
+  ]
 }
