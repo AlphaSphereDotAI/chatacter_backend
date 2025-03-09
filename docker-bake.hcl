@@ -1,5 +1,5 @@
 variable "IMAGE" {
-  default = "ghcr.io/AlphaSphereDotAI/chatacter_backend"
+  default = "ghcr.io/alphaspheredotai/chatacter_backend"
 }
 target "default" {
   name = item.name
