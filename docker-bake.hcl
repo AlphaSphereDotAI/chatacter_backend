@@ -7,17 +7,17 @@ target "default" {
   	item = [
   	  {
     		name = "chatacter_backend_app"
-    		context = "https://github.com/AlphaSphereDotAI/chatacter_backend_app"
+    		context = "https://github.com/AlphaSphereDotAI/chatacter_backend_app.git"
     		tags = [ "${IMAGE}_app:dev", "${IMAGE}_app:latest" ]
   	  },
   		{
     		name = "chatacter_backend_video_generator"
-    		context = "https://github.com/AlphaSphereDotAI/chatacter_backend_video_generator"
+    		context = "https://github.com/AlphaSphereDotAI/chatacter_backend_video_generator.git"
     		tags = [ "${IMAGE}_video_generator:dev", "${IMAGE}_video_generator:latest" ]
   	  },
   		{
     		name = "chatacter_backend_voice_generator"
-    		context = "https://github.com/AlphaSphereDotAI/chatacter_backend_voice_generator"
+    		context = "https://github.com/AlphaSphereDotAI/chatacter_backend_voice_generator.git"
     		tags = [ "${IMAGE}_voice_generator:dev", "${IMAGE}_voice_generator:latest" ]
   	  }
   	]
