@@ -6,8 +6,4 @@
 	url = https://github.com/AlphaSphereDotAI/chatacter_backend_video_generator
 [submodule "VoiceGenerator"]
 	path = VoiceGenerator
-<<<<<<< Updated upstream
-	url = https://github.com/AlphaSphereDotAI/chatacter_backend_voice_generator
-=======
 	url = https://github.com/AlphaSphereDotAI/vocalizr
->>>>>>> Stashed changes
