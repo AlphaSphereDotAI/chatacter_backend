@@ -1,51 +1,8 @@
-**/AUDIO.wav
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-*.bin
-*.tmp
 .pyc
-.env
-.env.me
-.env.previous
-**/checkpoints/
-**/bark-small/
-**/weights/
-./chatacter/sadtalker/checkpoints/
-**/gfpgan/weights/
-VoiceGenerator/chatacter/bark-small/
 .ruff_cache
 **/__pycache__/
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-/build/
-**/.pixi/
-**/doc/api/
-frontend/.dart_tool/
-frontend/.flutter-plugins
-frontend/.flutter-plugins-dependencies
-frontend/.pub-cache/
-frontend/.pub/
-/frontend/build/
-
-# Android Studio will place build artifacts here
-/frontend/android/app/debug
-/frontend/android/app/profile
-/frontend/android/app/release
-
 .env*
 .flaskenv*
 !.env.project
 !.env.vault
-
-# vscode
 .vscode/
