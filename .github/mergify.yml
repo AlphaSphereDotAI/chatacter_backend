@@ -1,9 +1,4 @@
 pull_request_rules:
-  - name: Automatically merge Dependabot PRs
-    conditions:
-      - author = dependabot[bot]
-    actions:
-      queue:
   - name: Automatically merge Renovate PRs
     conditions:
       - author = renovate[bot]
