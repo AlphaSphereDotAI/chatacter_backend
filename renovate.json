@@ -3,10 +3,6 @@
   "extends": [
     "config:recommended"
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
-  },
   "git-submodules": {
     "enabled": true,
     "automerge": true
