@@ -1,6 +1,6 @@
 [submodule "App"]
 	path = App
-	url = https://github.com/AlphaSphereDotAI/chatacter_backend_app
+	url = https://github.com/AlphaSphereDotAI/chattr
 [submodule "VideoGenerator"]
 	path = VideoGenerator
 	url = https://github.com/AlphaSphereDotAI/visualizr
