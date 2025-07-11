@@ -1,7 +1,7 @@
 name: chatacter
 services:
   App:
-    image: ghcr.io/alphaspheredotai/chatacter_backend_app:latest
+    image: ghcr.io/alphaspheredotai/chattr:latest
     ports:
       - 8000:8000
     container_name: app
@@ -30,30 +30,8 @@ services:
           target: /app
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY}
-  Ollama:
-    image: ghcr.io/alphaspheredotai/chatacter_backend_ollama:latest
-    ports:
-      - 11434:11434
-    container_name: ollama
-    networks:
-      - app_network
-    volumes:
-      - ./Ollama:/root/.ollama:rw
-    restart: always
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./Ollama
-          target: /root/.ollama
   VideoGenerator:
-    image: ghcr.io/alphaspheredotai/chatacter_backend_video_generator:latest
+    image: ghcr.io/alphaspheredotai/visualizr:latest
     container_name: video_generator
     volumes:
       - ./VideoGenerator:/app:rw
@@ -75,7 +53,7 @@ services:
           path: ./VideoGenerator
           target: /app
   VoiceGenerator:
-    image: ghcr.io/alphaspheredotai/chatacter_backend_voice_generator:latest
+    image: ghcr.io/alphaspheredotai/vocalizr:latest
     container_name: voice_generator
     volumes:
       - ./VoiceGenerator:/app:rw
