@@ -16,18 +16,6 @@ services:
       - VoiceGenerator
       - SearchEngine
       - VectorDatabase
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./App
-          target: /app
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY}
   VideoGenerator:
@@ -47,11 +35,6 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./VideoGenerator
-          target: /app
   VoiceGenerator:
     image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:8d5208e035c6c4b4d8b7b0b7cf83a0dc1c5e66c26d34d528ffcd6b64a22f984b
     container_name: voice_generator
@@ -69,41 +52,6 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./VoiceGenerator
-          target: /app
-  SearchEngine:
-    image: searxng/searxng:latest@sha256:54097e8189288082454fc257cf39c51d8059f24efeb07a4abbe0abbc58e38772
-    ports:
-      - 8080:8080
-    volumes:
-      - ./SearchEngine:/etc/searxng:rw
-    restart: always
-    networks:
-      - app_network
-    container_name: search_engine
-    environment:
-      SEARXNG_DEBUG: true
-      SEARXNG_PORT: 8080
-      SEARXNG_BASE_URL: https://${SEARXNG_HOSTNAME:-localhost}/
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-      - SETGID
-      - SETUID
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1m"
-        max-file: "1"
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./SearchEngine
-          target: /app/chatacter/searxng
   VectorDatabase:
     image: qdrant/qdrant:latest@sha256:419d72603f5346ee22ffc4606bdb7beb52fcb63077766fab678e6622ba247366
     ports:
@@ -114,10 +62,5 @@ services:
       - app_network
     container_name: vector_database
     restart: always
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./VectorDatabase
-          target: /qdrant/storage
 networks:
   app_network:
