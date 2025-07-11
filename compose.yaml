@@ -53,7 +53,7 @@ services:
           path: ./VideoGenerator
           target: /app
   VoiceGenerator:
-    image: ghcr.io/alphaspheredotai/vocalizr:latest
+    image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:8d5208e035c6c4b4d8b7b0b7cf83a0dc1c5e66c26d34d528ffcd6b64a22f984b
     container_name: voice_generator
     volumes:
       - ./VoiceGenerator:/app:rw
