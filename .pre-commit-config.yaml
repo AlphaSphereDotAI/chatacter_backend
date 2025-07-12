@@ -4,4 +4,4 @@
     - id: yamlfmt
       args: 
         - -conf
-        - ./.github/.yamlfmt.yaml]
+        - .github/.yamlfmt.yaml
