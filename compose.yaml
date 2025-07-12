@@ -55,7 +55,7 @@ services:
               capabilities:
                 - gpu
   VectorDatabase:
-    image: qdrant/qdrant:v1.14.0
+    image: qdrant/qdrant:v1.14.0@sha256:f21bbaf111837592b70f4d727c62cf6d6525b5374b1193e9faeac26a953702a8
     ports:
       - 6333:8000
     volumes:
