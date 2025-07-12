@@ -2,3 +2,4 @@
   rev: v0.17.0
   hooks:
     - id: yamlfmt
+      args: [-conf, .github/.yamlfmt.yaml]
