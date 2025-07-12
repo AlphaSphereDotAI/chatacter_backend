@@ -6,5 +6,9 @@
   "git-submodules": {
     "enabled": true,
     "automerge": true
+  },
+  "pre-commit": {
+    "enabled": true,
+    "automerge": true
   }
 }
