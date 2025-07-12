@@ -34,7 +34,8 @@ services:
           devices:
             - driver: nvidia
               count: all
-              capabilities: [gpu]
+              capabilities:
+                - gpu
   VoiceGenerator:
     image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:82081ac76aabd5d49f9dc6d46ca5718857a420311daf820fcaf1b59f798c8e7c
     container_name: voice_generator
@@ -51,7 +52,8 @@ services:
           devices:
             - driver: nvidia
               count: all
-              capabilities: [gpu]
+              capabilities:
+                - gpu
   VectorDatabase:
     image: qdrant/qdrant:latest@sha256:419d72603f5346ee22ffc4606bdb7beb52fcb63077766fab678e6622ba247366
     ports:
