@@ -3,5 +3,4 @@
   hooks:
     - id: yamlfmt
       args: 
-        - -conf
-        - .github/.yamlfmt.yaml
+        - -conf .github/.yamlfmt.yaml
