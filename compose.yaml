@@ -1,7 +1,7 @@
 name: chatacter
 services:
   App:
-    image: ghcr.io/alphaspheredotai/chattr:latest@sha256:0cfa5eb3742df8603880d3a5379adeca1da26a262e56cd983f43143119a81e5a
+    image: ghcr.io/alphaspheredotai/chattr:latest@sha256:0a3d0854eafcc6c937f5a59c7b33edd177892c68cf3d5a8e7403c3fbe8a3519a
     ports:
       - 8000:8000
     container_name: app
