@@ -1,4 +1,6 @@
 name: Chatacter
+include:
+  - https://github.com/AlphaSphereDotAI/vocalizr/blob/ebc61884c46ca8d8a52ce69300a7030478574e02/compose.yaml
 services:
   App:
     image: ghcr.io/alphaspheredotai/chattr:latest@sha256:0a3d0854eafcc6c937f5a59c7b33edd177892c68cf3d5a8e7403c3fbe8a3519a
@@ -12,16 +14,16 @@ services:
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY}
     ports:
-      - '8000:7860'
+      - '0.0.0.0:8000:7860'
     restart: always
   VectorDatabase:
-    image: qdrant/qdrant:latest
+    image: qdrant/qdrant:latest@sha256:419d72603f5346ee22ffc4606bdb7beb52fcb63077766fab678e6622ba247366
     container_name: vector_database
     volumes:
       - qdrant_storage:/qdrant/storage
     ports:
-      - '6333:6333'
-      - '6334:6334'
+      - '0.0.0.0:6333:6333'
+      - '0.0.0.0:6334:6334'
     restart: always
   VideoGenerator:
     image: ghcr.io/alphaspheredotai/visualizr:latest
@@ -29,7 +31,7 @@ services:
     volumes:
       - ./VideoGenerator:/app:rw
     ports:
-      - '8002:7860'
+      - '0.0.0.0:8002:7860'
     restart: always
     deploy:
       resources:
@@ -43,9 +45,13 @@ services:
     image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:1ede121ba19a00b1ee74a736aa075657645eb21e0412557e6d0c03ab2c47cbca
     container_name: voice_generator
     volumes:
-      - ./VoiceGenerator:/app:rw
+      - huggingface:/home/app/hf
+      - ./results/voice_generator:/home/app/results
+      - ./logs/voice_generator:/home/app/logs
+    environment:
+      GRADIO_SERVER_PORT: 7860
     ports:
-      - '8001:7860'
+      - '0.0.0.0:8001:7860'
     restart: always
     deploy:
       resources:
@@ -55,3 +61,5 @@ services:
               count: all
               capabilities:
                 - gpu
+volumes:
+  huggingface:
