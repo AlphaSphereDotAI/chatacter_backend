@@ -4,7 +4,7 @@ services:
     container_name: app
     image: ghcr.io/alphaspheredotai/chattr:latest@sha256:0a3d0854eafcc6c937f5a59c7b33edd177892c68cf3d5a8e7403c3fbe8a3519a
     ports:
-      - 8000:7860
+      - "8000:7860"
     volumes:
       - ./App:/app:rw
     restart: always
@@ -21,7 +21,7 @@ services:
       - ./VideoGenerator:/app:rw
     restart: always
     ports:
-      - 8002:7860
+      - "8002:7860"
     deploy:
       resources:
         reservations:
@@ -37,7 +37,7 @@ services:
       - ./VoiceGenerator:/app:rw
     restart: always
     ports:
-      - 8001:7860
+      - "8001:7860"
     deploy:
       resources:
         reservations:
@@ -50,8 +50,8 @@ services:
     container_name: vector_database
     image: qdrant/qdrant:latest
     ports:
-      - 6333:6333
-      - 6334:6334
+      - "6333:6333"
+      - "6334:6334"
     volumes:
-      - ./VectorDatabase:/qdrant/storage:rw
+      - qdrant_storage:/qdrant/storage
     restart: always
