@@ -1,6 +1,4 @@
 name: Chatacter
-include:
-  - https://github.com/AlphaSphereDotAI/vocalizr/blob/ebc61884c46ca8d8a52ce69300a7030478574e02/compose.yaml
 services:
   App:
     image: ghcr.io/alphaspheredotai/chattr:latest@sha256:0a3d0854eafcc6c937f5a59c7b33edd177892c68cf3d5a8e7403c3fbe8a3519a
