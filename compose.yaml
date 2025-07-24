@@ -15,7 +15,7 @@ services:
       - '0.0.0.0:8000:7860'
     restart: always
   VectorDatabase:
-    image: qdrant/qdrant:latest@sha256:709bd2656bb929b745a956260f61a6395d09f8eed72c5bf2131985ae70f95974
+    image: qdrant/qdrant:latest@sha256:d122138f76868edba68d36cb0833139c1d1761f00f09e48e61f8314196e6a4c6
     container_name: vector_database
     volumes:
       - qdrant_storage:/qdrant/storage
