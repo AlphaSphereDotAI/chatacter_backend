@@ -40,7 +40,7 @@ services:
               capabilities:
                 - gpu
   VoiceGenerator:
-    image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:e00227a6a7fe06c294510be738fb6c2728b30e7c5de174f25fbed169fc9e188f
+    image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:fb5e187dde2a8a3cf6571f2064768ee9f5442ac5a11c925a00b7f509256d7fa7
     container_name: voice_generator
     volumes:
       - huggingface:/home/app/hf
