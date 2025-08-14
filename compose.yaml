@@ -29,7 +29,7 @@ services:
       timeout: 10s
     image: ghcr.io/alphaspheredotai/chattr:latest@sha256:20f597ba31ca595574ef504cd9f09e4ae5974ddd4bd31ea6dab72ac6666de27b
     ports:
-      - "8000:7860"
+      - '8000:7860'
     post_start:
       - command: chown -R nonroot:nonroot /home/nonroot
         user: root
@@ -47,14 +47,34 @@ services:
       - '6333:6333'
       - '6334:6334'
     restart: always
-  VideoGenerator:
+  video_generator:
     image: ghcr.io/alphaspheredotai/visualizr:latest
-    container_name: video_generator
-    volumes:
-      - ./VideoGenerator:/app:rw
+    container_name: visualizr
     ports:
-      - '0.0.0.0:8002:7860'
+      - '8002:7860'
+    post_start:
+      - command: chown -R nonroot:nonroot /home/nonroot
+        user: root
     restart: always
+    volumes:
+      - assets:/home/nonroot/assets
+      - fastembed:/home/nonroot/fastembed
+      - logs:/home/nonroot/logs
+    healthcheck:
+      interval: 1m30s
+      retries: 5
+      start_period: 40s
+      test:
+        - "CMD"
+        - "curl"
+        - "-o"
+        - "/dev/null"
+        - "-f"
+        - "-s"
+        - "-w"
+        - "'Status: %{http_code},\tTime: %{time_total}s'"
+        - "http://localhost:7860/"
+      timeout: 10s
     deploy:
       resources:
         reservations:
@@ -63,17 +83,20 @@ services:
               count: all
               capabilities:
                 - gpu
-  VoiceGenerator:
+  voice_generator:
     image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:66c028c1b3ed00723acd7b3d386ec0ff07ba9f16684c23f749fc4031e116c45e
-    container_name: voice_generator
+    container_name: vocalizr
+    post_start:
+      - command: chown -R nonroot:nonroot /home/nonroot
+        user: root
     volumes:
-      - huggingface:/home/app/hf
-      - ./results/voice_generator:/home/app/results
-      - ./logs/voice_generator:/home/app/logs
+      - assets:/home/nonroot/assets
+      - huggingface:/home/nonroot/hf
+      - logs:/home/nonroot/logs
     environment:
       GRADIO_SERVER_PORT: 7860
     ports:
-      - '0.0.0.0:8001:7860'
+      - '8001:7860'
     restart: always
     deploy:
       resources:
