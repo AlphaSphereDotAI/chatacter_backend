@@ -3,14 +3,14 @@ services:
   app:
     image: ghcr.io/alphaspheredotai/chattr:latest@sha256:20f597ba31ca595574ef504cd9f09e4ae5974ddd4bd31ea6dab72ac6666de27b
     container_name: chattr
-    volumes:
-      - assets:/home/nonroot/assets
-      - fastembed:/home/nonroot/fastembed
-      - logs:/home/nonroot/logs
     depends_on:
       - VectorDatabase
       - VideoGenerator
       - VoiceGenerator
+    volumes:
+      - assets:/home/nonroot/assets
+      - fastembed:/home/nonroot/fastembed
+      - logs:/home/nonroot/logs
     environment:
       MODEL__API_KEY: ${MODEL__API_KEY}
       MODEL__NAME: llama3-70b-8192
