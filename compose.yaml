@@ -1,7 +1,12 @@
 name: Chatacter
 services:
   app:
+    image: ghcr.io/alphaspheredotai/chattr:latest@sha256:20f597ba31ca595574ef504cd9f09e4ae5974ddd4bd31ea6dab72ac6666de27b
     container_name: chattr
+    volumes:
+      - assets:/home/nonroot/assets
+      - fastembed:/home/nonroot/fastembed
+      - logs:/home/nonroot/logs
     depends_on:
       - VectorDatabase
       - VideoGenerator
@@ -12,6 +17,9 @@ services:
       MODEL__URL: https://api.groq.com/openai/v1
       VECTOR_DATABASE__NAME: test
       VECTOR_DATABASE__URL: http://vector_database:6333
+    ports:
+      - '8000:7860'
+    restart: always
     healthcheck:
       interval: 1m30s
       retries: 5
@@ -27,17 +35,9 @@ services:
         - "'Status: %{http_code},\tTime: %{time_total}s'"
         - "http://localhost:7860/"
       timeout: 10s
-    image: ghcr.io/alphaspheredotai/chattr:latest@sha256:20f597ba31ca595574ef504cd9f09e4ae5974ddd4bd31ea6dab72ac6666de27b
-    ports:
-      - '8000:7860'
     post_start:
       - command: chown -R nonroot:nonroot /home/nonroot
         user: root
-    restart: always
-    volumes:
-      - assets:/home/nonroot/assets
-      - fastembed:/home/nonroot/fastembed
-      - logs:/home/nonroot/logs
   vector_database:
     image: qdrant/qdrant:latest@sha256:82872f85515f475ebbb3d0d15ec3507c3bef8c5fd520b3e3759a9f3af29ff9bf
     container_name: qdrant
@@ -50,16 +50,13 @@ services:
   video_generator:
     image: ghcr.io/alphaspheredotai/visualizr:latest
     container_name: visualizr
-    ports:
-      - '8002:7860'
-    post_start:
-      - command: chown -R nonroot:nonroot /home/nonroot
-        user: root
-    restart: always
     volumes:
       - assets:/home/nonroot/assets
       - fastembed:/home/nonroot/fastembed
       - logs:/home/nonroot/logs
+    ports:
+      - '8002:7860'
+    restart: always
     healthcheck:
       interval: 1m30s
       retries: 5
@@ -83,12 +80,12 @@ services:
               count: all
               capabilities:
                 - gpu
-  voice_generator:
-    image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:66c028c1b3ed00723acd7b3d386ec0ff07ba9f16684c23f749fc4031e116c45e
-    container_name: vocalizr
     post_start:
       - command: chown -R nonroot:nonroot /home/nonroot
         user: root
+  voice_generator:
+    image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:66c028c1b3ed00723acd7b3d386ec0ff07ba9f16684c23f749fc4031e116c45e
+    container_name: vocalizr
     volumes:
       - assets:/home/nonroot/assets
       - huggingface:/home/nonroot/hf
@@ -106,5 +103,8 @@ services:
               count: all
               capabilities:
                 - gpu
+    post_start:
+      - command: chown -R nonroot:nonroot /home/nonroot
+        user: root
 volumes:
   huggingface:
