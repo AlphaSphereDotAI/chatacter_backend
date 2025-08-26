@@ -1,7 +1,7 @@
 name: Chatacter
 services:
   app:
-    image: ghcr.io/alphaspheredotai/chattr:latest@sha256:3eb1167886d6b4d6bcad56ffd63d04c94bea016cf77932e00f49e91d5b4c57d0
+    image: ghcr.io/alphaspheredotai/chattr:latest@sha256:4f019943f92faca081c278204b6e4f39a2d8f8166482b3e9e24f790bb89f0b00
     container_name: chattr
     depends_on:
       - VectorDatabase
