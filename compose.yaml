@@ -39,7 +39,7 @@ services:
       - command: chown -R nonroot:nonroot /home/nonroot
         user: root
   vector_database:
-    image: qdrant/qdrant:latest@sha256:aa4edad2607f2ddfedc04cf4b6bac404052b8483bf7328ea9aba5de6d2e5ac53
+    image: qdrant/qdrant:latest@sha256:6ac4807063bbecddca0250bfbcff52acf18c22263b904d12919349e6d0a408f1
     container_name: qdrant
     volumes:
       - qdrant_storage:/qdrant/storage
