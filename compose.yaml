@@ -84,7 +84,7 @@ services:
       - command: chown -R nonroot:nonroot /home/nonroot
         user: root
   voice_generator:
-    image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:a887b7c750d828d3755e157705d51fbe8e4ab5ee1ab6a0f5ceca38b608fe141d
+    image: ghcr.io/alphaspheredotai/vocalizr:latest@sha256:4fe2c155133834e787750250ae55fb945486a77a4f93646a0ed237eac1f2237f
     container_name: vocalizr
     volumes:
       - assets:/home/nonroot/assets
