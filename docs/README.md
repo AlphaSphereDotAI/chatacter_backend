@@ -8,11 +8,10 @@ Welcome to the comprehensive documentation for the Chatacter Backend project. Th
 - [Quick Start Guide](./quick-start.md) - Get up and running quickly
 - [Installation Guide](./installation.md) - Detailed installation instructions
 - [Configuration Reference](./configuration.md) - Complete configuration options
+- [FAQ](./faq.md) - Frequently asked questions and answers
 
 ### Architecture & Design
 - [System Architecture](./architecture.md) - Overall system design and components
-- [Service Architecture](./services.md) - Individual service details
-- [Data Flow](./data-flow.md) - How data flows through the system
 
 ### API Documentation
 - [Main App API](./api/app.md) - Chattr service API reference
@@ -21,20 +20,13 @@ Welcome to the comprehensive documentation for the Chatacter Backend project. Th
 
 ### Development
 - [Development Guide](./development.md) - Setting up development environment
-- [Contributing](./contributing.md) - How to contribute to the project
-- [Testing](./testing.md) - Running and writing tests
+- [Contributing Guide](./contributing.md) - How to contribute to the project
 
 ### Deployment
 - [Production Deployment](./deployment.md) - Production deployment guide
-- [Docker Guide](./docker.md) - Docker-specific deployment information
-- [Scaling Guide](./scaling.md) - Horizontal and vertical scaling
 
 ### Operations
-- [Monitoring](./monitoring.md) - System monitoring and observability
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
-- [Maintenance](./maintenance.md) - Regular maintenance tasks
 
 ### Reference
 - [Environment Variables](./environment-variables.md) - Complete environment variable reference
-- [Port Configuration](./ports.md) - Service port mappings
-- [Volume Management](./volumes.md) - Docker volume configuration
