@@ -48,7 +48,7 @@ services:
       - '6334:6334'
     restart: always
   video_generator:
-    image: ghcr.io/alphaspheredotai/visualizr:latest@sha256:175490f99e805be119e83d91ed85aba6c40f573551ba125ee90c8f6ed37bf40d
+    image: ghcr.io/alphaspheredotai/visualizr:latest@sha256:6142d41fd6455042a01e0141bf7457d335e73cc657a05ede1902e37763ceaa8d
     container_name: visualizr
     volumes:
       - assets:/home/nonroot/assets
